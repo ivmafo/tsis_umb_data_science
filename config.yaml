@@ -1,0 +1,8 @@
+# configuraciones generales del proyecto
+
+database:
+  user: "postgres"
+  password: "Iforero2011."
+  host: "localhost"
+  port: 5432
+  database: "flights"
