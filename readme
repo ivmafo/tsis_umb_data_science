@@ -27,6 +27,8 @@ project_root/
 │       └── infrastructure/            # Pruebas para la infraestructura
 └── requirements.txt                   # Lista de dependencias del proyecto
 
+# instalacion de dependencias del proyecto de python usar python >= 3.12
+pip install -r requirements.txt
 
 # activacion de backend FastAPI
 uvicorn src.entrypoints.api.main:app --reload
