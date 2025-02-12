@@ -1,6 +1,6 @@
 # src/infrastructure/adapters/postgres_flight_repository.py
 from domain.ports.flight_repository import FlightRepository
-from domain.entities.flight import Flight
+from tsis_umb_data_science.src.core.entities.flight import Flight
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from typing import Optional

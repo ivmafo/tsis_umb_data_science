@@ -1,0 +1,28 @@
+project_root/
+├── data/                              # Datos (ej. archivos de prueba, bases de datos)
+├── notebooks/                         # Exploración y experimentación (Jupyter notebooks)
+├── scripts/                           # Scripts de utilidad (ej. para tareas repetitivas)
+├── src/                         
+│   ├── core/                          # Núcleo del dominio
+│   │   ├── entities/                  # Entidades del dominio
+│   │   ├── use_cases/                 # Casos de uso
+│   │   ├── services/                  # Servicios del dominio (lógica de negocio compleja)
+│   │   ├── ports/                     # Interfaces (puertos) para interactuar con el exterior
+│   │   └── exceptions/                # Excepciones específicas del dominio
+│   ├── infrastructure/                # Implementación de los puertos
+│   │   ├── adapters/                  # Adaptadores que implementan los puertos
+│   │   │   ├── inbound/               # Adaptadores para las entradas (ej. API, UI)
+│   │   │   │   └── web/               # Adaptador para la interfaz web (React)
+│   │   │   │       ├── react_frontend/# Código fuente de la app React
+│   │   │   │       └── main.py        # Punto de entrada de la API
+│   │   │   └── outbound/              # Adaptadores para las salidas (ej. base de datos, servicios externos)
+│   │   │       └── database/          # Adaptador para la base de datos
+│   │   │       └── api_client/        # Adaptador para un servicio externo
+│   │   ├── config/                    # Configuración de la infraestructura
+│   │   └── logging/                   # Configuración de logs
+│   ├── entrypoints/                   # Puntos de entrada principales de la aplicación
+│   │   └── api/                       # Punto de entrada para la API (Flask, FastAPI, etc.)
+│   └── tests/                         # Pruebas unitarias y de integración
+│       ├── core/                      # Pruebas para el dominio
+│       └── infrastructure/            # Pruebas para la infraestructura
+└── requirements.txt                   # Lista de dependencias del proyecto

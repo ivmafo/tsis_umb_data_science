@@ -1,10 +1,10 @@
-import os
-from pathlib import Path
-from datetime import datetime
+#import os
+#from pathlib import Path
+#from datetime import datetime
 from infraestructure.config.database import PostgresConnectionPool
 from infraestructure.adapters.postgres_flight_repository import PostgresFlightRepository
-from application.use_cases.create_flight import CreateFlightUseCase
-from application.use_cases.process_flights_from_excel import ProcessFlightsFromExcelUseCase
+#from application.use_cases.create_flight import CreateFlightUseCase
+#from application.use_cases.process_flights_from_excel import ProcessFlightsFromExcelUseCase
 
 
 # Configurar el pool de conexiones
@@ -13,6 +13,7 @@ conn = pool.get_connection()
 
 # Inicializar repositorio y caso de uso
 flight_repo = PostgresFlightRepository(conn)
+
 
 # Liberar recursos
 pool.release_connection(conn)

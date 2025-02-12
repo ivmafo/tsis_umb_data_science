@@ -10,26 +10,3 @@ CREATE DATABASE flights
     IS_TEMPLATE = False;
 
 
-CREATE TABLE vuelos (
-    id SERIAL PRIMARY KEY,
-    callsign VARCHAR(10),
-    matricula VARCHAR(10),
-    tipo_aeronave VARCHAR(10),
-    empresa VARCHAR(50),
-    numero_vuelo VARCHAR(10),
-    tipo_vuelo VARCHAR(1),
-    tiempo_inicial TIMESTAMP,
-    origen VARCHAR(10),
-    pista_origen VARCHAR(10),
-    sid VARCHAR(10),
-    fecha_salida DATE,
-    hora_salida TIME,
-    destino VARCHAR(10),
-    pista_destino VARCHAR(10),
-    fecha_llegada DATE,
-    hora_llegada TIME,
-    nivel INTEGER,
-    ambito VARCHAR(1),
-    nombre_origen_zzzz VARCHAR(100),
-    nombre_destino_zzzz VARCHAR(100)
-);
