@@ -1,7 +1,11 @@
+import os
+from pathlib import Path
 from datetime import datetime
-from infrastructure.config.database import PostgresConnectionPool
-from infrastructure.adapters.postgres_flight_repository import PostgresFlightRepository
+from infraestructure.config.database import PostgresConnectionPool
+from infraestructure.adapters.postgres_flight_repository import PostgresFlightRepository
 from application.use_cases.create_flight import CreateFlightUseCase
+from application.use_cases.process_flights_from_excel import ProcessFlightsFromExcelUseCase
+
 
 # Configurar el pool de conexiones
 pool = PostgresConnectionPool()
@@ -9,6 +13,18 @@ conn = pool.get_connection()
 
 # Inicializar repositorio y caso de uso
 flight_repo = PostgresFlightRepository(conn)
+
+# Liberar recursos
+pool.release_connection(conn)
+pool.close_all_connections()
+
+'''
+###############################################################################
+###############################################################################
+###################### TEST ###################################################
+###############################################################################
+###############################################################################
+# prueba unitaria de creacion de vuelo
 create_flight_uc = CreateFlightUseCase(flight_repo)
 
 # Crear un vuelo de ejemplo
@@ -37,6 +53,11 @@ new_flight = create_flight_uc.execute({
 
 print(f"Vuelo creado: {new_flight}")
 
-# Liberar recursos
-pool.release_connection(conn)
-pool.close_all_connections()
+###############################################################################
+###############################################################################
+###################### TEST ###################################################
+###############################################################################
+###############################################################################
+*/
+'''
+
