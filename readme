@@ -26,3 +26,17 @@ project_root/
 │       ├── core/                      # Pruebas para el dominio
 │       └── infrastructure/            # Pruebas para la infraestructura
 └── requirements.txt                   # Lista de dependencias del proyecto
+
+
+# activacion de backend FastAPI
+uvicorn src.entrypoints.api.main:app --reload
+
+# ejecutar aplicacion React 
+# desde src/infrastructure/adapters/inbound/web/react_frontend
+npm start #dev
+# instalar
+npm install --save-dev web-vitals
+
+
+# revisar frontend desde : 
+http://localhost:3000

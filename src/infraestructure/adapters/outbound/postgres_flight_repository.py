@@ -1,10 +1,12 @@
-# src/infrastructure/adapters/postgres_flight_repository.py
-from domain.ports.flight_repository import FlightRepository
-from tsis_umb_data_science.src.core.entities.flight import Flight
+# 
 import psycopg2
 from psycopg2.extras import RealDictCursor
+from src.core.ports.flight_repository import FlightRepository
+from src.core.entities.flight import Flight
 from typing import Optional
 from datetime import datetime
+
+
 
 
 class PostgresFlightRepository(FlightRepository):
@@ -94,3 +96,7 @@ class PostgresFlightRepository(FlightRepository):
         except Exception as e:
             print(f"Error al encontrar el vuelo: {e}")
             return None
+
+
+
+

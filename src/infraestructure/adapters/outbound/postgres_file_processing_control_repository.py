@@ -1,7 +1,6 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor
-
-from domain.ports.file_processing_control_repository import FileProcessingControlRepository
+from src.core.ports.file_processing_control_repository import FileProcessingControlRepository
 
 class PostgresFileProcessingControlRepository(FileProcessingControlRepository):
     def __init__(self, connection: psycopg2.extensions.connection):

@@ -1,5 +1,5 @@
 import psycopg2
-#from psycopg2 import pool
+from psycopg2 import pool
 
 class PostgresConnectionPool:
     def __init__(self, min_conn=1, max_conn=5):

@@ -2,7 +2,7 @@
 #from pathlib import Path
 #from datetime import datetime
 from infraestructure.config.database import PostgresConnectionPool
-from infraestructure.adapters.postgres_flight_repository import PostgresFlightRepository
+from src.infraestructure.adapters.outbound.postgres_flight_repository import PostgresFlightRepository
 #from application.use_cases.create_flight import CreateFlightUseCase
 #from application.use_cases.process_flights_from_excel import ProcessFlightsFromExcelUseCase
 

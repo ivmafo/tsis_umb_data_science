@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
-from tsis_umb_data_science.src.core.entities.flight import Flight
+from typing import Optional
+from src.core.entities.flight import Flight
+
 
 class FlightRepository(ABC):
     @abstractmethod
@@ -7,7 +9,9 @@ class FlightRepository(ABC):
         pass
 
     @abstractmethod
-    def find_by_id(self, flight_id: str) -> Flight | None:
+    def find_by_id(self, flight_id: str) -> Optional[Flight]:
         pass
 
-    
+    def find_by_callsign(self, callsign: str) -> Optional[Flight]:
+        pass
+
