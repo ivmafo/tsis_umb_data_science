@@ -1,4 +1,4 @@
-# src\application\use_cases\process_flights_from_excel.py
+# src\core\use_cases\process_flights_from_excel.py
 from src.infraestructure.adapters.excel_flight_transformer import ExcelFlightTransformer
 from src.core.ports.flight_repository import FlightRepository
 from src.core.ports.file_processing_control_repository import FileProcessingControlRepository
@@ -28,4 +28,6 @@ class ProcessFlightsFromExcelUseCase:
         # Registrar archivo como procesado
         self.file_repository.add_file(file_path)
 
-        
+
+
+

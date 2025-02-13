@@ -1,6 +1,6 @@
 # src/application/use_cases/create_flight.py
-from src.domain.ports.flight_repository import FlightRepository
-from src.domain.entities.flight import Flight
+from src.core.ports.flight_repository import FlightRepository
+from src.core.entities.flight import Flight
 
 class CreateFlightUseCase:
     def __init__(self, flight_repository: FlightRepository):

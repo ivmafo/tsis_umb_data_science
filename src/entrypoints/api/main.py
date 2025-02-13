@@ -1,13 +1,15 @@
-from fastapi import FastAPI, File, UploadFile
+#tsis_umb_data_science/src/entrypoints/api/main.py
+import traceback
+from fastapi import FastAPI, File, Request, UploadFile
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pathlib import Path
 import shutil
 
 # Importar casos de uso y repositorios
-from src.infrastructure.config.database import PostgresConnectionPool
-from src.infrastructure.adapters.outbound.database.postgres_flight_repository import PostgresFlightRepository
-from src.infrastructure.adapters.outbound.database.postgres_file_processing_control_repository import PostgresFileProcessingControlRepository
+from src.infraestructure.config.database import PostgresConnectionPool
+from src.infraestructure.adapters.outbound.postgres_flight_repository import PostgresFlightRepository
+from src.infraestructure.adapters.outbound.postgres_file_processing_control_repository import PostgresFileProcessingControlRepository
 from src.core.use_cases.process_flights_from_excel import ProcessFlightsFromExcelUseCase
 
 app = FastAPI()
@@ -31,11 +33,15 @@ async def read_root(request: Request):
 
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
-    file_location = f"data/raw/{file.filename}"
-    with open(file_location, "wb") as file_object:
-        shutil.copyfileobj(file.file, file_object)
-    process_flights_uc.execute(file_location)
-    return {"message": f"Archivo '{file.filename}' procesado exitosamente."}
+    try:
+        file_location = f"data/raw/{file.filename}"
+        with open(file_location, "wb") as file_object:
+            shutil.copyfileobj(file.file, file_object)
+        process_flights_uc.execute(file_location)
+        return {"message": f"Archivo '{file.filename}' procesado exitosamente."}
+    except Exception as e:
+        traceback.print_exc()
+        return {"message": f"Error al procesar archivo : {str(e)}"}
 
 @app.on_event("shutdown")
 def shutdown_event():

@@ -32,9 +32,12 @@ pip install -r requirements.txt
 
 # activacion de backend FastAPI
 uvicorn src.entrypoints.api.main:app --reload
+# especificando el puerto especifico
+uvicorn src.entrypoints.api.main:app --reload --port 8080 
 
 # ejecutar aplicacion React 
 # desde src/infrastructure/adapters/inbound/web/react_frontend
+npm install 
 npm start #dev
 # instalar
 npm install --save-dev web-vitals
