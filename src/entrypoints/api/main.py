@@ -1,7 +1,7 @@
 #tsis_umb_data_science/src/entrypoints/api/main.py
 import traceback
-from fastapi import FastAPI, File, Request, UploadFile
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, File, Request, UploadFile, HTTPException
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from pathlib import Path
 import shutil
@@ -41,7 +41,18 @@ async def upload_file(file: UploadFile = File(...)):
         return {"message": f"Archivo '{file.filename}' procesado exitosamente."}
     except Exception as e:
         traceback.print_exc()
-        return {"message": f"Error al procesar archivo : {str(e)}"}
+        raise HTTPException(status_code=500, detail=f"Error al procesar el archivo: {str(e)}")
+
+@app.get("/files")
+async def get_files():
+    try:
+        files = file_repo.get_all_files()
+        return files
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Error al obtener archivos: {str(e)}")
+
+
 
 @app.on_event("shutdown")
 def shutdown_event():

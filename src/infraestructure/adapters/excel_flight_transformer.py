@@ -8,7 +8,38 @@ class ExcelFlightTransformer:
         self.file_path = file_path
 
     def transform_flights(self):
+        # diccionario de listas de posibles nombres de columnas 
+         column_mapping = {
+            "callsign": ["callsign", "Callsign", "Call sign", "call-sign", "CallSign"],
+            "matricula": ["matricula", "Matrícula"],
+            "tipo_aeronave": ["tipo_aeronave", "Tip Aer", "Tipo Aeronave"],
+            "empresa": ["empresa", "Empresa"],
+            "numero_vuelo": ["numero_vuelo", "# Vuelo", "Numero de Vuelo"],
+            "tipo_vuelo": ["tipo_vuelo", "Tip Vuel", "Tipo de Vuelo"],
+            "tiempo_inicial": ["tiempo_inicial", "Tiempo Inicial"],
+            "origen": ["origen", "Origen"],
+            "fecha_salida": ["fecha_salida", "Fec Sal", "Fecha de Salida"],
+            "hora_salida": ["hora_salida", "Hr Sal", "Hora de Salida"],
+            "destino": ["destino", "Destino"],
+            "fecha_llegada": ["fecha_llegada", "Fec Lle", "Fecha de Llegada"],
+            "hora_llegada": ["hora_llegada", "Hr Lle", "Hora de Llegada"],
+            "nivel": ["nivel", "Nivel"],
+            "nombre_origen": ["nombre_origen", "Nombre origen ZZZZ", "Nombre Origen"],
+            "nombre_destino": ["nombre_destino", "Nombre destino ZZZZ", "Nombre Destino"]
+        }
+         
         df = pd.read_excel(self.file_path)
+
+                # Renombrar las columnas basadas en el mapeo
+        for new_name, old_names in column_mapping.items():
+            for old_name in old_names:
+                if old_name in df.columns:
+                    df.rename(columns={old_name: new_name}, inplace=True)
+                    break
+
+        # verificar encabezado            
+        print(df.head())
+    
         flights = []
         for _, row in df.iterrows():
             # Estandarizar campos y manejar campos adicionales
