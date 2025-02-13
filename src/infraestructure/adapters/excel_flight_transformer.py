@@ -50,4 +50,5 @@ class ExcelFlightTransformer:
                 "nombre_destino": row.get('nombre_destino', '')
             }
             flights.append(flight_data)
+            print(flights) 
         return flights

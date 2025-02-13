@@ -23,7 +23,9 @@ class ProcessFlightsFromExcelUseCase:
 
         # procesar los datos y guardarlos en la base de datos 
         for flight_data in flights:
+            #print(flight_data) 
             create_flight_uc.execute(flight_data)
+
 
         # Registrar archivo como procesado
         self.file_repository.add_file(file_path)
