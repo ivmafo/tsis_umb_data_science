@@ -12,6 +12,7 @@ from src.infraestructure.adapters.outbound.postgres_flight_repository import Pos
 from src.infraestructure.adapters.outbound.postgres_file_processing_control_repository import PostgresFileProcessingControlRepository
 from src.core.use_cases.process_flights_from_excel import ProcessFlightsFromExcelUseCase
 
+
 app = FastAPI()
 
 # Configurar el pool de conexiones
@@ -42,6 +43,8 @@ async def upload_file(file: UploadFile = File(...)):
     except Exception as e:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Error al procesar el archivo: {str(e)}")
+    
+   
 
 @app.get("/files")
 async def get_files():

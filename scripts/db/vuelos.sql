@@ -1,10 +1,10 @@
-CREATE TABLE vuelos (
+CREATE TABLE fligths (
     id SERIAL PRIMARY KEY,
     callsign VARCHAR(10),
     matricula VARCHAR(10),
     tipo_aeronave VARCHAR(10),
     empresa VARCHAR(50),
-    numero_vuelo VARCHAR(10),
+    numero_vuelo INTEGER,
     tipo_vuelo VARCHAR(1),
     tiempo_inicial TIMESTAMP,
     origen VARCHAR(10),
@@ -18,6 +18,6 @@ CREATE TABLE vuelos (
     hora_llegada TIME,
     nivel INTEGER,
     ambito VARCHAR(1),
-    nombre_origen_zzzz VARCHAR(100),
-    nombre_destino_zzzz VARCHAR(100)
+    nombre_origen VARCHAR(100),
+    nombre_destino VARCHAR(100)
 );

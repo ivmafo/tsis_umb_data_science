@@ -1,5 +1,8 @@
-import psycopg2
+import psycopg2 # libreria postgres
+import sqlite3 # libreria sqlite3
 from psycopg2 import pool
+
+
 
 class PostgresConnectionPool:
     def __init__(self, min_conn=1, max_conn=5):
@@ -22,3 +25,4 @@ class PostgresConnectionPool:
 
     def close_all_connections(self):
         self.pool.closeall()
+

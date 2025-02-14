@@ -8,7 +8,7 @@ class PostgresFileProcessingControlRepository(FileProcessingControlRepository):
 
     def add_file(self, file_name: str) -> None:
         with self.connection.cursor(cursor_factory=RealDictCursor) as cursor:
-            query = "INSERT INTO file_processing_control (file_name) VALUES (%s);"
+            query = "INSERT INTO public.file_processing_control (file_name) VALUES (%s);"
             cursor.execute(query, (file_name,))
             self.connection.commit()
 

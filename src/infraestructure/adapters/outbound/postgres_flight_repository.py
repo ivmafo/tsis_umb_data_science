@@ -17,7 +17,8 @@ class PostgresFlightRepository(FlightRepository):
         try:
             with self.connection.cursor(cursor_factory=RealDictCursor) as cursor:
                 query = """
-                    INSERT INTO flights (
+                    INSERT INTO 
+                    public.fligths (
                         callsign, matricula, tipo_aeronave, empresa, numero_vuelo,
                         tipo_vuelo, tiempo_inicial, origen, pista_origen, sid,
                         fecha_salida, hora_salida, destino, pista_destino,
