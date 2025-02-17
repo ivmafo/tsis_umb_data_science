@@ -18,3 +18,5 @@ class PostgresFileProcessingControlRepository(FileProcessingControlRepository):
             cursor.execute(query, (file_name,))
             result = cursor.fetchone()
             return result is not None
+        
+
