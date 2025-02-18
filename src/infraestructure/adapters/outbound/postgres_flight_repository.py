@@ -88,8 +88,8 @@ class PostgresFlightRepository(FlightRepository):
 
                 return Flight(**result)
         except Exception as e:
-            print(f"Error al guardar el vuelo: {e}")
-            raise
+            print(f"EEEEEEError al guardar el vuelo: {e}")
+            return None
 
     def find_by_id(self, flight_id: str) -> Optional[Flight]:
         try:

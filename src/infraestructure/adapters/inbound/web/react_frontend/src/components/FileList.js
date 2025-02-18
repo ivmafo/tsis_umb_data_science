@@ -6,7 +6,7 @@ function FileList() {
   useEffect(() => {
     fetch('http://localhost:8000/files')
       .then(response => response.json())
-      .then(data => setFiles(data))
+      .then(data => setFiles(data.files))
       .catch(error => console.error('Error fetching files:', error));
   }, []);
 
@@ -15,11 +15,11 @@ function FileList() {
       <h2>Archivos Cargados</h2>
       <ul>
         {files.map((file, index) => (
-          <li key={index}>{file.file_name}</li>
+          <li key={index}>{file}</li>
         ))}
       </ul>
     </div>
   );
-}
+} 
 
 export default FileList; // Asegúrate de que el componente se exporta correctamente

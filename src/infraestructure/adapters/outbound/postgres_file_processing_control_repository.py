@@ -18,5 +18,12 @@ class PostgresFileProcessingControlRepository(FileProcessingControlRepository):
             cursor.execute(query, (file_name,))
             result = cursor.fetchone()
             return result is not None
-        
+
+    def get_all_files(self) -> list:
+        with self.connection.cursor(cursor_factory=RealDictCursor) as cursor:
+            query = "SELECT id, file_name, processed_at	FROM public.file_processing_control;"
+            cursor.execute(query)
+            result = cursor.fetchall()
+            return [row['file_name'] for row in result]
+
 

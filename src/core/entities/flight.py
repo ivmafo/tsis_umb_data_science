@@ -6,7 +6,7 @@ from typing import Optional
 class Flight(BaseModel):
     fecha: Optional[datetime]                 # Fecha
     sid: Optional[int]                        # SID (db) /  ID Excel
-    ssr: Optional[int]                        # SSR
+    ssr: Optional[str]                        # SSR
     callsign: Optional[str]                   # Callsign
     matricula: Optional[str]                  # Matrícula
     tipo_aeronave: Optional[str]              # Tip Aer

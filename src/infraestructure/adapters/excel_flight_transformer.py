@@ -51,7 +51,7 @@ class ExcelFlightTransformer:
                 # Validar y formatear cada campo individualmente, manejando NaN y None
                 flight_data['fecha'] = self.safe_get_date(row, 'fecha')         
                 flight_data['sid'] = self.safe_get_int(row, 'sid')
-                flight_data['ssr'] = self.safe_get_int(row,'ssr')                       
+                flight_data['ssr'] = self.safe_get_str(row,'ssr')                       
                 flight_data['callsign'] = self.safe_get_str(row, 'callsign')
                 flight_data['matricula'] = self.safe_get_str(row, 'matricula')
                 flight_data['tipo_aeronave'] = self.safe_get_str(row, 'tipo_aeronave')
@@ -82,7 +82,8 @@ class ExcelFlightTransformer:
                 print(f"Error general al procesar la fila: {row}. Error: {str(e)}")
                 # Si quieres detener el procesamiento en un error, puedes usar 'break' aquí.
                 # Si quieres continuar con las siguientes filas a pesar del error, no uses 'break'.
-                # break  # Descomenta para detener el procesamiento en el primer error.
+                print(flight_data)
+                break  # Descomenta para detener el procesamiento en el primer error.
 
         return flights
 
@@ -179,6 +180,7 @@ class ExcelFlightTransformer:
 
     def convertir_hora(self, hora_str):
         hora_str = str(hora_str).replace(".0","")
+        hora_str = hora_str.zfill(4)
         if pd.isna(hora_str):  # Verifica NaN al inicio de la función
             return None
 
@@ -204,11 +206,12 @@ class ExcelFlightTransformer:
                 try: # Intenta convertirlo a datetime, en caso de que ya tenga un formato válido
                     hora = pd.to_datetime(hora_str).time()
                 except:
+                    raise ValueError(f"Formato de hora no válido: {hora_str}")  # Lanza una excepción si el formato no es válido
                     return  None
-                    # raise ValueError(f"Formato de hora no válido: {hora_str}")  # Lanza una excepción si el formato no es válido
+                    
             return hora
         except ValueError as e:
-            print(f"Error al convertir la hora: {hora_str}. Error: {e}")
+            #print(f"Error al convertir la hora convertir_hora: {hora_str}. Error: {e}")
             return None  # O devuelve un valor predeterminado
 
     def safe_get_time_as_datetime(self, row, column_name, base_date):
@@ -231,6 +234,7 @@ class ExcelFlightTransformer:
         
     def convertir_hora(self, hora_str):
         hora_str = str(hora_str).replace(".0", "")
+        hora_str = hora_str.zfill(4)
         if pd.isna(hora_str) or hora_str is None or hora_str.strip() == '':
             return None
 
@@ -251,5 +255,5 @@ class ExcelFlightTransformer:
                 # Manejar otros formatos posibles
                 return pd.to_datetime(hora_str).time()
         except ValueError as e:
-            print(f"Error al convertir la hora: {hora_str}. Error: {e}")
+            #print(f"Error al convertir la hora convertir_hora2: {hora_str}. Error: {e}")
             return None  # O devuelve un valor predeterminado

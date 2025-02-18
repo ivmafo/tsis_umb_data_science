@@ -24,7 +24,7 @@ function App() {
       <Sidebar onSelect={setSelectedView} />
       <div className="main-content">
         <header className="App-header">
-          <h1>Importar Archivos de Vuelos</h1>
+          <h1>Operaciones:</h1>
         </header>
         {renderContent()}
         <Footer />

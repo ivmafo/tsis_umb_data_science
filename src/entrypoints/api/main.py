@@ -1,6 +1,7 @@
 #tsis_umb_data_science/src/entrypoints/api/main.py
 import traceback
 from fastapi import FastAPI, File, Request, UploadFile, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from pathlib import Path
@@ -28,6 +29,20 @@ process_flights_uc = ProcessFlightsFromExcelUseCase(flight_repo, file_repo)
 
 templates = Jinja2Templates(directory="src/infrastructure/adapters/inbound/web/templates")
 
+# Configure CORS
+origins = [
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
@@ -46,11 +61,12 @@ async def upload_file(file: UploadFile = File(...)):
     
    
 
-@app.get("/files")
+@app.get("/files") 
 async def get_files():
     try:
         files = file_repo.get_all_files()
-        return files
+        print("LISTADO : ->>>>>>>>>>>>>>>>>>>>>>",files)
+        return {"files": files}
     except Exception as e:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Error al obtener archivos: {str(e)}")

@@ -7,7 +7,8 @@ function Sidebar({ onSelect }) {
       <h2>Opciones</h2>
       <ul>
         <li onClick={() => onSelect('upload')}>Cargar Archivo</li>
-        <li onClick={() => onSelect('list')}>Listado de Archivos</li>
+        <li onClick={() => onSelect('uploadDir')}>Cargar Archivos Desde Directorio</li>
+        <li onClick={() => onSelect('list')}>Listado de Archivos</li>        
       </ul>
     </div>
   );
