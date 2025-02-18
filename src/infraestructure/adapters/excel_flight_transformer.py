@@ -8,7 +8,8 @@ class ExcelFlightTransformer:
     def transform_flights(self):
         column_mapping = {
             "fecha": ["Fecha", "fecha"],
-            "sid": ["id"],
+            "sid": ["id","ID","sid","SID"],
+            "ssr": ["SSR"],
             "callsign": ["callsign", "Callsign", "Call sign", "call-sign", "CallSign"],
             "matricula": ["matricula", "Matrícula"],
             "tipo_aeronave": ["tipo_aeronave", "Tip Aer", "Tipo Aeronave"],
@@ -17,15 +18,17 @@ class ExcelFlightTransformer:
             "tipo_vuelo": ["tipo_vuelo", "Tip Vuel", "Tipo de Vuelo"],
             "tiempo_inicial": ["tiempo_inicial", "Tiempo Inicial"],
             "origen": ["origen", "Origen"],
-            "pista_origen": ["Pista Origen"],
             "fecha_salida": ["fecha_salida", "Fec Sal", "Fecha de Salida"],
             "hora_salida": ["hora_salida", "Hr Sal", "Hora de Salida"],
+            "hora_pv": ["Hora PV"],
             "destino": ["destino", "Destino"],
-            "pista_destino": ["Pista Destino"],
             "fecha_llegada": ["fecha_llegada", "Fec Lle", "Fecha de Llegada"],
             "hora_llegada": ["hora_llegada", "Hr Lle", "Hora de Llegada"],
             "nivel": ["nivel", "Nivel"],
-            "ambito": ["Ambito"],
+            "duracion": ["duracion", "Duración"],
+            "distancia": ["distancia", "Distancia"],
+            "velocidad": ["velocidad", "Velocidad"],
+            "eq_ssr": ["Eq SSR"],
             "nombre_origen": ["nombre_origen", "Nombre origen ZZZZ", "Nombre Origen"],
             "nombre_destino": ["nombre_destino", "Nombre destino ZZZZ", "Nombre Destino"],
             "fecha_registro": ["Fecha de Registro"]
@@ -44,34 +47,37 @@ class ExcelFlightTransformer:
         flights = []
         for _, row in df.iterrows():
             flight_data = {}
-            try:
+            try: 
                 # Validar y formatear cada campo individualmente, manejando NaN y None
                 flight_data['fecha'] = self.safe_get_date(row, 'fecha')         
-                flight_data['sid'] = self.safe_get_date(row, 'sid')                       
+                flight_data['sid'] = self.safe_get_int(row, 'sid')
+                flight_data['ssr'] = self.safe_get_int(row,'ssr')                       
                 flight_data['callsign'] = self.safe_get_str(row, 'callsign')
                 flight_data['matricula'] = self.safe_get_str(row, 'matricula')
                 flight_data['tipo_aeronave'] = self.safe_get_str(row, 'tipo_aeronave')
                 flight_data['empresa'] = self.safe_get_str(row, 'empresa')
-                flight_data['numero_vuelo'] = self.safe_get_str(row, 'numero_vuelo')
+                flight_data['numero_vuelo'] = self.safe_get_int(row, 'numero_vuelo')
                 flight_data['tipo_vuelo'] = self.safe_get_str(row, 'tipo_vuelo')
                 flight_data['tiempo_inicial'] = self.safe_get_datetime(row, 'tiempo_inicial')
                 flight_data['origen'] = self.safe_get_str(row, 'origen')
-                flight_data['pista_origen'] = ''                
                 flight_data['fecha_salida'] = self.safe_get_date(row, 'fecha_salida')
                 flight_data['hora_salida'] = self.safe_get_time(row, 'hora_salida')
+                #flight_data['hora_pv'] =self.safe_get_time_as_datetime(row, 'hora_pv', flight_data['fecha_salida'])
+                flight_data['hora_pv'] = self.safe_get_time(row, 'hora_pv')
                 flight_data['destino'] = self.safe_get_str(row, 'destino')
-                flight_data['pista_destino'] = ''
                 flight_data['fecha_llegada'] = self.safe_get_date(row, 'fecha_llegada')
                 flight_data['hora_llegada'] = self.safe_get_time(row, 'hora_llegada')
                 flight_data['nivel'] = self.safe_get_int(row, 'nivel')
-                flight_data['ambito'] = self.safe_get_int(row, 'ambito')
+                flight_data['duracion'] = self.safe_get_int(row, 'duracion')
+                flight_data['distancia'] = self.safe_get_int(row, 'distancia')
+                flight_data['velocidad'] = self.safe_get_int(row, 'velocidad')
+                flight_data['eq_ssr'] = self.safe_get_str(row, 'eq_ssr')
                 flight_data['nombre_origen'] = self.safe_get_str(row, 'nombre_origen')
                 flight_data['nombre_destino'] = self.safe_get_str(row, 'nombre_destino')
                 flight_data['fecha_registro'] = self.safe_get_date(row, 'fecha_registro')
 
                 flights.append(flight_data)
-                print(flights)
-                break
+                #print(flights)
             except Exception as e:
                 print(f"Error general al procesar la fila: {row}. Error: {str(e)}")
                 # Si quieres detener el procesamiento en un error, puedes usar 'break' aquí.
@@ -85,6 +91,14 @@ class ExcelFlightTransformer:
         if pd.isna(date_str) or date_str is None or str(date_str).lower() == 'nan' or not date_str:
             return None
         return self.validar_y_formatear_fecha(str(date_str))
+
+    def safe_get_time_as_time(self, row, column_name):
+        time_str = row.get(column_name)
+        if pd.isna(time_str) or time_str is None or str(time_str).lower() == 'nan' or not time_str:
+            return None
+        return self.convertir_hora(str(time_str))
+
+
 
     def safe_get_time(self, row, column_name):
         time_str = row.get(column_name)
@@ -123,7 +137,7 @@ class ExcelFlightTransformer:
         fecha_str = str(fecha_str).replace(".0","")
 
         if pd.isna(fecha_str) or fecha_str is None or str(fecha_str).lower() == 'nan' or not fecha_str:
-            return None        
+            return None 
 
         try:
             fecha = datetime.strptime(fecha_str, '%Y-%m-%d %H:%M:%S')
@@ -190,10 +204,52 @@ class ExcelFlightTransformer:
                 try: # Intenta convertirlo a datetime, en caso de que ya tenga un formato válido
                     hora = pd.to_datetime(hora_str).time()
                 except:
-                    raise ValueError(f"Formato de hora no válido: {hora_str}")  # Lanza una excepción si el formato no es válido
+                    return  None
+                    # raise ValueError(f"Formato de hora no válido: {hora_str}")  # Lanza una excepción si el formato no es válido
             return hora
         except ValueError as e:
             print(f"Error al convertir la hora: {hora_str}. Error: {e}")
             return None  # O devuelve un valor predeterminado
 
-            
+    def safe_get_time_as_datetime(self, row, column_name, base_date):
+        time_str = row.get(column_name)
+        if pd.isna(time_str) or time_str is None or str(time_str).lower() == 'nan' or not time_str:
+            return None
+        try:
+            time_value = self.convertir_hora(str(time_str))
+            if time_value:
+                if base_date:
+                    return datetime.combine(base_date, time_value)
+                else:
+                    # Si base_date es None, usar una fecha por defecto, por ejemplo la fecha actual
+                    return datetime.combine(datetime.now().date(), time_value)
+            else:
+                return None
+        except Exception as e:
+            print(f"Error al convertir {column_name}: {time_str}. Error: {str(e)}")
+            return None
+        
+    def convertir_hora(self, hora_str):
+        hora_str = str(hora_str).replace(".0", "")
+        if pd.isna(hora_str) or hora_str is None or hora_str.strip() == '':
+            return None
+
+        try:
+            if len(hora_str) == 4:  # Si la cadena tiene 4 dígitos (HHMM)
+                return time(int(hora_str[:2]), int(hora_str[2:]))
+            elif len(hora_str) == 3:  # Si la cadena tiene 3 dígitos (HMM)
+                return time(int(hora_str[:1]), int(hora_str[1:]))
+            elif len(hora_str) == 2:  # Si la cadena tiene 2 dígitos (MM)
+                return time(0, int(hora_str))
+            elif len(hora_str) > 4 and "." in hora_str:  # Si tiene decimales, asumimos que es HHMM.SS
+                hora_str = hora_str.split(".")[0]
+                return time(int(hora_str[:2]), int(hora_str[2:]))
+            elif len(hora_str) < 2 and "." in hora_str:  # Si tiene decimales, asumimos que son los minutos
+                hora_str = hora_str.split(".")[0]
+                return time(0, int(hora_str))
+            else:
+                # Manejar otros formatos posibles
+                return pd.to_datetime(hora_str).time()
+        except ValueError as e:
+            print(f"Error al convertir la hora: {hora_str}. Error: {e}")
+            return None  # O devuelve un valor predeterminado

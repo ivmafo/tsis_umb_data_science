@@ -19,23 +19,27 @@ class PostgresFlightRepository(FlightRepository):
                 query = """
                     INSERT INTO 
                     public.fligths (
-                        sid,callsign, matricula, tipo_aeronave, empresa, numero_vuelo,
-                        tipo_vuelo, tiempo_inicial, origen, pista_origen, 
-                        fecha_salida, hora_salida, destino, pista_destino,
-                        fecha_llegada, hora_llegada, nivel, ambito,
+                        fecha, sid, ssr, callsign, matricula,
+                        tipo_aeronave, empresa, numero_vuelo,
+                        tipo_vuelo, tiempo_inicial, origen,
+                        fecha_salida, hora_salida, hora_pv, destino,
+                        fecha_llegada, hora_llegada, nivel, duracion, distancia, velocidad, eq_ssr,
                         nombre_origen, nombre_destino,fecha_registro
                     ) VALUES (
-                        %s, %s, %s, %s, %s, %s,
+                        %s, %s, %s, %s, %s,
+                        %s, %s, %s,
+                        %s, %s, %s,
                         %s, %s, %s, %s,
-                        %s, %s, %s, %s,
-                        %s, %s, %s, %s,
-                        %s, %s, %s 
+                        %s, %s, %s, %s, %s, %s, %s,
+                        %s, %s, %s
                     )
                     RETURNING *;
                 """
 
                 cursor.execute(query, (
+                    flight.fecha,
                     flight.sid,
+                    flight.ssr,
                     flight.callsign,
                     flight.matricula,
                     flight.tipo_aeronave,
@@ -44,15 +48,17 @@ class PostgresFlightRepository(FlightRepository):
                     flight.tipo_vuelo,
                     flight.tiempo_inicial,
                     flight.origen,
-                    flight.pista_origen,
                     flight.fecha_salida,
                     flight.hora_salida,
+                    flight.hora_pv,
                     flight.destino,
-                    flight.pista_destino,
                     flight.fecha_llegada,
                     flight.hora_llegada,                    
                     flight.nivel,
-                    flight.ambito,
+                    flight.duracion,
+                    flight.distancia,
+                    flight.velocidad,
+                    flight.eq_ssr,
                     flight.nombre_origen,
                     flight.nombre_destino,
                     flight.fecha_registro
