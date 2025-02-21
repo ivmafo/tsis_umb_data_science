@@ -1,3 +1,8 @@
+# DOCUMENTACION BASE 
+https://www.aerocivil.gov.co/servicios-a-la-navegacion/servicio-de-informacion-aeronautica-ais/Documents/Forms/AllItems.aspx
+
+
+
 project_root/
 ├── data/                              # Datos (ej. archivos de prueba, bases de datos)
 ├── notebooks/                         # Exploración y experimentación (Jupyter notebooks)
@@ -45,3 +50,49 @@ npm install --save-dev web-vitals
 
 # revisar frontend desde : 
 http://localhost:3000
+
+
+# Aproximacion a analisis exploratorio . 
+primero sacar la demanda de de vuelos por hora  , es decir sacar los vuelos que se presentas por semana por hora
+es decir sacar el conteo de vuelos por hora para cada semana del mes.
+luego dependiendo del volumen de vuelos sacar la demanda de controladores por hora , 
+luego sacar la demanda de controladores por semana del mes
+1. vuelos por hora sacar horas picos y horas valle en un mes, casa mes en particular, pues marzo por ejemplo puede
+ser temporada baja , pero diciembre temporada alta.
+
+
+Control de Autorizaciones (DEL):
+
+Proporciona autorizaciones de plan de vuelo a las aeronaves salientes.
+Verifica que todos los planes de vuelo cumplan con las regulaciones.
+Control de Tierra (GND):
+
+Guía a las aeronaves en tierra, desde las puertas de embarque hasta la pista de despegue y viceversa.
+Coordina el movimiento de vehículos de servicio en el área de maniobras.
+Control de Torre (TWR):
+
+Autoriza despegues y aterrizajes.
+Supervisa el tráfico aéreo en el área inmediata del aeropuerto.
+Controla los aviones que operan bajo reglas de vuelo visual (VFR).
+Control de Aproximación (APP):
+
+Gestiona las aeronaves en aproximación y salida dentro de un radio específico del aeropuerto.
+Transfiere el control de las aeronaves al controlador de torre para el aterrizaje.
+Control de Ruta o Área (ACC):
+
+Gestiona el tráfico aéreo en ruta, fuera del área inmediata del aeropuerto.
+Utiliza radares y tecnología avanzada para monitorear la posición y condiciones de vuelo de las aeronaves.
+Flujo de Trabajo
+Inicio del Turno:
+
+Revisión de informes meteorológicos y de tráfico.
+Coordinación con otros controladores y personal de apoyo.
+Durante el Turno:
+
+Monitoreo constante de las pantallas de radar.
+Comunicación continua con los pilotos para dar instrucciones y autorizaciones.
+Coordinación con otros controladores para transferir el control de las aeronaves entre sectores.
+Final del Turno:
+
+Informe de relevos al siguiente controlador.
+Documentación de cualquier incidente o irregularidad.

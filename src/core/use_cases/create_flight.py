@@ -1,4 +1,4 @@
-# src/application/use_cases/create_flight.py
+# src\core\use_cases\create_flight.py
 from src.core.ports.flight_repository import FlightRepository
 from src.core.entities.flight import Flight
 

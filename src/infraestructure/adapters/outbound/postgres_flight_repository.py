@@ -1,4 +1,4 @@
-# 
+# src\infraestructure\adapters\outbound\postgres_flight_repository.py
 import psycopg2
 from psycopg2.extras import RealDictCursor
 from src.core.ports.flight_repository import FlightRepository

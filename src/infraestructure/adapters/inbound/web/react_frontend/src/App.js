@@ -3,6 +3,7 @@ import FileUpload from './components/FileUpload';
 import FileList from './components/FileList';
 import Sidebar from './components/Sidebar';
 import Footer from './components/Footer';
+import DirectoryUpload from './components/DirectoryUpload';
 import './App.css';
 
 function App() {
@@ -14,8 +15,10 @@ function App() {
         return <FileUpload onUploadSuccess={() => setSelectedView('list')} />;
       case 'list':
         return <FileList />;
+      case 'uploadDir':
+        return <DirectoryUpload onUploadSuccess={() => setSelectedView('list')} />;
       default:
-        return <FileUpload onUploadSuccess={() => setSelectedView('list')} />;
+        return <FileList />;
     }
   };
 

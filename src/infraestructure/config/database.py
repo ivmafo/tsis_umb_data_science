@@ -1,3 +1,4 @@
+# src\infraestructure\config\database.py
 import psycopg2 # libreria postgres
 import sqlite3 # libreria sqlite3
 from psycopg2 import pool

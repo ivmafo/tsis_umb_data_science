@@ -1,4 +1,4 @@
-# src/domain/entities/flight.py
+# tsis_umb_data_science\src\core\entities\flight.py
 from pydantic import BaseModel, Field, validator
 from datetime import datetime, time, date
 from typing import Optional
