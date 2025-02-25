@@ -54,7 +54,7 @@ class PostgresFlightRepository(FlightRepository):
                     query, 
                     values,
                     template="(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                    page_size=100
+                    page_size=1000
                 )
                 result = cursor.fetchone()
                 self.connection.commit()
