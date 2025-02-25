@@ -2,7 +2,7 @@
 import pandas as pd
 from datetime import datetime, time
 
-class ExcelFlightTransformer:
+class ExcelFlightTransformer: 
     def __init__(self, file_path):
         self.file_path = file_path
 

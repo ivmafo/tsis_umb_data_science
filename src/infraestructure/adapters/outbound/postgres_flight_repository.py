@@ -1,6 +1,6 @@
 # src\infraestructure\adapters\outbound\postgres_flight_repository.py
 import psycopg2
-from psycopg2.extras import RealDictCursor
+from psycopg2.extras import RealDictCursor  , execute_values
 from src.core.ports.flight_repository import FlightRepository
 from src.core.entities.flight import Flight
 from typing import Optional
@@ -25,17 +25,47 @@ class PostgresFlightRepository(FlightRepository):
                         fecha_salida, hora_salida, hora_pv, destino,
                         fecha_llegada, hora_llegada, nivel, duracion, distancia, velocidad, eq_ssr,
                         nombre_origen, nombre_destino,fecha_registro
-                    ) VALUES (
-                        %s, %s, %s, %s, %s,
-                        %s, %s, %s,
-                        %s, %s, %s,
-                        %s, %s, %s, %s,
-                        %s, %s, %s, %s, %s, %s, %s,
-                        %s, %s, %s
-                    )
+                    ) VALUES %s
+                                           
+                                   
+                                   
+                                       
+                                                   
+                                  
+                     
                     RETURNING *;
                 """
+                
+                # Convertir el vuelo a tupla de valores
+                values = [(
+                    flight.fecha, flight.sid, flight.ssr, flight.callsign,
+                    flight.matricula, flight.tipo_aeronave, flight.empresa,
+                    flight.numero_vuelo, flight.tipo_vuelo, flight.tiempo_inicial,
+                    flight.origen, flight.fecha_salida, flight.hora_salida,
+                    flight.hora_pv, flight.destino, flight.fecha_llegada,
+                    flight.hora_llegada, flight.nivel, flight.duracion,
+                    flight.distancia, flight.velocidad, flight.eq_ssr,
+                    flight.nombre_origen, flight.nombre_destino, flight.fecha_registro
+                )]
 
+                # Usar execute_values con template específico
+                execute_values(
+                    cursor, 
+                    query, 
+                    values,
+                    template="(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                    page_size=100
+                )
+                result = cursor.fetchone()
+                self.connection.commit()
+                return Flight(**result) if result else None
+
+        except Exception as e:
+            self.connection.rollback()
+            print(f"Error al guardar el vuelo: {e}")
+            raise
+
+    '''
                 cursor.execute(query, (
                     flight.fecha,
                     flight.sid,
@@ -66,22 +96,6 @@ class PostgresFlightRepository(FlightRepository):
                 result = cursor.fetchone()
                 self.connection.commit()
                 
-                '''
-                if result:
-                    # **VERIFICAR None ANTES DE COMBINAR:**
-                    if result['fecha_salida'] is not None and result['hora_salida'] is not None:  # Verifica ambos
-                        result['hora_salida'] = datetime.combine(result['fecha_salida'], result['hora_salida'])
-                    else:
-                        result['hora_salida'] = None  # O el valor que desees para indicar que no hay hora
-
-                    if result['fecha_llegada'] is not None and result['hora_llegada'] is not None: # Verifica ambos
-                        result['hora_llegada'] = datetime.combine(result['fecha_llegada'], result['hora_llegada'])
-                    else:
-                        result['hora_llegada'] = None # O el valor que desees para indicar que no hay hora
-                    return Flight(**result)
-                else:
-                    return None
-                '''
                 # Combinar fecha y hora para los campos hora_salida y hora_llegada
                 #result['hora_salida'] = datetime.combine(result['fecha_salida'], result['hora_salida'])
                 #result['hora_llegada'] = datetime.combine(result['fecha_llegada'], result['hora_llegada'])
@@ -90,6 +104,7 @@ class PostgresFlightRepository(FlightRepository):
         except Exception as e:
             print(f"EEEEEEError al guardar el vuelo: {e}")
             return None
+    '''
 
     def find_by_id(self, flight_id: str) -> Optional[Flight]:
         try:

@@ -33,6 +33,7 @@ flight_repo = PostgresFlightRepository(conn)
 file_repo = PostgresFileProcessingControlRepository(conn)
 
 # Inicializar casos de uso
+process_flights_uc = ProcessFlightsFromExcelUseCase(flight_repo, file_repo)
 process_directory_uc = ProcessDirectoryFlightsUseCase(flight_repo, file_repo, file_system_repo)
 
 templates = Jinja2Templates(directory="src/infrastructure/adapters/inbound/web/templates")
@@ -84,10 +85,7 @@ async def get_files():
 @app.post("/upload-directory")
 async def upload_directory(request: DirectoryRequest):
     try:
-        # Initialize directory processing use case
-        process_directory_uc = ProcessDirectoryFlightsUseCase(flight_repo, file_repo)
         result = process_directory_uc.execute(request.directory_path)
-        
         return {
             "message": f"Procesados {len(result['processed_files'])} archivos exitosamente",
             "processed_files": result['processed_files'],
@@ -99,7 +97,8 @@ async def upload_directory(request: DirectoryRequest):
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Error al procesar el directorio: {str(e)}")
 
-def shutdown_event():
+@app.on_event("shutdown")
+async def shutdown_event():
     pool.release_connection(conn)
     pool.close_all_connections()
 
