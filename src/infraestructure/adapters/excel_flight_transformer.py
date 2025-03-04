@@ -2,9 +2,22 @@
 import pandas as pd
 from datetime import datetime, time
 
-class ExcelFlightTransformer: 
+class ExcelFlightTransformer:
     def __init__(self, file_path):
         self.file_path = file_path
+        self.df = None
+
+    def get_total_rows(self):
+        try:
+            if self.df is None:
+                self.df = pd.read_excel(self.file_path)
+            total = len(self.df)
+            # Remove print that might be blocking
+            # print(f"Total rows to process: {total}")
+            return total
+        except Exception as e:
+            print(f"Error reading Excel file: {str(e)}")
+            raise
 
     def transform_flights(self):
         column_mapping = {
@@ -43,13 +56,14 @@ class ExcelFlightTransformer:
                     df.rename(columns={old_name: new_name}, inplace=True)
                     break
 
-        print(df.head())
+        # Remove DataFrame print that might be blocking
+        # print(df.head())
 
         flights = []
         for _, row in df.iterrows():
             flight_data = {}
             try: 
-                # Validar y formatear cada campo individualmente, manejando NaN y None
+                # Process flight data
                 flight_data['fecha'] = self.safe_get_date(row, 'fecha')         
                 flight_data['sid'] = self.safe_get_int(row, 'sid')
                 flight_data['ssr'] = self.safe_get_str(row,'ssr')                       
@@ -78,13 +92,9 @@ class ExcelFlightTransformer:
                 flight_data['fecha_registro'] = self.safe_get_date(row, 'fecha_registro')
 
                 flights.append(flight_data)
-                #print(flights)
             except Exception as e:
-                print(f"Error general al procesar la fila: {row}. Error: {str(e)}")
-                # Si quieres detener el procesamiento en un error, puedes usar 'break' aquí.
-                # Si quieres continuar con las siguientes filas a pesar del error, no uses 'break'.
-                print(flight_data)
-                break  # Descomenta para detener el procesamiento en el primer error.
+                print(f"Error processing row: {str(e)}")
+                raise  # Raise the error instead of breaking
 
         return flights
 

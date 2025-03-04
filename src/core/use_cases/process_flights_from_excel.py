@@ -9,33 +9,48 @@ class ProcessFlightsFromExcelUseCase:
     def __init__(self, flight_repository: FlightRepository, file_repository: FileProcessingControlRepository):
         self.flight_repository = flight_repository
         self.file_repository = file_repository
+        self.update_progress = None
 
+    def get_total_rows(self, file_path):
+        try:
+            transformer = ExcelFlightTransformer(file_path)
+            total = transformer.get_total_rows()
+            print(f"Total rows to process: {total}")
+            return total
+        except Exception as e:
+            print(f"Error getting total rows: {str(e)}")
+            raise
 
     def execute(self, file_path):
-        # verificar si archivo ya ha sido procesado
-        if self.file_repository.is_file_processed(file_path):
-            print(f"El archivo {file_path} ya ha sido procesado")
-            return
+        try:
+            if self.file_repository.is_file_processed(file_path):
+                print(f"File {file_path} already processed")
+                return {"processed": 0, "total": 0, "status": "already_processed"}
 
-        # tranformacion de los datos de archivo excel
-        transformer = ExcelFlightTransformer(file_path)
-        flights = transformer.transform_flights()
-        create_flight_uc = CreateFlightUseCase(self.flight_repository)
+            transformer = ExcelFlightTransformer(file_path)
+            flights = transformer.transform_flights()
+            create_flight_uc = CreateFlightUseCase(self.flight_repository)
+            
+            total_flights = len(flights)
+            processed = 0
 
-        # procesar los datos y guardarlos en la base de datos 
-        for flight_data in flights:
-            #print(flight_data) 
-            try:
-                create_flight_uc.execute(flight_data)
-            except Exception as e:
-                print(f"Error al crear el vuelo: {e}")
-                print(f"Datos del vuelo: {flight_data}") 
-                # Puedes manejar el error de diferentes maneras, 
-                # por ejemplo, registrar el error en un log, 
-                # saltar el vuelo o intentar corregir el error 
-                break
-        # Registrar archivo como procesado
-        self.file_repository.add_file(file_path)
+            for flight_data in flights:
+                try:
+                    create_flight_uc.execute(flight_data)
+                    processed += 1
+                    if self.update_progress:
+                        self.update_progress(processed)
+                    #rint(f"Processed {processed}/{total_flights} flights")
+                except Exception as e:
+                    print(f"Error processing flight: {str(e)}")
+                    raise
+
+            self.file_repository.add_file(file_path)
+            return {"processed": processed, "total": total_flights, "status": "completed"}
+
+        except Exception as e:
+            print(f"Error in execute method: {str(e)}")
+            raise
 
 
 

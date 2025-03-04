@@ -1,37 +1,40 @@
 import React, { useState } from 'react';
+import Sidebar from './components/Sidebar';
 import FileUpload from './components/FileUpload';
 import FileList from './components/FileList';
-import Sidebar from './components/Sidebar';
-import Footer from './components/Footer';
 import DirectoryUpload from './components/DirectoryUpload';
+import ConfigManager from './components/ConfigManager';
 import './App.css';
 
 function App() {
-  const [selectedView, setSelectedView] = useState('upload');
+  const [selectedOption, setSelectedOption] = useState('');
+  const [refreshList, setRefreshList] = useState(false);
+
+  const handleUploadSuccess = () => {
+    setRefreshList(prev => !prev);
+  };
 
   const renderContent = () => {
-    switch (selectedView) {
+    switch (selectedOption) {
       case 'upload':
-        return <FileUpload onUploadSuccess={() => setSelectedView('list')} />;
+        return <FileUpload onUploadSuccess={handleUploadSuccess} />;
       case 'list':
-        return <FileList />;
+        return <FileList refresh={refreshList} />;
       case 'uploadDir':
-        return <DirectoryUpload onUploadSuccess={() => setSelectedView('list')} />;
+        return <DirectoryUpload onUploadSuccess={handleUploadSuccess} />;
+      case 'config':
+        return <ConfigManager />;
       default:
-        return <FileList />;
+        return <div className="welcome-message">Seleccione una opción del menú</div>;
     }
   };
 
   return (
-    <div className="App">
-      <Sidebar onSelect={setSelectedView} />
-      <div className="main-content">
-        <header className="App-header">
-          <h1>Operaciones:</h1>
-        </header>
+    <div className="app">
+      <Sidebar onSelect={setSelectedOption} />
+      <main className="content">
         {renderContent()}
-        <Footer />
-      </div>
+      </main>
     </div>
   );
 }

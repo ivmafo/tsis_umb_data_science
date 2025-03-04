@@ -2,47 +2,27 @@
 import traceback
 from fastapi import FastAPI, File, Request, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-from pathlib import Path
 import shutil
-import os
-
-# Importar casos de uso y repositorios
-from src.infraestructure.config.database import PostgresConnectionPool
-from src.infraestructure.adapters.outbound.postgres_flight_repository import PostgresFlightRepository
-from src.infraestructure.adapters.outbound.postgres_file_processing_control_repository import PostgresFileProcessingControlRepository
-from src.core.use_cases.process_flights_from_excel import ProcessFlightsFromExcelUseCase
-from src.core.use_cases.process_directory_flights import ProcessDirectoryFlightsUseCase
-from src.infraestructure.adapters.outbound.file_system_repository import LocalFileSystemRepository
 from pydantic import BaseModel
+from src.infraestructure.config.container import DependencyContainer
+from fastapi.responses import JSONResponse  # Agregar esta importación al inicio
 
 class DirectoryRequest(BaseModel):
     directory_path: str
 
+class ConfigRequest(BaseModel):
+    key: str
+    value: str
+
 app = FastAPI()
-
-# Configurar el pool de conexiones
-pool = PostgresConnectionPool()
-conn = pool.get_connection()
-
-# Inicializar repositorios
-base_path = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
-file_system_repo = LocalFileSystemRepository(base_path)
-flight_repo = PostgresFlightRepository(conn)
-file_repo = PostgresFileProcessingControlRepository(conn)
-
-# Inicializar casos de uso
-process_flights_uc = ProcessFlightsFromExcelUseCase(flight_repo, file_repo)
-process_directory_uc = ProcessDirectoryFlightsUseCase(flight_repo, file_repo, file_system_repo)
+container = DependencyContainer()
 
 templates = Jinja2Templates(directory="src/infrastructure/adapters/inbound/web/templates")
 
 # Configure CORS
-origins = [
-    "http://localhost:3000",
-]
-
+origins = ["http://localhost:3000"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -51,41 +31,70 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
+class ProcessStatus:
+    def __init__(self):
+        self.total_rows = 0
+        self.processed_rows = 0
+        self.status = "idle"  # idle, processing, completed, error
+
+process_status = ProcessStatus()
+
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
     try:
+        process_status.status = "processing"
+        process_status.processed_rows = 0
+        
         file_location = f"data/raw/{file.filename}"
         with open(file_location, "wb") as file_object:
             shutil.copyfileobj(file.file, file_object)
-        process_flights_uc.execute(file_location)
-        return {"message": f"Archivo '{file.filename}' procesado exitosamente."}
+        
+        def update_progress(processed_rows):
+            process_status.processed_rows = processed_rows
+            # Mantener el estado en "processing" mientras se actualiza
+            process_status.status = "processing"
+        
+        container.process_flights_use_case.update_progress = update_progress
+        process_status.total_rows = container.process_flights_use_case.get_total_rows(file_location)
+        result = container.process_flights_use_case.execute(file_location)
+        
+        process_status.status = "completed"
+        return {"message": f"Archivo '{file.filename}' procesado exitosamente.", "details": result}
+            
     except Exception as e:
+        process_status.status = "error"
+        print(f"Error processing file: {str(e)}")
         traceback.print_exc()
-        raise HTTPException(status_code=500, detail=f"Error al procesar el archivo: {str(e)}")
-    
-   
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        container.process_flights_use_case.update_progress = None
+@app.get("/api/process-status")
+async def get_process_status():
+    return {
+        "status": process_status.status,
+        "total_rows": process_status.total_rows,
+        "processed_rows": process_status.processed_rows,
+        "percentage": round((process_status.processed_rows / process_status.total_rows * 100) 
+                          if process_status.total_rows > 0 else 0)
+    }
 
 @app.get("/files") 
 async def get_files():
     try:
-        files = file_repo.get_all_files()
-        print("LISTADO : ->>>>>>>>>>>>>>>>>>>>>>",files)
+        files = container.file_repository.get_all_files()
         return {"files": files}
     except Exception as e:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Error al obtener archivos: {str(e)}")
 
-
-# llamado a carga en bloque
 @app.post("/upload-directory")
 async def upload_directory(request: DirectoryRequest):
     try:
-        result = process_directory_uc.execute(request.directory_path)
+        result = container.process_directory_use_case.execute(request.directory_path)
         return {
             "message": f"Procesados {len(result['processed_files'])} archivos exitosamente",
             "processed_files": result['processed_files'],
@@ -97,10 +106,61 @@ async def upload_directory(request: DirectoryRequest):
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Error al procesar el directorio: {str(e)}")
 
+@app.get("/api/config")
+async def get_configs():
+    try:
+        configs = container.get_all_configs_use_case.execute()
+        return configs
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Error al obtener configuraciones: {str(e)}")
+
+@app.get("/api/config/{key}")
+async def get_config(key: str):
+    try:
+        config = container.get_config_use_case.execute(key)
+        return config
+    except ValueError as ve:
+        raise HTTPException(status_code=404, detail=str(ve))
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Error al obtener configuración: {str(e)}")
+
+@app.post("/api/config")
+async def create_config(config: ConfigRequest):
+    try:
+        result = container.create_config_use_case.execute(config.dict())
+        return result
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Error al crear configuración: {str(e)}")
+
+@app.put("/api/config/{key}")
+async def update_config(key: str, config: ConfigRequest):
+    try:
+        result = container.update_config_use_case.execute(key, config.value)
+        return result
+    except ValueError as ve:
+        raise HTTPException(status_code=404, detail=str(ve))
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Error al actualizar configuración: {str(e)}")
+@app.delete("/api/config/{key}")
+async def delete_config(key: str):
+    try:
+        result = container.config_repository.delete_by_key(key)
+        if result:
+            return {"message": f"Configuración '{key}' eliminada exitosamente"}
+        return JSONResponse(
+            status_code=404,
+            content={"message": f"Configuración '{key}' no encontrada"}
+        )
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Error al eliminar configuración: {str(e)}")
 @app.on_event("shutdown")
 async def shutdown_event():
-    pool.release_connection(conn)
-    pool.close_all_connections()
+    container.cleanup()
 
 
 

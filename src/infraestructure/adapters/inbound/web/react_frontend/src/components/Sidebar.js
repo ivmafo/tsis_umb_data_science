@@ -8,13 +8,10 @@ function Sidebar({ onSelect }) {
     <div className="sidebar">
       <h2>Opciones</h2>
       <ul>
-        <li onClick={() => onSelect('')}>Calculo Capacidad A. DCA</li>
-        <li onClick={() => onSelect('')}>Calculo Capacidad A. OASI</li>
-        <li onClick={() => onSelect('')}>Calculo Capacidad A. UMB</li>
-        <li onClick={() => onSelect('')}>Calculo Analisis DCA</li>
         <li onClick={() => onSelect('list')}>Listado de Archivos</li>
         <li onClick={() => onSelect('upload')}>Cargar Archivo</li>
-        <li onClick={() => onSelect('uploadDir')}>Cargar Archivos Desde Directorio</li>        
+        <li onClick={() => onSelect('uploadDir')}>Cargar Archivos Desde Directorio</li>
+        <li onClick={() => onSelect('config')}>Configuración General</li>        
       </ul>
     </div>
   );
