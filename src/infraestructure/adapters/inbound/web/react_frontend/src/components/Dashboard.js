@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import FlightFilter from './FlightFilter';
 import TreeMapChart from './TreeMapChart';
 import DestinationTreeMap from './DestinationTreeMap';
+import AirlineTreeMap from './AirlineTreeMap';
 import './Dashboard.css';
 
 function Dashboard() {
@@ -27,6 +28,7 @@ function Dashboard() {
             <div className="treemaps-container">
                 <TreeMapChart filters={filters} />
                 <DestinationTreeMap filters={filters} />
+                <AirlineTreeMap filters={filters} />
             </div>
         </div>
     );

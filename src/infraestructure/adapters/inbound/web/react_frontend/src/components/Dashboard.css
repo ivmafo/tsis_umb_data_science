@@ -4,9 +4,21 @@
 
 .treemaps-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   margin-top: 20px;
+}
+
+@media (max-width: 1200px) {
+  .treemaps-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .treemaps-container {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 1024px) {
