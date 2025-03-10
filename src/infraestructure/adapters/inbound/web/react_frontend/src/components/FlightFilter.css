@@ -1,0 +1,130 @@
+.flight-filter {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+    min-width: 200px;
+}
+
+.filter-group label {
+    font-weight: 500;
+    color: #1a237e;
+}
+
+.multiple-select {
+    padding: 0.5rem;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    background-color: white;
+    min-height: 120px;
+}
+
+.multiple-select:focus {
+    outline: none;
+    border-color: #1a237e;
+    box-shadow: 0 0 0 2px rgba(26, 35, 126, 0.1);
+}
+
+.helper-text {
+    width: 100%;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 0.5rem;
+}
+
+/* Add these styles to your existing FlightFilter.css */
+.level-range-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.add-range-btn {
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.add-range-btn:hover {
+    background-color: #45a049;
+}
+
+.level-ranges-list {
+    margin-top: 10px;
+}
+
+.level-range-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 10px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
+
+.remove-range-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0;
+}
+
+.remove-range-btn:hover {
+    background-color: #c82333;
+}
+
+.level-ranges-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.level-range-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+}
+
+.remove-range-btn {
+    background-color: #ff4444;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.remove-range-btn:hover {
+    background-color: #cc0000;
+}

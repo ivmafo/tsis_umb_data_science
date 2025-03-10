@@ -140,6 +140,116 @@ class PostgresFlightRepository(FlightRepository):
             print(f"Error al encontrar el vuelo: {e}")
             return None
 
+    def get_distinct_years(self) -> list:
+        try:
+            with self.connection.cursor(cursor_factory=RealDictCursor) as cursor:
+                query = """
+                    SELECT DISTINCT EXTRACT(YEAR FROM fecha) as year 
+                    FROM fligths 
+                    WHERE fecha IS NOT NULL 
+                    ORDER BY year DESC;
+                """
+                cursor.execute(query)
+                return [int(row['year']) for row in cursor.fetchall()]
+        except Exception as e:
+            print(f"Error getting distinct years: {e}")
+            return []
+
+    def get_distinct_months(self) -> list:
+        try:
+            with self.connection.cursor(cursor_factory=RealDictCursor) as cursor:
+                query = """
+                    SELECT DISTINCT EXTRACT(MONTH FROM fecha)::integer as month 
+                    FROM fligths 
+                    WHERE fecha IS NOT NULL 
+                    ORDER BY month;
+                """
+                cursor.execute(query)
+                months = [row['month'] for row in cursor.fetchall()]
+                return months
+        except Exception as e:
+            print(f"Error getting distinct months: {e}")
+            return []
+
+    def get_distinct_origins(self) -> list:
+        try:
+            with self.connection.cursor(cursor_factory=RealDictCursor) as cursor:
+                query = """
+                    SELECT DISTINCT origen 
+                    FROM fligths 
+                    WHERE origen IS NOT NULL AND origen != ''
+                    ORDER BY origen;
+                """
+                cursor.execute(query)
+                origins = [row['origen'] for row in cursor.fetchall()]
+                return origins
+        except Exception as e:
+            print(f"Error getting distinct origins: {e}")
+            return []
+
+    def get_distinct_destinations(self) -> list:
+        try:
+            with self.connection.cursor(cursor_factory=RealDictCursor) as cursor:
+                query = """
+                    SELECT DISTINCT destino 
+                    FROM fligths 
+                    WHERE destino IS NOT NULL AND destino != ''
+                    ORDER BY destino;
+                """
+                cursor.execute(query)
+                destinations = [row['destino'] for row in cursor.fetchall()]
+                return destinations
+        except Exception as e:
+            print(f"Error getting distinct destinations: {e}")
+            return []
+
+    def get_distinct_flight_types(self) -> list:
+        try:
+            with self.connection.cursor(cursor_factory=RealDictCursor) as cursor:
+                query = """
+                    SELECT DISTINCT tipo_vuelo 
+                    FROM fligths 
+                    WHERE tipo_vuelo IS NOT NULL AND tipo_vuelo != ''
+                    ORDER BY tipo_vuelo;
+                """
+                cursor.execute(query)
+                return [row['tipo_vuelo'] for row in cursor.fetchall()]
+        except Exception as e:
+            print(f"Error getting distinct flight types: {e}")
+            return []
+
+    def get_distinct_airlines(self) -> list:
+        try:
+            with self.connection.cursor(cursor_factory=RealDictCursor) as cursor:
+                query = """
+                    SELECT DISTINCT empresa 
+                    FROM fligths 
+                    WHERE empresa IS NOT NULL 
+                    AND empresa != '' 
+                    ORDER BY empresa;
+                """
+                cursor.execute(query)
+                return [row['empresa'] for row in cursor.fetchall()]
+        except Exception as e:
+            print(f"Error getting distinct airlines: {e}")
+            return []
+
+    def get_distinct_aircraft_types(self) -> list:
+        try:
+            with self.connection.cursor(cursor_factory=RealDictCursor) as cursor:
+                query = """
+                    SELECT DISTINCT tipo_aeronave 
+                    FROM fligths 
+                    WHERE tipo_aeronave IS NOT NULL 
+                    AND tipo_aeronave != '' 
+                    ORDER BY tipo_aeronave;
+                """
+                cursor.execute(query)
+                return [row['tipo_aeronave'] for row in cursor.fetchall()]
+        except Exception as e:
+            print(f"Error getting distinct aircraft types: {e}")
+            return []
+
 
 
 

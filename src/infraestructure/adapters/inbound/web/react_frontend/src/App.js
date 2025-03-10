@@ -4,6 +4,7 @@ import FileUpload from './components/FileUpload';
 import FileList from './components/FileList';
 import DirectoryUpload from './components/DirectoryUpload';
 import ConfigManager from './components/ConfigManager';
+import Dashboard from './components/Dashboard'; // Necesitarás crear este componente
 import './App.css';
 
 function App() {
@@ -24,6 +25,8 @@ function App() {
         return <DirectoryUpload onUploadSuccess={handleUploadSuccess} />;
       case 'config':
         return <ConfigManager />;
+      case 'dashboard':
+        return <Dashboard />;
       default:
         return <div className="welcome-message">Seleccione una opción del menú</div>;
     }

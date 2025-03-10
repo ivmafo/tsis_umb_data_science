@@ -72,6 +72,7 @@ async def upload_file(file: UploadFile = File(...)):
         raise HTTPException(status_code=500, detail=str(e))
     finally:
         container.process_flights_use_case.update_progress = None
+
 @app.get("/api/process-status")
 async def get_process_status():
     return {
@@ -161,6 +162,65 @@ async def delete_config(key: str):
 @app.on_event("shutdown")
 async def shutdown_event():
     container.cleanup()
+
+
+@app.get("/api/flights/years")
+async def get_flight_years():
+    try:
+        years = container.flight_repository.get_distinct_years()
+        return {"years": years}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/flights/months")
+async def get_flight_months():
+    try:
+        months = container.flight_repository.get_distinct_months()
+        return {"months": months}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/flights/origins")
+async def get_flight_origins():
+    try:
+        origins = container.flight_repository.get_distinct_origins()
+        return {"origins": origins}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/flights/destinations")
+async def get_flight_destinations():
+    try:
+        destinations = container.flight_repository.get_distinct_destinations()
+        return {"destinations": destinations}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/flights/flight-types")
+async def get_flight_types():
+    try:
+        flight_types = container.flight_repository.get_distinct_flight_types()
+        return {"flightTypes": flight_types}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/flights/airlines")
+async def get_airlines():
+    try:
+        airlines = container.flight_repository.get_distinct_airlines()
+        return {"airlines": airlines}
+    except Exception as e:
+        print(f"Error in get_airlines endpoint: {str(e)}")
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/flights/aircraft-types")
+async def get_aircraft_types():
+    try:
+        aircraft_types = container.flight_repository.get_distinct_aircraft_types()
+        return {"aircraftTypes": aircraft_types}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 
