@@ -23,3 +23,7 @@ class FlightDestinationCountDTO(BaseModel):
 class FlightAirlineCountDTO(BaseModel):
     airline: str
     count: int
+
+class FlightTypeCountDTO(BaseModel):
+    flight_type: str
+    count: int

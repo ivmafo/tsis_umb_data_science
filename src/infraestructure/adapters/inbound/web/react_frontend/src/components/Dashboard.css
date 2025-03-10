@@ -2,11 +2,21 @@
   padding: 20px;
 }
 
+.charts-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 20px;
+}
+
 .treemaps-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
-  margin-top: 20px;
+}
+
+.bar-charts-container {
+  width: 100%;
 }
 
 @media (max-width: 1200px) {

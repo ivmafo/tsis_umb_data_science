@@ -96,3 +96,22 @@ Final del Turno:
 
 Informe de relevos al siguiente controlador.
 Documentación de cualquier incidente o irregularidad.
+
+
+
+
+1. Tres TreeMaps para:
+   
+   - Distribución de vuelos por origen
+   - Distribución de vuelos por destino
+   - Distribución de vuelos por aerolínea
+2. Un gráfico de barras para:
+   
+   - Distribución de tipos de vuelo
+Todos los gráficos responden a los mismos filtros, lo que permite un análisis comparativo muy completo. ¿Te gustaría agregar alguna otra visualización? Por ejemplo:
+
+- Un gráfico de líneas para mostrar tendencias temporales por mes/año
+- Un gráfico circular para la distribución de tipos de aeronaves
+- Un mapa de calor para mostrar las rutas más frecuentes
+- Un gráfico de barras apiladas para mostrar la distribución de niveles de vuelo
+¡Déjame saber si quieres explorar alguna de estas opciones!

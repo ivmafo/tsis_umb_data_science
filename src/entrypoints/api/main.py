@@ -322,5 +322,35 @@ async def get_airlines_count(
         print(f"Error in get_airlines_count: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/api/flights/flight-types-count")
+async def get_flight_types_count(
+    years: str = None,
+    months: str = None,
+    origins: str = None,
+    destinations: str = None,
+    flightTypes: str = None,
+    airlines: str = None,
+    aircraftTypes: str = None,
+    levelRanges: str = None
+):
+    try:
+        filters = FlightFilterDTO(
+            years=years.split(',') if years else None,
+            months=months.split(',') if months else None,
+            origins=origins.split(',') if origins else None,
+            destinations=destinations.split(',') if destinations else None,
+            flight_types=flightTypes.split(',') if flightTypes else None,
+            airlines=airlines.split(',') if airlines else None,
+            aircraft_types=aircraftTypes.split(',') if aircraftTypes else None,
+            level_ranges=levelRanges.split(',') if levelRanges else None
+        )
+        
+        result = container.flight_repository.get_flight_types_count(filters)
+        return result if result else []
+        
+    except Exception as e:
+        print(f"Error in get_flight_types_count: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 
