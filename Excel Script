@@ -1,0 +1,76 @@
+function main(workbook: ExcelScript.Workbook) {
+    // Get the worksheets
+    let baseSheet = workbook.getWorksheet("Base de Datos");
+    let targetSheet = workbook.getWorksheet("Hoja1");
+
+    // Get the used range from Base de Datos
+    let dataRange = baseSheet.getUsedRange();
+    let values = dataRange.getValues();
+
+    // Get all Consecutivo OS values (excluding header)
+    let consecutivos = values.slice(1).map(row => row[0]);
+
+    // Create a dropdown in Hoja1 cell A1
+    let dropdownCell = targetSheet.getRange("A1");
+    
+    // Create named range for the validation list
+    let validationRange = targetSheet.getRange("Z1:Z" + consecutivos.length);
+    validationRange.setValues(consecutivos.map(value => [value]));
+    
+    // Set up data validation using the proper method
+    dropdownCell.getDataValidation().setRule({
+        list: {
+            inCellDropDown: true,
+            source: "=" + validationRange.getAddress()
+        }
+    });
+    
+    // Check current value and update related cells
+    let selectedValue = dropdownCell.getValue();
+    
+    if (selectedValue) {
+        // Encontrar la fila completa en Base de Datos que coincida con el valor seleccionado
+        let selectedRowIndex = values.findIndex(row => row[0] === selectedValue);
+        
+        if (selectedRowIndex !== -1) {
+            // Obtener todas las columnas de la fila seleccionada
+            let selectedRowData = values[selectedRowIndex];
+            
+            // Separar los datos en variables individuales
+            let consecutivoOS = selectedRowData[0];
+            let fecha = selectedRowData[1];
+            let proveedor = selectedRowData[2];
+            
+            // Asegurarnos que Hoja2 existe, si no, crearla
+            let targetSheet2: ExcelScript.Worksheet;
+            try {
+                targetSheet2 = workbook.getWorksheet("Hoja2");
+                if (!targetSheet2) {
+                    targetSheet2 = workbook.addWorksheet("Hoja2");
+                }
+            } catch {
+                targetSheet2 = workbook.addWorksheet("Hoja2");
+            }
+            
+            // Asignar valores a Hoja1
+            targetSheet.getRange("A2").setValue(consecutivoOS);
+            targetSheet.getRange("B2").setValue(fecha);
+            targetSheet.getRange("C2").setValue(proveedor);
+            
+            // Asignar los mismos valores a Hoja2 con verificación
+            try {
+                targetSheet2.getRange("A2").setValue(consecutivoOS);
+                targetSheet2.getRange("B2").setValue(fecha);
+                targetSheet2.getRange("C2").setValue(proveedor);
+                
+                // Formatear las celdas de fecha en ambas hojas
+                if (typeof fecha === 'object' && fecha !== null) {
+                    targetSheet.getRange("B2").setNumberFormat("dd/mm/yyyy");
+                    targetSheet2.getRange("B2").setNumberFormat("dd/mm/yyyy");
+                }
+            } catch (error) {
+                console.log("Error copying to Hoja2: " + error);
+            }
+        }
+    }
+}

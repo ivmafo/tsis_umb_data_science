@@ -1,17 +1,25 @@
 # src\infraestructure\adapters\outbound\postgres_flight_repository.py
 import psycopg2
-from psycopg2.extras import RealDictCursor  , execute_values
+from psycopg2.extras import RealDictCursor, execute_values
 from src.core.ports.flight_repository import FlightRepository
 from src.core.entities.flight import Flight
-from typing import Optional
+from src.core.dtos.flight_dtos import FlightFilterDTO, FlightOriginCountDTO  # Añadir esta importación
+from typing import Optional, List
 from datetime import datetime
-
-
-
 
 class PostgresFlightRepository(FlightRepository):
     def __init__(self, connection: psycopg2.extensions.connection):
         self.connection = connection
+
+    def _execute_query(self, query: str, params=None):
+        try:
+            with self.connection.cursor(cursor_factory=RealDictCursor) as cursor:
+                cursor.execute(query, params if params else ())
+                return cursor.fetchall()
+        except Exception as e:
+            self.connection.rollback()
+            print(f"Database error in _execute_query: {str(e)}")
+            raise e
 
     def save(self, flight: Flight) -> Flight:
         try:
@@ -249,6 +257,57 @@ class PostgresFlightRepository(FlightRepository):
         except Exception as e:
             print(f"Error getting distinct aircraft types: {e}")
             return []
+
+    def get_origins_count(self, filters: FlightFilterDTO) -> List[FlightOriginCountDTO]:
+        try:
+            where_clauses = []
+            params = []
+            
+            if filters.years:
+                where_clauses.append("EXTRACT(YEAR FROM fecha)::text = ANY(%s)")
+                params.append(filters.years)
+            
+            if filters.months:
+                where_clauses.append("EXTRACT(MONTH FROM fecha)::text = ANY(%s)")
+                params.append(filters.months)
+            
+            if filters.origins:
+                where_clauses.append("origen = ANY(%s)")
+                params.append(filters.origins)
+            
+            if filters.destinations:
+                where_clauses.append("destino = ANY(%s)")
+                params.append(filters.destinations)
+            
+            if filters.flight_types:
+                where_clauses.append("tipo_vuelo = ANY(%s)")
+                params.append(filters.flight_types)
+            
+            if filters.airlines:
+                where_clauses.append("empresa = ANY(%s)")
+                params.append(filters.airlines)
+            
+            if filters.aircraft_types:
+                where_clauses.append("tipo_aeronave = ANY(%s)")
+                params.append(filters.aircraft_types)
+            
+            if filters.level_ranges:
+                where_clauses.append("nivel::text = ANY(%s)")
+                params.append(filters.level_ranges)
+
+            query = "SELECT origen as origin, COUNT(*) as count FROM fligths"
+            
+            if where_clauses:
+                query += " WHERE " + " AND ".join(where_clauses)
+            
+            query += " GROUP BY origen ORDER BY count DESC"
+
+            results = self._execute_query(query, params)
+            return [FlightOriginCountDTO(origin=row['origin'], count=row['count']) for row in results]
+            
+        except Exception as e:
+            print(f"Error in get_origins_count: {str(e)}")
+            raise e
 
 
 

@@ -65,3 +65,8 @@
   height: 200px;
   margin-top: 1rem;
 }
+
+/* Add to existing Dashboard.css */
+.full-width {
+    grid-column: 1 / -1; /* Makes the card take full width */
+}

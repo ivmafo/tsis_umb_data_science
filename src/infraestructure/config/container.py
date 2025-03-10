@@ -11,6 +11,7 @@ from src.core.use_cases.config_use_cases import (
     GetConfigUseCase, 
     GetAllConfigsUseCase
 )
+from src.core.use_cases.get_flight_origins_count import GetFlightOriginsCountUseCase
 import os
 
 class DependencyContainer:
@@ -58,6 +59,11 @@ class DependencyContainer:
             self.flight_repository,
             self.file_repository,
             self.file_system_repository
+        )
+        
+        # Casos de uso
+        self.get_flight_origins_count_use_case = GetFlightOriginsCountUseCase(
+            self.flight_repository
         )
 
     def cleanup(self):

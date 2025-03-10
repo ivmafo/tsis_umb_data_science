@@ -2,11 +2,12 @@
 import traceback
 from fastapi import FastAPI, File, Request, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from src.infraestructure.config.container import DependencyContainer
+from src.core.dtos.flight_dtos import FlightFilterDTO  # Add this import
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 import shutil
 from pydantic import BaseModel
-from src.infraestructure.config.container import DependencyContainer
 from fastapi.responses import JSONResponse  # Agregar esta importación al inicio
 
 class DirectoryRequest(BaseModel):
@@ -220,6 +221,45 @@ async def get_aircraft_types():
         aircraft_types = container.flight_repository.get_distinct_aircraft_types()
         return {"aircraftTypes": aircraft_types}
     except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/flights/level-ranges")
+async def get_level_ranges():
+    try:
+        level_ranges = container.flight_repository.get_distinct_level_ranges()
+        return {"levelRanges": level_ranges}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/flights/origins-count")
+async def get_origins_count(
+    years: str = None,
+    months: str = None,
+    origins: str = None,
+    destinations: str = None,
+    flightTypes: str = None,
+    airlines: str = None,
+    aircraftTypes: str = None,    # Nuevo parámetro
+    levelRanges: str = None       # Nuevo parámetro
+):
+    try:
+        filters = FlightFilterDTO(
+            years=years.split(',') if years else None,
+            months=months.split(',') if months else None,
+            origins=origins.split(',') if origins else None,
+            destinations=destinations.split(',') if destinations else None,
+            flight_types=flightTypes.split(',') if flightTypes else None,
+            airlines=airlines.split(',') if airlines else None,
+            aircraft_types=aircraftTypes.split(',') if aircraftTypes else None,
+            level_ranges=levelRanges.split(',') if levelRanges else None
+        )
+        
+        result = container.get_flight_origins_count_use_case.execute(filters)
+        # Asegurarse de que siempre devolvemos una lista
+        return result if result else []
+        
+    except Exception as e:
+        print(f"Error in get_origins_count: {str(e)}")  # Agregar log para debugging
         raise HTTPException(status_code=500, detail=str(e))
 
 
