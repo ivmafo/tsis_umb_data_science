@@ -1,8 +1,18 @@
 .dashboard {
-  padding: 2rem;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 20px;
+}
+
+.treemaps-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+@media (max-width: 1024px) {
+  .treemaps-container {
+    grid-template-columns: 1fr;
+  }
 }
 
 .dashboard h2 {

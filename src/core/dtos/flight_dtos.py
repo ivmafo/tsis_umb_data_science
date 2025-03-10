@@ -9,9 +9,13 @@ class FlightFilterDTO(BaseModel):
     destinations: Optional[List[str]] = None
     flight_types: Optional[List[str]] = None
     airlines: Optional[List[str]] = None
-    aircraft_types: Optional[List[str]] = None  # Nuevo campo
-    level_ranges: Optional[List[str]] = None    # Nuevo campo
+    aircraft_types: Optional[List[str]] = None
+    level_ranges: Optional[List[str]] = None
 
 class FlightOriginCountDTO(BaseModel):
     origin: str
+    count: int
+
+class FlightDestinationCountDTO(BaseModel):
+    destination: str
     count: int

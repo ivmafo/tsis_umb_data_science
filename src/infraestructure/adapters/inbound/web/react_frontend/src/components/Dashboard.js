@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import FlightFilter from './FlightFilter';
 import TreeMapChart from './TreeMapChart';
+import DestinationTreeMap from './DestinationTreeMap';
 import './Dashboard.css';
 
 function Dashboard() {
@@ -23,7 +24,10 @@ function Dashboard() {
         <div className="dashboard">
             <h2>Dashboard</h2>
             <FlightFilter onFilterChange={handleFilterChange} />
-            <TreeMapChart filters={filters} />
+            <div className="treemaps-container">
+                <TreeMapChart filters={filters} />
+                <DestinationTreeMap filters={filters} />
+            </div>
         </div>
     );
 }
