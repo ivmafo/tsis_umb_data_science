@@ -73,47 +73,6 @@ class PostgresFlightRepository(FlightRepository):
             print(f"Error al guardar el vuelo: {e}")
             raise
 
-    '''
-                cursor.execute(query, (
-                    flight.fecha,
-                    flight.sid,
-                    flight.ssr,
-                    flight.callsign,
-                    flight.matricula,
-                    flight.tipo_aeronave,
-                    flight.empresa,
-                    flight.numero_vuelo,
-                    flight.tipo_vuelo,
-                    flight.tiempo_inicial,
-                    flight.origen,
-                    flight.fecha_salida,
-                    flight.hora_salida,
-                    flight.hora_pv,
-                    flight.destino,
-                    flight.fecha_llegada,
-                    flight.hora_llegada,                    
-                    flight.nivel,
-                    flight.duracion,
-                    flight.distancia,
-                    flight.velocidad,
-                    flight.eq_ssr,
-                    flight.nombre_origen,
-                    flight.nombre_destino,
-                    flight.fecha_registro
-                ))
-                result = cursor.fetchone()
-                self.connection.commit()
-                
-                # Combinar fecha y hora para los campos hora_salida y hora_llegada
-                #result['hora_salida'] = datetime.combine(result['fecha_salida'], result['hora_salida'])
-                #result['hora_llegada'] = datetime.combine(result['fecha_llegada'], result['hora_llegada'])
-
-                return Flight(**result)
-        except Exception as e:
-            print(f"EEEEEEError al guardar el vuelo: {e}")
-            return None
-    '''
-
     def find_by_id(self, flight_id: str) -> Optional[Flight]:
         try:
             with self.connection.cursor(cursor_factory=RealDictCursor) as cursor:
@@ -291,10 +250,6 @@ class PostgresFlightRepository(FlightRepository):
                 where_clauses.append("tipo_aeronave = ANY(%s)")
                 params.append(filters.aircraft_types)
             
-            if filters.level_ranges:
-                where_clauses.append("nivel::text = ANY(%s)")
-                params.append(filters.level_ranges)
-
             query = "SELECT origen as origin, COUNT(*) as count FROM fligths"
             
             if where_clauses:
@@ -342,10 +297,6 @@ class PostgresFlightRepository(FlightRepository):
                 where_clauses.append("tipo_aeronave = ANY(%s)")
                 params.append(filters.aircraft_types)
             
-            if filters.level_ranges:
-                where_clauses.append("nivel::text = ANY(%s)")
-                params.append(filters.level_ranges)
-
             query = "SELECT destino as destination, COUNT(*) as count FROM fligths"
             
             if where_clauses:
@@ -393,9 +344,7 @@ class PostgresFlightRepository(FlightRepository):
                     where_clauses.append("tipo_aeronave = ANY(%s)")
                     params.append(filters.aircraft_types)
                 
-                if filters.level_ranges:
-                    where_clauses.append("nivel::text = ANY(%s)")
-                    params.append(filters.level_ranges)
+
     
                 # Modified query to handle NULL values
                 query = """
@@ -456,10 +405,7 @@ class PostgresFlightRepository(FlightRepository):
                     where_clauses.append("tipo_aeronave = ANY(%s)")
                     params.append(filters.aircraft_types)
                 
-                if filters.level_ranges:
-                    where_clauses.append("nivel::text = ANY(%s)")
-                    params.append(filters.level_ranges)
-    
+   
                 query = """
                     SELECT 
                         COALESCE(tipo_vuelo, 'Unknown') as flight_type,

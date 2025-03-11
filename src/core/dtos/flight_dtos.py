@@ -10,7 +10,7 @@ class FlightFilterDTO(BaseModel):
     flight_types: Optional[List[str]] = None
     airlines: Optional[List[str]] = None
     aircraft_types: Optional[List[str]] = None
-    level_ranges: Optional[List[str]] = None
+    # Removed level_ranges field
 
 class FlightOriginCountDTO(BaseModel):
     origin: str

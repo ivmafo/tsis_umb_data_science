@@ -223,13 +223,14 @@ async def get_aircraft_types():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/api/flights/level-ranges")
-async def get_level_ranges():
-    try:
-        level_ranges = container.flight_repository.get_distinct_level_ranges()
-        return {"levelRanges": level_ranges}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+# Remove this entire endpoint
+# @app.get("/api/flights/level-ranges")
+# async def get_level_ranges():
+#     try:
+#         level_ranges = container.flight_repository.get_distinct_level_ranges()
+#         return {"levelRanges": level_ranges}
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/flights/origins-count")
 async def get_origins_count(
@@ -239,8 +240,7 @@ async def get_origins_count(
     destinations: str = None,
     flightTypes: str = None,
     airlines: str = None,
-    aircraftTypes: str = None,    # Nuevo parámetro
-    levelRanges: str = None       # Nuevo parámetro
+    aircraftTypes: str = None    
 ):
     try:
         filters = FlightFilterDTO(
@@ -250,16 +250,18 @@ async def get_origins_count(
             destinations=destinations.split(',') if destinations else None,
             flight_types=flightTypes.split(',') if flightTypes else None,
             airlines=airlines.split(',') if airlines else None,
-            aircraft_types=aircraftTypes.split(',') if aircraftTypes else None,
-            level_ranges=levelRanges.split(',') if levelRanges else None
+            aircraft_types=aircraftTypes.split(',') if aircraftTypes else None
         )
         
         result = container.get_flight_origins_count_use_case.execute(filters)
-        # Asegurarse de que siempre devolvemos una lista
-        return result if result else []
+        # Convert to list if not already a list
+        if isinstance(result, list):
+            return result
+        return []
         
     except Exception as e:
-        print(f"Error in get_origins_count: {str(e)}")  # Agregar log para debugging
+        print(f"Error in get_origins_count: {str(e)}")
+        traceback.print_exc()  # Add this to get more detailed error information
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/flights/destinations-count")
@@ -270,8 +272,7 @@ async def get_destinations_count(
     destinations: str = None,
     flightTypes: str = None,
     airlines: str = None,
-    aircraftTypes: str = None,
-    levelRanges: str = None
+    aircraftTypes: str = None
 ):
     try:
         filters = FlightFilterDTO(
@@ -281,8 +282,7 @@ async def get_destinations_count(
             destinations=destinations.split(',') if destinations else None,
             flight_types=flightTypes.split(',') if flightTypes else None,
             airlines=airlines.split(',') if airlines else None,
-            aircraft_types=aircraftTypes.split(',') if aircraftTypes else None,
-            level_ranges=levelRanges.split(',') if levelRanges else None
+            aircraft_types=aircraftTypes.split(',') if aircraftTypes else None
         )
         
         result = container.flight_repository.get_destinations_count(filters)
@@ -300,8 +300,7 @@ async def get_airlines_count(
     destinations: str = None,
     flightTypes: str = None,
     airlines: str = None,
-    aircraftTypes: str = None,
-    levelRanges: str = None
+    aircraftTypes: str = None
 ):
     try:
         filters = FlightFilterDTO(
@@ -311,8 +310,7 @@ async def get_airlines_count(
             destinations=destinations.split(',') if destinations else None,
             flight_types=flightTypes.split(',') if flightTypes else None,
             airlines=airlines.split(',') if airlines else None,
-            aircraft_types=aircraftTypes.split(',') if aircraftTypes else None,
-            level_ranges=levelRanges.split(',') if levelRanges else None
+            aircraft_types=aircraftTypes.split(',') if aircraftTypes else None
         )
         
         result = container.flight_repository.get_airlines_count(filters)
@@ -330,8 +328,7 @@ async def get_flight_types_count(
     destinations: str = None,
     flightTypes: str = None,
     airlines: str = None,
-    aircraftTypes: str = None,
-    levelRanges: str = None
+    aircraftTypes: str = None
 ):
     try:
         filters = FlightFilterDTO(
@@ -341,8 +338,7 @@ async def get_flight_types_count(
             destinations=destinations.split(',') if destinations else None,
             flight_types=flightTypes.split(',') if flightTypes else None,
             airlines=airlines.split(',') if airlines else None,
-            aircraft_types=aircraftTypes.split(',') if aircraftTypes else None,
-            level_ranges=levelRanges.split(',') if levelRanges else None
+            aircraft_types=aircraftTypes.split(',') if aircraftTypes else None
         )
         
         result = container.flight_repository.get_flight_types_count(filters)

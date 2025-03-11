@@ -2,10 +2,6 @@ import React, { useState, useEffect } from 'react';
 import './FlightFilter.css';
 
 function FlightFilter({ onFilterChange }) {
-    // Add these new states with the existing state declarations
-    const [levelRanges, setLevelRanges] = useState([]);
-    const [selectedLevelRanges, setSelectedLevelRanges] = useState([]);
-    
     // State declarations
     const [airlines, setAirlines] = useState([]);
     const [selectedAirlines, setSelectedAirlines] = useState([]);
@@ -69,7 +65,8 @@ function FlightFilter({ onFilterChange }) {
             origins: selectedOrigins,
             destinations: selectedDestinations,
             flightTypes: selectedFlightTypes,
-            airlines: selectedOptions
+            airlines: selectedAirlines,
+            aircraftTypes: selectedOptions
         });
     };
 
@@ -202,44 +199,7 @@ function FlightFilter({ onFilterChange }) {
         });
     };
 
-    // Add these new handlers
-    const handleAddLevelRange = () => {
-        const minLevel = prompt("Ingrese el nivel mínimo:");
-        const maxLevel = prompt("Ingrese el nivel máximo:");
-        const alias = prompt("Ingrese un alias para este rango:");
-        
-        if (minLevel && maxLevel && alias) {
-            const newRange = {
-                id: Date.now(),
-                min: parseInt(minLevel),
-                max: parseInt(maxLevel),
-                alias: alias
-            };
-            setLevelRanges([...levelRanges, newRange]);
-        }
-    };
-
-    const handleRemoveLevelRange = (rangeId) => {
-        setLevelRanges(levelRanges.filter(range => range.id !== rangeId));
-        setSelectedLevelRanges(selectedLevelRanges.filter(id => id !== rangeId));
-    };
-
-    const handleLevelRangeChange = (e) => {
-        const selectedOptions = Array.from(e.target.selectedOptions, option => parseInt(option.value));
-        setSelectedLevelRanges(selectedOptions);
-        onFilterChange({
-            years: selectedYears,
-            months: selectedMonths,
-            origins: selectedOrigins,
-            destinations: selectedDestinations,
-            flightTypes: selectedFlightTypes,
-            airlines: selectedAirlines,
-            aircraftTypes: selectedAircraftTypes,
-            levelRanges: selectedOptions.map(id => levelRanges.find(range => range.id === id))
-        });
-    };
-
-    // In the return statement, add this new filter group before the helper text
+        // In the return statement, add this new filter group before the helper text
     return (
         <div className="flight-filter">
             <div className="filter-group">
@@ -305,39 +265,7 @@ function FlightFilter({ onFilterChange }) {
                 </select>
             </div>
 
-            <div className="filter-group">
-                <label>Rangos de Nivel:</label>
-                <div className="level-range-controls">
-                    <button onClick={handleAddLevelRange} className="add-range-btn">
-                        Agregar Rango
-                    </button>
-                    <select
-                        multiple
-                        value={selectedLevelRanges}
-                        onChange={handleLevelRangeChange}
-                        className="multiple-select"
-                    >
-                        {levelRanges.map(range => (
-                            <option key={range.id} value={range.id}>
-                                {range.alias} ({range.min} - {range.max})
-                            </option>
-                        ))}
-                    </select>
-                </div>
-                <div className="level-ranges-list">
-                    {levelRanges.map(range => (
-                        <div key={range.id} className="level-range-item">
-                            <span>{range.alias} ({range.min} - {range.max})</span>
-                            <button 
-                                onClick={() => handleRemoveLevelRange(range.id)}
-                                className="remove-range-btn"
-                            >
-                                ×
-                            </button>
-                        </div>
-                    ))}
-                </div>
-            </div>
+            {/* Remove the entire level ranges filter group that was here */}
 
             <small className="helper-text">
                 Mantén presionado Ctrl (Cmd en Mac) para seleccionar múltiples opciones
