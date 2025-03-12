@@ -1,0 +1,89 @@
+.atc-capacity-manager {
+    padding: 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin: 20px;
+}
+
+.control-panel {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    align-items: center;
+}
+
+.detailed-results {
+    display: grid;
+    gap: 2rem;
+}
+
+.metric-section {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.metric-section h3 {
+    color: #1a237e;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid #e3e3e3;
+    padding-bottom: 0.5rem;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.metric-item {
+    background: white;
+    padding: 1rem;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.metric-item label {
+    display: block;
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+}
+
+.metric-item value {
+    display: block;
+    font-size: 1.2rem;
+    color: #1a237e;
+    font-weight: 500;
+}
+
+.control-panel select,
+.control-panel input {
+    padding: 0.5rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    min-width: 200px;
+}
+
+.control-panel button {
+    padding: 0.5rem 1rem;
+    background: #1a237e;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.control-panel button:hover {
+    background: #283593;
+}
+
+.control-panel button:disabled {
+    background: #ccc;
+}

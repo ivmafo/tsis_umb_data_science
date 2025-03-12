@@ -76,13 +76,13 @@ function AirlineTreeMap({ filters }) {
     return (
         <div className="treemap-card">
             <div className="treemap-header">
-                <h3>Airlines Distribution</h3>
+                <h3>Distribucion por Empresa</h3>
                 <button 
                     onClick={fetchData}
                     disabled={isLoading}
                     className="refresh-button"
                 >
-                    {isLoading ? 'Loading...' : 'Refresh Chart'}
+                    {isLoading ? 'Loading...' : 'Refrescar Grafico'}
                 </button>
             </div>
             <div className="treemap-container">

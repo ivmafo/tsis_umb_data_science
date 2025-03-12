@@ -6,11 +6,14 @@ from src.infraestructure.adapters.outbound.file_system_repository import LocalFi
 from src.core.use_cases.process_flights_from_excel import ProcessFlightsFromExcelUseCase
 from src.core.use_cases.process_directory_flights import ProcessDirectoryFlightsUseCase
 from src.core.use_cases.config_use_cases import (
-    CreateConfigUseCase, 
-    UpdateConfigUseCase, 
-    GetConfigUseCase, 
-    GetAllConfigsUseCase
+    CreateConfigUseCase,
+    UpdateConfigUseCase,
+    GetConfigUseCase,
+    GetAllConfigsUseCase,
+    DeleteConfigUseCase
 )
+# Add the correct import for GetSectorCapacityUseCase
+from src.core.use_cases.get_sector_capacity import GetSectorCapacityUseCase
 from src.core.use_cases.get_flight_origins_count import GetFlightOriginsCountUseCase
 import os
 
@@ -22,6 +25,15 @@ from src.core.use_cases.level_range_use_cases import (
     GetLevelRangeUseCase,
     GetAllLevelRangesUseCase,
     DeleteLevelRangeUseCase
+)
+from src.infraestructure.adapters.outbound.postgres_sector_capacity_repository import PostgresSectorCapacityRepository
+# Add to imports
+from src.infraestructure.adapters.outbound.postgres_sector_analysis_repository import PostgresSectorAnalysisRepository
+from src.core.use_cases.sector_analysis_use_cases import (
+    GetSectorAnalysisByDateUseCase,
+    GetSectorAnalysisUseCase,
+    GetAllSectorsUseCase,
+    GetSectorAnalysisByDateRangeUseCase
 )
 
 class DependencyContainer:
@@ -53,6 +65,7 @@ class DependencyContainer:
         self.file_repository = PostgresFileProcessingControlRepository(self.connection)
         self.config_repository = PostgresConfigRepository(self.connection)
         self.level_range_repository = PostgresLevelRangeRepository(self.connection)
+        self.sector_capacity_repository = PostgresSectorCapacityRepository(self.connection)
 
     def _init_use_cases(self):
         # Casos de uso de configuración
@@ -83,6 +96,15 @@ class DependencyContainer:
         self.get_flight_origins_count_use_case = GetFlightOriginsCountUseCase(
             self.flight_repository
         )
+        
+        # Initialize sector capacity use case
+        self.sector_capacity_use_case = GetSectorCapacityUseCase(
+            self.sector_capacity_repository
+        )
+
+    # Move this method outside of _init_use_cases
+    def get_sector_capacity_use_case(self):
+        return self.sector_capacity_use_case
 
     def cleanup(self):
         if hasattr(self, 'connection') and self.connection:

@@ -11,6 +11,15 @@ body {
   min-height: 100vh;
 }
 
+.main-content {
+  flex-grow: 1;
+  margin-left: 250px; /* Match sidebar width */
+  padding: 20px;
+  background-color: #f8f9fa;
+  min-height: calc(100vh - 60px); /* Account for footer height */
+  margin-bottom: 60px; /* Footer height */
+}
+
 .content {
   flex-grow: 1;
   margin-left: 250px;

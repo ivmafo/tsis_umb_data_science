@@ -44,13 +44,13 @@ function FlightTypeBarChart({ filters }) {
     return (
         <div className="chart-card">
             <div className="chart-header">
-                <h3>Flight Types Distribution</h3>
+                <h3>Distribucion de Tipo de Vuelo</h3>
                 <button 
                     onClick={fetchData}
                     disabled={isLoading}
                     className="refresh-button"
                 >
-                    {isLoading ? 'Loading...' : 'Refresh Chart'}
+                    {isLoading ? 'Loading...' : 'Refrescar Grafico'}
                 </button>
             </div>
             <div className="chart-container">
@@ -65,7 +65,7 @@ function FlightTypeBarChart({ filters }) {
                         </BarChart>
                     </ResponsiveContainer>
                 ) : (
-                    <div className="no-data">No data available</div>
+                    <div className="no-data">No hay datos</div>
                 )}
             </div>
         </div>

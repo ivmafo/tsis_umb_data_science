@@ -76,13 +76,13 @@ function DestinationTreeMap({ filters }) {
     return (
         <div className="treemap-card">
             <div className="treemap-header">
-                <h3>Flight Destinations Distribution</h3>
+                <h3>Distribucion de Vuelos por Destino</h3>
                 <button 
                     onClick={fetchData}
                     disabled={isLoading}
                     className="refresh-button"
                 >
-                    {isLoading ? 'Loading...' : 'Refresh Chart'}
+                    {isLoading ? 'Loading...' : 'Refrescar Destinos'}
                 </button>
             </div>
             <div className="treemap-container">

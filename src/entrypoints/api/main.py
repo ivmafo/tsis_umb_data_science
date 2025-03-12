@@ -1,5 +1,6 @@
 # src\entrypoints\api\main.py
 import traceback
+from datetime import datetime
 from fastapi import FastAPI, File, Request, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from src.infraestructure.config.container import DependencyContainer
@@ -9,6 +10,9 @@ from fastapi.templating import Jinja2Templates
 import shutil
 from pydantic import BaseModel
 from fastapi.responses import JSONResponse  # Agregar esta importación al inicio
+from src.core.entities.sector_capacity import SectorCapacityResponse
+from src.core.use_cases.get_sector_capacity import GetSectorCapacityUseCase
+from src.core.entities.sector_analysis import SectorDetailedAnalysis
 
 class DirectoryRequest(BaseModel):
     directory_path: str
@@ -402,6 +406,134 @@ async def delete_level_range(id: int):
     except Exception as e:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Error al eliminar rango de nivel: {str(e)}")
+
+# Sector Capacity endpoints
+@app.get("/api/sector-capacity/sectors")
+def get_sectors():
+    try:
+        use_case = container.get_sector_capacity_use_case()
+        sectors = use_case.get_sectors()
+        return {"sectors": sectors}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/sector-capacity/{sector}")
+def get_sector_capacity(sector: str, date: str):
+    try:
+        use_case = container.get_sector_capacity_use_case()
+        
+        try:
+            date_obj = datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
+        except ValueError:
+            raise HTTPException(
+                status_code=400, 
+                detail="Formato de fecha inválido. Use YYYY-MM-DD HH:MM:SS"
+            )
+            
+        if date_obj.year < 1900:
+            raise HTTPException(
+                status_code=400,
+                detail="La fecha debe ser posterior a 1900"
+            )
+            
+        result = use_case.execute(sector, date_obj)
+        
+        if result is None:
+            raise HTTPException(
+                status_code=404,
+                detail=f"No se encontraron datos para el sector {sector} en la fecha {date}"
+            )
+            
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+# Add these imports at the top with other imports
+from src.core.entities.sector_analysis import SectorDetailedAnalysis
+
+# Add these endpoints after the existing ones
+@app.get("/api/sector-analysis/sectors")
+async def get_analysis_sectors():
+    try:
+        sectors = container.sector_analysis_repository.get_all_sectors()
+        return sectors
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Error getting sectors: {str(e)}")
+
+@app.get("/api/sector-analysis/{sector}")
+async def get_sector_analysis(
+    sector: str,
+    start_date: str,
+    end_date: str,
+    page: int = 1,
+    page_size: int = 10000
+):
+    try:
+        print(f"Received request with params: sector={sector}, start_date={start_date}, end_date={end_date}, page={page}, page_size={page_size}")
+        
+        start_date_obj = datetime.strptime(start_date, '%Y-%m-%d')
+        end_date_obj = datetime.strptime(end_date, '%Y-%m-%d')
+        
+        if start_date_obj > end_date_obj:
+            raise HTTPException(
+                status_code=400,
+                detail="Start date cannot be later than end date"
+            )
+        
+        skip = (page - 1) * page_size
+        
+        analysis_data = container.sector_analysis_repository.get_analysis_by_date_range(
+            sector,
+            start_date_obj,
+            end_date_obj,
+            skip,
+            page_size
+        )
+        
+        total_count = container.sector_analysis_repository.get_total_count(
+            sector,
+            start_date_obj,
+            end_date_obj
+        )
+        
+        print(f"Found {total_count} total records, returning {len(analysis_data)} items")
+        
+        return {
+            "items": analysis_data,
+            "total": total_count,
+            "page": page,
+            "page_size": page_size
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=f"Invalid date format: {str(e)}")
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Error getting sector analysis: {str(e)}")
+
+@app.get("/api/sector-analysis/{sector}/date")
+async def get_sector_analysis_by_date(
+    sector: str,
+    date: str
+):
+    try:
+        date_obj = datetime.strptime(date, '%Y-%m-%d')
+        analysis = container.sector_analysis_repository.get_by_sector_and_date(sector, date_obj)
+        
+        if not analysis:
+            raise HTTPException(
+                status_code=404,
+                detail=f"No data found for sector {sector} on {date}"
+            )
+            
+        return analysis
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=f"Invalid date format: {str(e)}")
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Error getting sector analysis: {str(e)}")
 
 
 
