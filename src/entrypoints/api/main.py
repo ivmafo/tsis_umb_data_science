@@ -223,14 +223,7 @@ async def get_aircraft_types():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# Remove this entire endpoint
-# @app.get("/api/flights/level-ranges")
-# async def get_level_ranges():
-#     try:
-#         level_ranges = container.flight_repository.get_distinct_level_ranges()
-#         return {"levelRanges": level_ranges}
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.get("/api/flights/origins-count")
 async def get_origins_count(
@@ -347,6 +340,68 @@ async def get_flight_types_count(
     except Exception as e:
         print(f"Error in get_flight_types_count: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+# Add this class with the other BaseModel classes at the top
+class LevelRangeRequest(BaseModel):
+    min_level: int
+    max_level: int
+    alias: str
+
+# Add these new endpoints
+@app.get("/api/level-ranges")
+async def get_level_ranges():
+    try:
+        ranges = container.get_all_level_ranges_use_case.execute()
+        return ranges
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Error al obtener rangos de nivel: {str(e)}")
+
+@app.get("/api/level-ranges/{id}")
+async def get_level_range(id: int):
+    try:
+        range = container.get_level_range_use_case.execute(id)
+        return range
+    except ValueError as ve:
+        raise HTTPException(status_code=404, detail=str(ve))
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Error al obtener rango de nivel: {str(e)}")
+
+@app.post("/api/level-ranges")
+async def create_level_range(level_range: LevelRangeRequest):
+    try:
+        result = container.create_level_range_use_case.execute(level_range.dict())
+        return result
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Error al crear rango de nivel: {str(e)}")
+
+@app.put("/api/level-ranges/{id}")
+async def update_level_range(id: int, level_range: LevelRangeRequest):
+    try:
+        level_range_dict = level_range.dict()
+        result = container.update_level_range_use_case.execute(id, level_range_dict)
+        return result
+    except ValueError as ve:
+        raise HTTPException(status_code=404, detail=str(ve))
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Error al actualizar rango de nivel: {str(e)}")
+
+@app.delete("/api/level-ranges/{id}")
+async def delete_level_range(id: int):
+    try:
+        result = container.delete_level_range_use_case.execute(id)
+        if result:
+            return {"message": f"Rango de nivel con ID '{id}' eliminado exitosamente"}
+        return JSONResponse(
+            status_code=404,
+            content={"message": f"Rango de nivel con ID '{id}' no encontrado"}
+        )
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Error al eliminar rango de nivel: {str(e)}")
 
 
 

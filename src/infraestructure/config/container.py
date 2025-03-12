@@ -14,6 +14,16 @@ from src.core.use_cases.config_use_cases import (
 from src.core.use_cases.get_flight_origins_count import GetFlightOriginsCountUseCase
 import os
 
+# Add these imports at the top with other imports
+from src.infraestructure.adapters.outbound.postgres_level_range_repository import PostgresLevelRangeRepository
+from src.core.use_cases.level_range_use_cases import (
+    CreateLevelRangeUseCase,
+    UpdateLevelRangeUseCase,
+    GetLevelRangeUseCase,
+    GetAllLevelRangesUseCase,
+    DeleteLevelRangeUseCase
+)
+
 class DependencyContainer:
     _instance = None
 
@@ -42,6 +52,7 @@ class DependencyContainer:
         self.flight_repository = PostgresFlightRepository(self.connection)
         self.file_repository = PostgresFileProcessingControlRepository(self.connection)
         self.config_repository = PostgresConfigRepository(self.connection)
+        self.level_range_repository = PostgresLevelRangeRepository(self.connection)
 
     def _init_use_cases(self):
         # Casos de uso de configuración
@@ -49,6 +60,13 @@ class DependencyContainer:
         self.update_config_use_case = UpdateConfigUseCase(self.config_repository)
         self.get_config_use_case = GetConfigUseCase(self.config_repository)
         self.get_all_configs_use_case = GetAllConfigsUseCase(self.config_repository)
+
+        # Casos de uso de rangos de nivel
+        self.create_level_range_use_case = CreateLevelRangeUseCase(self.level_range_repository)
+        self.update_level_range_use_case = UpdateLevelRangeUseCase(self.level_range_repository)
+        self.get_level_range_use_case = GetLevelRangeUseCase(self.level_range_repository)
+        self.get_all_level_ranges_use_case = GetAllLevelRangesUseCase(self.level_range_repository)
+        self.delete_level_range_use_case = DeleteLevelRangeUseCase(self.level_range_repository)
 
         # Casos de uso de vuelos
         self.process_flights_use_case = ProcessFlightsFromExcelUseCase(

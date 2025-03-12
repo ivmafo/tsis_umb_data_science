@@ -12,7 +12,8 @@ function Sidebar({ onSelect }) {
         <li onClick={() => onSelect('upload')}>Cargar Archivo</li>
         <li onClick={() => onSelect('uploadDir')}>Cargar Archivos Desde Directorio</li>
         <li onClick={() => onSelect('config')}>Configuración General</li>
-        <li onClick={() => onSelect('dashboard')}>Tablero</li>        
+        <li onClick={() => onSelect('dashboard')}>Tablero</li>
+        <li onClick={() => onSelect('levelRanges')}>Rangos de Nivel</li>        
       </ul>
     </div>
   );

@@ -6,6 +6,7 @@ import DirectoryUpload from './components/DirectoryUpload';
 import ConfigManager from './components/ConfigManager';
 import Dashboard from './components/Dashboard'; // Necesitarás crear este componente
 import './App.css';
+import LevelRangesManager from './components/LevelRangesManager';
 
 function App() {
   const [selectedOption, setSelectedOption] = useState('');
@@ -27,6 +28,8 @@ function App() {
         return <ConfigManager />;
       case 'dashboard':
         return <Dashboard />;
+      case 'levelRanges':
+        return <LevelRangesManager />;
       default:
         return <div className="welcome-message">Seleccione una opción del menú</div>;
     }
