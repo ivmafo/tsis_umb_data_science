@@ -96,20 +96,32 @@ function ATCCapacityManager() {
                             <p>{formatNumber(sectorData.tt)}</p>
                         </div>
                         <div className="metric-item">
-                            <h4>Factor Complejidad</h4>
-                            <p>{formatNumber(sectorData.factor_complejidad)}</p>
-                        </div>
-                        <div className="metric-item">
                             <h4>SCV</h4>
-                            <p>{formatNumber(sectorData.scv)}</p>
+                            <p>{formatNumber(sectorData.scv_value)}</p>
                         </div>
                         <div className="metric-item">
-                            <h4>Capacidad Horaria</h4>
-                            <p>{sectorData.capacidad_horaria || '-'}</p>
+                            <h4>Capacidad Horaria Base</h4>
+                            <p>{sectorData.capacidad_horaria_base || '-'}</p>
                         </div>
                         <div className="metric-item">
-                            <h4>Carga de Trabajo Total</h4>
-                            <p>{formatNumber(sectorData.carga_trabajo_total)}</p>
+                            <h4>Capacidad Horaria Alta</h4>
+                            <p>{sectorData.capacidad_horaria_alta || '-'}</p>
+                        </div>
+                        <div className="metric-item">
+                            <h4>Capacidad Horaria Baja</h4>
+                            <p>{sectorData.capacidad_horaria_baja || '-'}</p>
+                        </div>
+                        <div className="metric-item">
+                            <h4>Carga de Trabajo Base</h4>
+                            <p>{formatNumber(sectorData.carga_trabajo_total_base)}</p>
+                        </div>
+                        <div className="metric-item">
+                            <h4>Carga de Trabajo Alta</h4>
+                            <p>{formatNumber(sectorData.carga_trabajo_total_alta)}</p>
+                        </div>
+                        <div className="metric-item">
+                            <h4>Carga de Trabajo Baja</h4>
+                            <p>{formatNumber(sectorData.carga_trabajo_total_baja)}</p>
                         </div>
                     </div>
                 </div>

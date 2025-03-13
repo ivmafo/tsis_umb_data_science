@@ -11,12 +11,11 @@ class SectorCapacityResponse(BaseModel):
     tm: Decimal
     tc: Decimal
     tt: Decimal
-    factor_complejidad: Decimal
-    scv: Decimal
-    capacidad_horaria: int
-    carga_trabajo_total: Decimal
-    tipos_aeronaves: Optional[int] = None
-    aerolineas: Optional[int] = None
-    factor_complejidad_total: Optional[Decimal] = None
-    vuelos_alto_nivel: Optional[int] = None
-    vuelos_bajo_nivel: Optional[int] = None
+    scv_value: Decimal
+    capacidad_horaria_base: int
+    capacidad_horaria_alta: int
+    capacidad_horaria_baja: int
+    carga_trabajo_total_base: Decimal
+    carga_trabajo_total_alta: Decimal
+    carga_trabajo_total_baja: Decimal
+    

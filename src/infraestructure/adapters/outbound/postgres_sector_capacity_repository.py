@@ -43,10 +43,13 @@ class PostgresSectorCapacityRepository(SectorCapacityRepository):
                     tm=result['tm'],
                     tc=result['tc'],
                     tt=result['tt'],
-                    factor_complejidad=result['factor_complejidad'],
-                    scv=result['scv'],
-                    capacidad_horaria=result['capacidad_horaria'],
-                    carga_trabajo_total=result['carga_trabajo_total']
+                    scv_value=result['scv_value'],
+                    capacidad_horaria_base=result['capacidad_horaria_base'],
+                    capacidad_horaria_alta=result['capacidad_horaria_alta'],
+                    capacidad_horaria_baja=result['capacidad_horaria_baja'],
+                    carga_trabajo_total_base=result['carga_trabajo_total_base'],
+                    carga_trabajo_total_alta=result['carga_trabajo_total_alta'],
+                    carga_trabajo_total_baja=result['carga_trabajo_total_baja']
                 )
         except Exception as e:
             print(f"Error obteniendo capacidad del sector: {str(e)}")

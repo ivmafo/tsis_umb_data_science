@@ -147,3 +147,55 @@ ALTER FUNCTION public.calculate_detailed_sector_capacity(character varying, time
 /***************************/
 
 SELECT * FROM calculate_detailed_sector_capacity('SKBO', '2017-02-01 00:00:00'::TIMESTAMP);
+
+
+
+
+
+
+
+
+
+-- View: public.sector_detailed_analysis
+
+-- DROP VIEW public.sector_detailed_analysis;
+
+CREATE OR REPLACE VIEW public.sector_detailed_analysis
+ AS
+ WITH flight_times AS (
+         SELECT fligths.origen AS sector,
+            date_trunc('hour'::text, fligths.tiempo_inicial) AS hora,
+            count(*) AS num_vuelos,
+            avg(EXTRACT(epoch FROM fligths.fecha_llegada::timestamp without time zone + fligths.hora_llegada::interval - (fligths.fecha_salida::timestamp without time zone + fligths.hora_salida::interval))) AS tps,
+            count(DISTINCT fligths.tipo_aeronave) AS tipos_aeronaves,
+            count(DISTINCT fligths.empresa) AS aerolineas,
+            count(DISTINCT fligths.tipo_vuelo) AS tipos_vuelo
+           FROM fligths
+          GROUP BY fligths.origen, (date_trunc('hour'::text, fligths.tiempo_inicial))
+        )
+ SELECT ft.sector,
+    ft.hora,
+    ft.num_vuelos,
+    ft.tps,
+    ft.tipos_aeronaves,
+    ft.aerolineas,
+    ft.tipos_vuelo,
+    cfg_msg.value::integer + cfg_com.value::integer AS tiempo_total_comunicaciones,
+    cfg_coord.value::integer AS tiempo_total_coordinacion,
+    cfg_tareas.value::integer AS tiempo_tareas_observables,
+        CASE
+            WHEN ft.tipos_aeronaves > 3 OR ft.tipos_vuelo > 2 THEN cfg_comp_alta.value::numeric
+            WHEN ft.tipos_aeronaves = 1 AND ft.tipos_vuelo = 1 THEN cfg_comp_baja.value::numeric
+            ELSE cfg_comp_base.value::numeric
+        END AS factor_complejidad
+   FROM flight_times ft
+     JOIN config cfg_msg ON cfg_msg.key::text = 'tiempo_mensaje_promedio'::text
+     JOIN config cfg_com ON cfg_com.key::text = 'comunicaciones_promedio_aeronave'::text
+     JOIN config cfg_coord ON cfg_coord.key::text = 'tiempo_coordinacion_promedio'::text
+     JOIN config cfg_tareas ON cfg_tareas.key::text = 'tiempo_tareas_observables'::text
+     JOIN config cfg_comp_alta ON cfg_comp_alta.key::text = 'factor_complejidad_alta'::text
+     JOIN config cfg_comp_base ON cfg_comp_base.key::text = 'factor_complejidad_base'::text
+     JOIN config cfg_comp_baja ON cfg_comp_baja.key::text = 'factor_complejidad_baja'::text;
+
+ALTER TABLE public.sector_detailed_analysis
+    OWNER TO postgres;

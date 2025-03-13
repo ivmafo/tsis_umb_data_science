@@ -24,6 +24,11 @@ function FlightFilter({ onFilterChange }) {
         9: 'Septiembre', 10: 'Octubre', 11: 'Noviembre', 12: 'Diciembre'
     };
 
+    // Add these state declarations with the other states at the top
+    // State declarations for level ranges
+    const [levelRanges, setLevelRanges] = useState([]);
+    const [selectedLevelRanges, setSelectedLevelRanges] = useState([]);
+    
     useEffect(() => {
         fetchYears();
         fetchMonths();
@@ -32,9 +37,35 @@ function FlightFilter({ onFilterChange }) {
         fetchFlightTypes();
         fetchAirlines();
         fetchAircraftTypes();
+        fetchLevelRanges();
     }, []);
+    
+    const fetchLevelRanges = async () => {
+        try {
+            const response = await fetch('http://localhost:8000/api/level-ranges');
+            const data = await response.json();
+            setLevelRanges(data || []);
+        } catch (error) {
+            console.error('Error fetching level ranges:', error);
+        }
+    };
+    
+    const handleLevelRangeChange = (e) => {
+        const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+        setSelectedLevelRanges(selectedOptions);
+        onFilterChange({ 
+            years: selectedYears, 
+            months: selectedMonths, 
+            origins: selectedOrigins,
+            destinations: selectedDestinations,
+            flightTypes: selectedFlightTypes,
+            airlines: selectedAirlines,
+            aircraftTypes: selectedAircraftTypes,
+            levelRanges: selectedOptions
+        });
+    };
 
-    // Fetch functions
+    
     const fetchAircraftTypes = async () => {
         try {
             const response = await fetch('http://localhost:8000/api/flights/aircraft-types');
@@ -55,33 +86,6 @@ function FlightFilter({ onFilterChange }) {
         }
     };
 
-    // Add new handler
-    const handleAircraftTypeChange = (e) => {
-        const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
-        setSelectedAircraftTypes(selectedOptions);
-        onFilterChange({ 
-            years: selectedYears, 
-            months: selectedMonths, 
-            origins: selectedOrigins,
-            destinations: selectedDestinations,
-            flightTypes: selectedFlightTypes,
-            airlines: selectedAirlines,
-            aircraftTypes: selectedOptions
-        });
-    };
-
-    const handleAirlineChange = (e) => {
-        const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
-        setSelectedAirlines(selectedOptions);
-        onFilterChange({ 
-            years: selectedYears, 
-            months: selectedMonths, 
-            origins: selectedOrigins,
-            destinations: selectedDestinations,
-            flightTypes: selectedFlightTypes,
-            airlines: selectedOptions 
-        });
-    };
 
     // Update all existing handlers to include airlines in onFilterChange
     const fetchYears = async () => {
@@ -143,7 +147,9 @@ function FlightFilter({ onFilterChange }) {
             origins: selectedOrigins,
             destinations: selectedDestinations,
             flightTypes: selectedFlightTypes,
-            airlines: selectedAirlines
+            airlines: selectedAirlines,
+            aircraftTypes: selectedAircraftTypes,
+            levelRanges: selectedLevelRanges  // Agregar esta línea
         });
     };
 
@@ -156,7 +162,9 @@ function FlightFilter({ onFilterChange }) {
             origins: selectedOrigins,
             destinations: selectedDestinations,
             flightTypes: selectedFlightTypes,
-            airlines: selectedAirlines
+            airlines: selectedAirlines,
+            aircraftTypes: selectedAircraftTypes,
+            levelRanges: selectedLevelRanges
         });
     };
 
@@ -169,7 +177,9 @@ function FlightFilter({ onFilterChange }) {
             origins: selectedOptions,
             destinations: selectedDestinations,
             flightTypes: selectedFlightTypes,
-            airlines: selectedAirlines
+            airlines: selectedAirlines,
+            aircraftTypes: selectedAircraftTypes,
+            levelRanges: selectedLevelRanges
         });
     };
 
@@ -182,7 +192,9 @@ function FlightFilter({ onFilterChange }) {
             origins: selectedOrigins,
             destinations: selectedOptions,
             flightTypes: selectedFlightTypes,
-            airlines: selectedAirlines
+            airlines: selectedAirlines,
+            aircraftTypes: selectedAircraftTypes,
+            levelRanges: selectedLevelRanges
         });
     };
 
@@ -195,7 +207,39 @@ function FlightFilter({ onFilterChange }) {
             origins: selectedOrigins,
             destinations: selectedDestinations,
             flightTypes: selectedOptions,
-            airlines: selectedAirlines
+            airlines: selectedAirlines,
+            aircraftTypes: selectedAircraftTypes,
+            levelRanges: selectedLevelRanges
+        });
+    };
+
+    const handleAirlineChange = (e) => {
+        const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+        setSelectedAirlines(selectedOptions);
+        onFilterChange({ 
+            years: selectedYears, 
+            months: selectedMonths,
+            origins: selectedOrigins,
+            destinations: selectedDestinations,
+            flightTypes: selectedFlightTypes,
+            airlines: selectedOptions,
+            aircraftTypes: selectedAircraftTypes,
+            levelRanges: selectedLevelRanges
+        });
+    };
+
+    const handleAircraftTypeChange = (e) => {
+        const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+        setSelectedAircraftTypes(selectedOptions);
+        onFilterChange({ 
+            years: selectedYears, 
+            months: selectedMonths,
+            origins: selectedOrigins,
+            destinations: selectedDestinations,
+            flightTypes: selectedFlightTypes,
+            airlines: selectedAirlines,
+            aircraftTypes: selectedOptions,
+            levelRanges: selectedLevelRanges
         });
     };
 
@@ -265,6 +309,16 @@ function FlightFilter({ onFilterChange }) {
                 </select>
             </div>
 
+            <div className="filter-group">
+                <label>Rango de Nivel:</label>
+                <select multiple value={selectedLevelRanges} onChange={handleLevelRangeChange} className="multiple-select">
+                    {levelRanges.map(range => (
+                        <option key={range.id} value={range.id}>
+                            {range.alias} ({range.min_level} - {range.max_level})
+                        </option>
+                    ))}
+                </select>
+            </div>
             {/* Remove the entire level ranges filter group that was here */}
 
             <small className="helper-text">
