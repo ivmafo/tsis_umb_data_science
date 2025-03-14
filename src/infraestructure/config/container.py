@@ -24,7 +24,9 @@ from src.core.use_cases.level_range_use_cases import (
     UpdateLevelRangeUseCase,
     GetLevelRangeUseCase,
     GetAllLevelRangesUseCase,
-    DeleteLevelRangeUseCase
+    DeleteLevelRangeUseCase,
+    GetLevelRangeByRouteUseCase,
+    GetLevelRangesByZoneUseCase
 )
 from src.infraestructure.adapters.outbound.postgres_sector_capacity_repository import PostgresSectorCapacityRepository
 # Add to imports
@@ -80,6 +82,8 @@ class DependencyContainer:
         self.get_level_range_use_case = GetLevelRangeUseCase(self.level_range_repository)
         self.get_all_level_ranges_use_case = GetAllLevelRangesUseCase(self.level_range_repository)
         self.delete_level_range_use_case = DeleteLevelRangeUseCase(self.level_range_repository)
+        self.get_level_range_by_route_use_case = GetLevelRangeByRouteUseCase(self.level_range_repository)
+        self.get_level_ranges_by_zone_use_case = GetLevelRangesByZoneUseCase(self.level_range_repository)
 
         # Casos de uso de vuelos
         self.process_flights_use_case = ProcessFlightsFromExcelUseCase(

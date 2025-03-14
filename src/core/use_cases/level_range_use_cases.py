@@ -8,9 +8,12 @@ class CreateLevelRangeUseCase:
 
     def execute(self, level_range_data: dict):
         level_range = LevelRange(
-            min_level=level_range_data['min_level'],
-            max_level=level_range_data['max_level'],
-            alias=level_range_data['alias']
+            origen=level_range_data['origen'],
+            destino=level_range_data['destino'],
+            nivel_min=level_range_data['nivel_min'],
+            nivel_max=level_range_data['nivel_max'],
+            ruta=level_range_data['ruta'],
+            zona=level_range_data['zona']
         )
         return self.level_range_repository.save(level_range)
 
@@ -21,11 +24,15 @@ class UpdateLevelRangeUseCase:
     def execute(self, id: int, level_range_data: dict) -> LevelRange:
         level_range = self.level_range_repository.find_by_id(id)
         if not level_range:
-            raise ValueError(f"Rango de nivel con ID '{id}' no encontrado")
+            raise ValueError(f"Level range with ID '{id}' not found")
         
-        level_range.min_level = level_range_data['min_level']
-        level_range.max_level = level_range_data['max_level']
-        level_range.alias = level_range_data['alias']
+        level_range.origen = level_range_data.get('origen', level_range.origen)
+        level_range.destino = level_range_data.get('destino', level_range.destino)
+        level_range.nivel_min = level_range_data.get('nivel_min', level_range.nivel_min)
+        level_range.nivel_max = level_range_data.get('nivel_max', level_range.nivel_max)
+        level_range.ruta = level_range_data.get('ruta', level_range.ruta)
+        level_range.zona = level_range_data.get('zona', level_range.zona)
+        
         return self.level_range_repository.update(level_range)
 
 class GetLevelRangeUseCase:
@@ -35,8 +42,25 @@ class GetLevelRangeUseCase:
     def execute(self, id: int) -> LevelRange:
         level_range = self.level_range_repository.find_by_id(id)
         if not level_range:
-            raise ValueError(f"Rango de nivel con ID '{id}' no encontrado")
+            raise ValueError(f"Level range with ID '{id}' not found")
         return level_range
+
+class GetLevelRangeByRouteUseCase:
+    def __init__(self, level_range_repository: LevelRangeRepository):
+        self.level_range_repository = level_range_repository
+
+    def execute(self, origen: str, destino: str) -> LevelRange:
+        level_range = self.level_range_repository.find_by_route(origen, destino)
+        if not level_range:
+            raise ValueError(f"Level range for route {origen}-{destino} not found")
+        return level_range
+
+class GetLevelRangesByZoneUseCase:
+    def __init__(self, level_range_repository: LevelRangeRepository):
+        self.level_range_repository = level_range_repository
+
+    def execute(self, zona: str) -> list[LevelRange]:
+        return self.level_range_repository.find_by_zone(zona)
 
 class GetAllLevelRangesUseCase:
     def __init__(self, level_range_repository: LevelRangeRepository):
