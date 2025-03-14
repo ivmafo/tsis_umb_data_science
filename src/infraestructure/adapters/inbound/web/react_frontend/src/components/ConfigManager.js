@@ -1,6 +1,51 @@
 import React, { useState, useEffect } from 'react';
 import './ConfigManager.css';
 
+const GenerarSectores = () => {
+  const [sector, setSector] = useState('');
+
+  const handleGenerarSectores = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/api/generar-sectores', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ sector }),
+      });
+      if (response.ok) {
+        alert('Sectores generados exitosamente');
+        setSector('');
+      } else {
+        const error = await response.json();
+        alert(`Error: ${error.message}`);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error al generar sectores');
+    }
+  };
+
+  return (
+    <div className="generar-sectores-card">
+      <h3>Generación de Sectores</h3>
+      <div className="sector-input-group">
+        <input
+          type="text"
+          value={sector}
+          onChange={(e) => setSector(e.target.value)}
+          placeholder="Ingrese el sector"
+          className="sector-input"
+        />
+        <button onClick={handleGenerarSectores} className="generate-button">
+          <i className="fas fa-cog"></i>
+          Generar Sectores
+        </button>
+      </div>
+    </div>
+  );
+};
+
 const ConfigManager = () => {
   const [configs, setConfigs] = useState([]);
   const [newConfig, setNewConfig] = useState({ key: '', value: '' });
@@ -93,6 +138,7 @@ const ConfigManager = () => {
   return (
     <div className="config-manager">
       <h2>Configuración General</h2>
+      <GenerarSectores />
       <form onSubmit={handleSubmit} className="config-form">
         <div className="input-group">
           <input

@@ -182,3 +182,64 @@ tr:hover {
   flex-grow: 1;
   margin: 0 1rem;
 }
+
+.generar-sectores {
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.generate-button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.generate-button:hover {
+  background-color: #45a049;
+}
+
+.generate-button i {
+  margin-right: 5px;
+}
+
+.generar-sectores-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 1rem 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ddd;
+}
+
+.generar-sectores-card h3 {
+  margin: 0 0 15px 0;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.sector-input-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.sector-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.sector-input:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
