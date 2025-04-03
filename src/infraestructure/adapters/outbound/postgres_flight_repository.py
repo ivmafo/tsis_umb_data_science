@@ -452,14 +452,14 @@ class PostgresFlightRepository(FlightRepository):
             ),
             flight_counts AS (
                 SELECT 
-                    date_part('hour', tiempo_inicial)::int AS hour,
+                    date_part('hour', hora_salida)::int AS hour,
                     dr.label,
                     COUNT(*) AS flight_count
                 FROM fligths f
                 CROSS JOIN date_ranges dr
-                WHERE f.fecha::date BETWEEN dr.start_date AND dr.end_date
+                WHERE f.fecha_salida::date BETWEEN dr.start_date AND dr.end_date
                 """ + airport_condition + """
-                GROUP BY date_part('hour', tiempo_inicial), dr.label
+                GROUP BY date_part('hour', hora_salida), dr.label
             )
             SELECT 
                 h.hour,
@@ -516,14 +516,14 @@ class PostgresFlightRepository(FlightRepository):
             ),
             flight_counts AS (
                 SELECT 
-                    date_part('hour', tiempo_inicial)::int AS hour,
+                    date_part('hour', hora_llegada)::int AS hour,
                     dr.label,
                     COUNT(*) AS flight_count
                 FROM fligths f
                 CROSS JOIN date_ranges dr
-                WHERE f.fecha::date BETWEEN dr.start_date AND dr.end_date
+                WHERE f.fecha_llegada::date BETWEEN dr.start_date AND dr.end_date
                 """ + airport_condition + """
-                GROUP BY date_part('hour', tiempo_inicial), dr.label
+                GROUP BY date_part('hour', hora_llegada), dr.label
             )
             SELECT 
                 h.hour,
