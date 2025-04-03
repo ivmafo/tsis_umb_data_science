@@ -173,10 +173,10 @@ const DateRangeAnalysis = () => {
     // Remove the second formatChartData function that was here
     // Add missing date range controls in return statement
     return (
-        <div className="date-range-analysis-card">
+        <div className="date-range-analysis">
             <h2>Análisis por Rangos de Fechas</h2>
             
-            <div className="controls">
+            <div className="controls-card">
                 <div className="airport-filters">
                     <div className="airport-filter">
                         <input
@@ -231,10 +231,10 @@ const DateRangeAnalysis = () => {
 
             {error && <div className="error-message">{error}</div>}
 
-            <div className="charts-wrapper">
-                {chartData.length > 0 && (
-                    <div className="chart-container">
-                        <h3>Análisis por Aeropuerto de Origen</h3>
+            <div className="charts-grid">
+                <div className="chart-card">
+                    <h3>Análisis por Aeropuerto de Origen</h3>
+                    {chartData.length > 0 ? (
                         <ResponsiveContainer width="100%" height={400}>
                             <LineChart data={chartData}>
                                 <CartesianGrid strokeDasharray="3 3" />
@@ -264,12 +264,14 @@ const DateRangeAnalysis = () => {
                                 ))}
                             </LineChart>
                         </ResponsiveContainer>
-                    </div>
-                )}
+                    ) : (
+                        <div className="no-data">No hay datos para mostrar</div>
+                    )}
+                </div>
             
-                {destinationChartData.length > 0 && (
-                    <div className="chart-container">
-                        <h3>Análisis por Aeropuerto de Destino</h3>
+                <div className="chart-card">
+                    <h3>Análisis por Aeropuerto de Destino</h3>
+                    {destinationChartData.length > 0 ? (
                         <ResponsiveContainer width="100%" height={400}>
                             <LineChart data={destinationChartData}>
                                 <CartesianGrid strokeDasharray="3 3" />
@@ -299,8 +301,10 @@ const DateRangeAnalysis = () => {
                                 ))}
                             </LineChart>
                         </ResponsiveContainer>
-                    </div>
-                )}
+                    ) : (
+                        <div className="no-data">No hay datos para mostrar</div>
+                    )}
+                </div>
             </div>
         </div>
     );
