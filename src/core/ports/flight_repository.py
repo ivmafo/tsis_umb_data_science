@@ -2,8 +2,12 @@
 from abc import ABC, abstractmethod
 from typing import Optional, List
 from src.core.entities.flight import Flight
-from src.core.dtos.flight_dtos import FlightFilterDTO, FlightOriginCountDTO
-
+from src.core.dtos.flight_dtos import (
+    FlightFilterDTO, 
+    FlightOriginCountDTO,
+    DateRangeDTO,
+    FlightHourlyCountDTO
+)
 
 class FlightRepository(ABC):
     @abstractmethod
@@ -19,5 +23,10 @@ class FlightRepository(ABC):
 
     @abstractmethod
     def get_origins_count(self, filters: FlightFilterDTO) -> List[FlightOriginCountDTO]:
+        pass
+
+    # Add this method to the FlightRepository class
+    @abstractmethod
+    def get_hourly_counts_by_date_ranges(self, date_ranges: List[DateRangeDTO]) -> List[FlightHourlyCountDTO]:
         pass
 

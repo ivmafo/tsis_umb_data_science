@@ -1,10 +1,15 @@
 # src\entrypoints\api\main.py
 import traceback
 from datetime import datetime
-from fastapi import FastAPI, File, Request, UploadFile, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File, Request
 from fastapi.middleware.cors import CORSMiddleware
 from src.infraestructure.config.container import DependencyContainer
-from src.core.dtos.flight_dtos import FlightFilterDTO  # Add this import
+from src.core.dtos.flight_dtos import (
+    FlightFilterDTO, 
+    FlightOriginCountDTO,
+    DateRangesAnalysisRequestDTO,
+    FlightHourlyCountDTO
+)
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 import shutil
@@ -559,6 +564,115 @@ async def get_sector_analysis_by_date(
     except Exception as e:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Error getting sector analysis: {str(e)}")
+
+@app.post("/api/flights/analyze-date-ranges")
+async def analyze_date_ranges(request: DateRangesAnalysisRequestDTO):
+    try:
+        if request.type == 'origin':
+            result = container.flight_repository.get_hourly_counts_by_date_ranges(
+                request.date_ranges,
+                request.airport
+            )
+        else:
+            result = container.flight_repository.get_hourly_counts_by_date_ranges_destination(
+                request.date_ranges,
+                request.airport
+            )
+        
+        # Asegurar que siempre devolvemos una lista, incluso si está vacía
+        if result is None:
+            result = []
+            
+        # Convertir los resultados a formato esperado por el frontend
+        formatted_result = [
+            {
+                'hour': item.hour,
+                'counts': item.counts
+            }
+            for item in result
+        ]
+        
+        return formatted_result
+    except Exception as e:
+        print(f"Error in analyze_date_ranges: {str(e)}")
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+from typing import List
+from pydantic import BaseModel
+from datetime import datetime
+
+class DateRange(BaseModel):
+    id: int
+    startDate: str
+    endDate: str
+    label: str
+
+class DateRangesRequest(BaseModel):
+    dateRanges: List[DateRange]
+
+@app.post("/api/flights/analyze-date-ranges")
+async def analyze_date_ranges(request: DateRangesRequest):
+    try:
+        # Build dynamic SQL query based on number of ranges
+        base_query = """
+        WITH horas_del_dia AS (
+            SELECT generate_series(0, 23) AS hora
+        ),
+        """
+
+        # Generate CTE for each date range
+        cte_parts = []
+        join_parts = []
+        select_parts = []
+
+        for range in request.dateRanges:
+            range_num = range.id
+            cte_parts.append(f"""
+            vuelos_rango{range_num} AS (
+                SELECT 
+                    date_part('hour', tiempo_inicial)::int AS hora, 
+                    COUNT(*) AS num_vuelos
+                FROM fligths
+                WHERE 
+                    tiempo_inicial::date BETWEEN '{range.startDate}' AND '{range.endDate}'
+                    OR (fecha_llegada || ' ' || hora_llegada)::timestamp::date 
+                       BETWEEN '{range.startDate}' AND '{range.endDate}'
+                GROUP BY date_part('hour', tiempo_inicial)
+            )""")
+            
+            join_parts.append(f"""
+            LEFT JOIN vuelos_rango{range_num} vr{range_num} ON h.hora = vr{range_num}.hora""")
+            
+            select_parts.append(f"COALESCE(vr{range_num}.num_vuelos, 0) AS rango{range_num}")
+
+        # Combine all parts
+        query = base_query + ",\n".join(cte_parts) + """
+        SELECT 
+            h.hora,
+            """ + ",\n            ".join(select_parts) + """
+        FROM horas_del_dia h
+        """ + "\n".join(join_parts) + """
+        ORDER BY h.hora;
+        """
+
+        # Execute query
+        with container.connection.cursor() as cursor:
+            cursor.execute(query)
+            results = cursor.fetchall()
+
+        # Format results
+        formatted_results = []
+        for row in results:
+            result_dict = {"hora": row[0]}
+            for i, range in enumerate(request.dateRanges, 1):
+                result_dict[f"rango{range.id}"] = row[i]
+            formatted_results.append(result_dict)
+
+        return formatted_results
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 

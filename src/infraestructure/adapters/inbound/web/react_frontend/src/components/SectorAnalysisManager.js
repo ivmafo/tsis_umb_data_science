@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './SectorAnalysisManager.css';
+import DateRangeAnalysis from './DateRangeAnalysis';
 
 const SectorAnalysisManager = () => {
     const [sectors, setSectors] = useState([]);
@@ -162,6 +163,9 @@ const SectorAnalysisManager = () => {
                     </div>
                 </>
             )}
+            
+            {/* Add the new DateRangeAnalysis component */}
+            <DateRangeAnalysis />
         </div>
     );
 };

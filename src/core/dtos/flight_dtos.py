@@ -1,6 +1,7 @@
 # src\core\dtos
-from pydantic import BaseModel
-from typing import List, Optional
+from pydantic import BaseModel, validator
+from typing import List, Optional, Dict
+from datetime import datetime
 
 class FlightFilterDTO(BaseModel):
     years: Optional[List[str]] = None
@@ -10,7 +11,6 @@ class FlightFilterDTO(BaseModel):
     flight_types: Optional[List[str]] = None
     airlines: Optional[List[str]] = None
     aircraft_types: Optional[List[str]] = None
-    # Removed level_ranges field
 
 class FlightOriginCountDTO(BaseModel):
     origin: str
@@ -27,3 +27,20 @@ class FlightAirlineCountDTO(BaseModel):
 class FlightTypeCountDTO(BaseModel):
     flight_type: str
     count: int
+
+# Add these classes to the existing file
+class DateRangeDTO(BaseModel):
+    id: int
+    start_date: str
+    end_date: str
+    label: str
+
+class DateRangesAnalysisRequestDTO(BaseModel):
+    date_ranges: List[DateRangeDTO]
+    airport: Optional[str] = None
+    type: str
+
+class FlightHourlyCountDTO(BaseModel):
+    hour: int
+    counts: Dict[str, int]
+

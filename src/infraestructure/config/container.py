@@ -37,6 +37,8 @@ from src.core.use_cases.sector_analysis_use_cases import (
     GetAllSectorsUseCase,
     GetSectorAnalysisByDateRangeUseCase
 )
+# Add to imports
+from src.core.use_cases.get_flight_hourly_counts import GetFlightHourlyCountsUseCase
 
 class DependencyContainer:
     _instance = None
@@ -68,6 +70,8 @@ class DependencyContainer:
         self.config_repository = PostgresConfigRepository(self.connection)
         self.level_range_repository = PostgresLevelRangeRepository(self.connection)
         self.sector_capacity_repository = PostgresSectorCapacityRepository(self.connection)
+        # Add this line
+        self.sector_analysis_repository = PostgresSectorAnalysisRepository(self.connection)
 
     def _init_use_cases(self):
         # Casos de uso de configuración
@@ -104,6 +108,9 @@ class DependencyContainer:
         # Initialize sector capacity use case
         self.sector_capacity_use_case = GetSectorCapacityUseCase(
             self.sector_capacity_repository
+        )
+        self.get_flight_hourly_counts_use_case = GetFlightHourlyCountsUseCase(
+            self.flight_repository
         )
 
     # Move this method outside of _init_use_cases
