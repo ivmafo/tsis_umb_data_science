@@ -15,6 +15,15 @@ from src.core.dtos.flight_dtos import (
 )
 
 class PostgresFlightRepository(FlightRepository):
+    """
+    PostgreSQL implementation of the Flight Repository.
+    
+    This class handles all database operations related to flight data using PostgreSQL.
+    
+    Attributes:
+        connection (psycopg2.extensions.connection): Database connection instance
+    """
+
     def __init__(self, connection: psycopg2.extensions.connection):
         self.connection = connection
 
@@ -432,6 +441,19 @@ class PostgresFlightRepository(FlightRepository):
                 raise e
 
     def get_hourly_counts_by_date_ranges(self, date_ranges: List[DateRangeDTO], airport: Optional[str] = None) -> List[FlightHourlyCountDTO]:
+        """
+        Get hourly flight counts for specified date ranges and origin airport.
+        
+        Args:
+            date_ranges (List[DateRangeDTO]): List of date ranges to analyze
+            airport (Optional[str]): Origin airport code to filter by
+            
+        Returns:
+            List[FlightHourlyCountDTO]: Hourly flight counts for each date range
+            
+        Raises:
+            Exception: If there's an error executing the query
+        """
         try:
             if not date_ranges:
                 return []
@@ -496,6 +518,19 @@ class PostgresFlightRepository(FlightRepository):
             return [FlightHourlyCountDTO(hour=h, counts={}) for h in range(24)]
 
     def get_hourly_counts_by_date_ranges_destination(self, date_ranges: List[DateRangeDTO], airport: Optional[str] = None) -> List[FlightHourlyCountDTO]:
+        """
+        Get hourly flight counts for specified date ranges and destination airport.
+        
+        Args:
+            date_ranges (List[DateRangeDTO]): List of date ranges to analyze
+            airport (Optional[str]): Destination airport code to filter by
+            
+        Returns:
+            List[FlightHourlyCountDTO]: Hourly flight counts for each date range
+            
+        Raises:
+            Exception: If there's an error executing the query
+        """
         try:
             if not date_ranges:
                 return []

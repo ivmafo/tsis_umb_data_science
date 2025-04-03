@@ -1,0 +1,1228 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Core Use Cases &mdash; documentación de TSIS UMB Data Science - </title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=e2bb6099"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/translations.js?v=f85f4cfb"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../search.html" />
+    <link rel="next" title="Infrastructure Adapters" href="../infrastructure/adapters.html" />
+    <link rel="prev" title="Core Ports" href="ports.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            TSIS UMB Data Science
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" aria-label="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="dtos.html">Core DTOs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="entities.html">Core Entities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ports.html">Core Ports</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Core Use Cases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.use_cases.config_use_cases.CreateConfigUseCase"><code class="docutils literal notranslate"><span class="pre">CreateConfigUseCase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.config_use_cases.CreateConfigUseCase.config_repository"><code class="docutils literal notranslate"><span class="pre">CreateConfigUseCase.config_repository</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.config_use_cases.CreateConfigUseCase.execute"><code class="docutils literal notranslate"><span class="pre">CreateConfigUseCase.execute()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.use_cases.config_use_cases.DeleteConfigUseCase"><code class="docutils literal notranslate"><span class="pre">DeleteConfigUseCase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.config_use_cases.DeleteConfigUseCase.config_repository"><code class="docutils literal notranslate"><span class="pre">DeleteConfigUseCase.config_repository</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.config_use_cases.DeleteConfigUseCase.execute"><code class="docutils literal notranslate"><span class="pre">DeleteConfigUseCase.execute()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.use_cases.config_use_cases.GetAllConfigsUseCase"><code class="docutils literal notranslate"><span class="pre">GetAllConfigsUseCase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.config_use_cases.GetAllConfigsUseCase.config_repository"><code class="docutils literal notranslate"><span class="pre">GetAllConfigsUseCase.config_repository</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.config_use_cases.GetAllConfigsUseCase.execute"><code class="docutils literal notranslate"><span class="pre">GetAllConfigsUseCase.execute()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.use_cases.config_use_cases.GetConfigUseCase"><code class="docutils literal notranslate"><span class="pre">GetConfigUseCase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.config_use_cases.GetConfigUseCase.config_repository"><code class="docutils literal notranslate"><span class="pre">GetConfigUseCase.config_repository</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.config_use_cases.GetConfigUseCase.execute"><code class="docutils literal notranslate"><span class="pre">GetConfigUseCase.execute()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.use_cases.config_use_cases.UpdateConfigUseCase"><code class="docutils literal notranslate"><span class="pre">UpdateConfigUseCase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.config_use_cases.UpdateConfigUseCase.config_repository"><code class="docutils literal notranslate"><span class="pre">UpdateConfigUseCase.config_repository</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.config_use_cases.UpdateConfigUseCase.execute"><code class="docutils literal notranslate"><span class="pre">UpdateConfigUseCase.execute()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.use_cases.create_flight.CreateFlightUseCase"><code class="docutils literal notranslate"><span class="pre">CreateFlightUseCase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.create_flight.CreateFlightUseCase.flight_repository"><code class="docutils literal notranslate"><span class="pre">CreateFlightUseCase.flight_repository</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.create_flight.CreateFlightUseCase.execute"><code class="docutils literal notranslate"><span class="pre">CreateFlightUseCase.execute()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.use_cases.get_flight_hourly_counts.GetFlightHourlyCountsUseCase"><code class="docutils literal notranslate"><span class="pre">GetFlightHourlyCountsUseCase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.get_flight_hourly_counts.GetFlightHourlyCountsUseCase._flight_repository"><code class="docutils literal notranslate"><span class="pre">GetFlightHourlyCountsUseCase._flight_repository</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.get_flight_hourly_counts.GetFlightHourlyCountsUseCase.execute"><code class="docutils literal notranslate"><span class="pre">GetFlightHourlyCountsUseCase.execute()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.use_cases.get_flight_origins_count.GetFlightOriginsCountUseCase"><code class="docutils literal notranslate"><span class="pre">GetFlightOriginsCountUseCase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.get_flight_origins_count.GetFlightOriginsCountUseCase._flight_repository"><code class="docutils literal notranslate"><span class="pre">GetFlightOriginsCountUseCase._flight_repository</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.get_flight_origins_count.GetFlightOriginsCountUseCase.execute"><code class="docutils literal notranslate"><span class="pre">GetFlightOriginsCountUseCase.execute()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.use_cases.get_sector_capacity.GetSectorCapacityUseCase"><code class="docutils literal notranslate"><span class="pre">GetSectorCapacityUseCase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.get_sector_capacity.GetSectorCapacityUseCase._repository"><code class="docutils literal notranslate"><span class="pre">GetSectorCapacityUseCase._repository</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.get_sector_capacity.GetSectorCapacityUseCase.execute"><code class="docutils literal notranslate"><span class="pre">GetSectorCapacityUseCase.execute()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.get_sector_capacity.GetSectorCapacityUseCase.get_sectors"><code class="docutils literal notranslate"><span class="pre">GetSectorCapacityUseCase.get_sectors()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.use_cases.level_range_use_cases.CreateLevelRangeUseCase"><code class="docutils literal notranslate"><span class="pre">CreateLevelRangeUseCase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.level_range_use_cases.CreateLevelRangeUseCase.level_range_repository"><code class="docutils literal notranslate"><span class="pre">CreateLevelRangeUseCase.level_range_repository</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.level_range_use_cases.CreateLevelRangeUseCase.execute"><code class="docutils literal notranslate"><span class="pre">CreateLevelRangeUseCase.execute()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.use_cases.level_range_use_cases.DeleteLevelRangeUseCase"><code class="docutils literal notranslate"><span class="pre">DeleteLevelRangeUseCase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.level_range_use_cases.DeleteLevelRangeUseCase.level_range_repository"><code class="docutils literal notranslate"><span class="pre">DeleteLevelRangeUseCase.level_range_repository</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.level_range_use_cases.DeleteLevelRangeUseCase.execute"><code class="docutils literal notranslate"><span class="pre">DeleteLevelRangeUseCase.execute()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.use_cases.level_range_use_cases.GetAllLevelRangesUseCase"><code class="docutils literal notranslate"><span class="pre">GetAllLevelRangesUseCase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.level_range_use_cases.GetAllLevelRangesUseCase.level_range_repository"><code class="docutils literal notranslate"><span class="pre">GetAllLevelRangesUseCase.level_range_repository</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.level_range_use_cases.GetAllLevelRangesUseCase.execute"><code class="docutils literal notranslate"><span class="pre">GetAllLevelRangesUseCase.execute()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.use_cases.level_range_use_cases.GetLevelRangeByRouteUseCase"><code class="docutils literal notranslate"><span class="pre">GetLevelRangeByRouteUseCase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.level_range_use_cases.GetLevelRangeByRouteUseCase.level_range_repository"><code class="docutils literal notranslate"><span class="pre">GetLevelRangeByRouteUseCase.level_range_repository</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.level_range_use_cases.GetLevelRangeByRouteUseCase.execute"><code class="docutils literal notranslate"><span class="pre">GetLevelRangeByRouteUseCase.execute()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.use_cases.level_range_use_cases.GetLevelRangeUseCase"><code class="docutils literal notranslate"><span class="pre">GetLevelRangeUseCase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.level_range_use_cases.GetLevelRangeUseCase.level_range_repository"><code class="docutils literal notranslate"><span class="pre">GetLevelRangeUseCase.level_range_repository</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.level_range_use_cases.GetLevelRangeUseCase.execute"><code class="docutils literal notranslate"><span class="pre">GetLevelRangeUseCase.execute()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.use_cases.level_range_use_cases.GetLevelRangesByZoneUseCase"><code class="docutils literal notranslate"><span class="pre">GetLevelRangesByZoneUseCase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.level_range_use_cases.GetLevelRangesByZoneUseCase.level_range_repository"><code class="docutils literal notranslate"><span class="pre">GetLevelRangesByZoneUseCase.level_range_repository</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.level_range_use_cases.GetLevelRangesByZoneUseCase.execute"><code class="docutils literal notranslate"><span class="pre">GetLevelRangesByZoneUseCase.execute()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.use_cases.level_range_use_cases.UpdateLevelRangeUseCase"><code class="docutils literal notranslate"><span class="pre">UpdateLevelRangeUseCase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.level_range_use_cases.UpdateLevelRangeUseCase.level_range_repository"><code class="docutils literal notranslate"><span class="pre">UpdateLevelRangeUseCase.level_range_repository</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.level_range_use_cases.UpdateLevelRangeUseCase.execute"><code class="docutils literal notranslate"><span class="pre">UpdateLevelRangeUseCase.execute()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.use_cases.process_directory_flights.ProcessDirectoryFlightsUseCase"><code class="docutils literal notranslate"><span class="pre">ProcessDirectoryFlightsUseCase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.process_directory_flights.ProcessDirectoryFlightsUseCase._flight_repository"><code class="docutils literal notranslate"><span class="pre">ProcessDirectoryFlightsUseCase._flight_repository</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.process_directory_flights.ProcessDirectoryFlightsUseCase._file_repository"><code class="docutils literal notranslate"><span class="pre">ProcessDirectoryFlightsUseCase._file_repository</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.process_directory_flights.ProcessDirectoryFlightsUseCase._file_system_repository"><code class="docutils literal notranslate"><span class="pre">ProcessDirectoryFlightsUseCase._file_system_repository</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.process_directory_flights.ProcessDirectoryFlightsUseCase._process_flights_uc"><code class="docutils literal notranslate"><span class="pre">ProcessDirectoryFlightsUseCase._process_flights_uc</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.process_directory_flights.ProcessDirectoryFlightsUseCase.execute"><code class="docutils literal notranslate"><span class="pre">ProcessDirectoryFlightsUseCase.execute()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.use_cases.process_flights_from_excel.ProcessFlightsFromExcelUseCase"><code class="docutils literal notranslate"><span class="pre">ProcessFlightsFromExcelUseCase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.process_flights_from_excel.ProcessFlightsFromExcelUseCase.flight_repository"><code class="docutils literal notranslate"><span class="pre">ProcessFlightsFromExcelUseCase.flight_repository</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.process_flights_from_excel.ProcessFlightsFromExcelUseCase.file_repository"><code class="docutils literal notranslate"><span class="pre">ProcessFlightsFromExcelUseCase.file_repository</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.process_flights_from_excel.ProcessFlightsFromExcelUseCase.update_progress"><code class="docutils literal notranslate"><span class="pre">ProcessFlightsFromExcelUseCase.update_progress</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.process_flights_from_excel.ProcessFlightsFromExcelUseCase.execute"><code class="docutils literal notranslate"><span class="pre">ProcessFlightsFromExcelUseCase.execute()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.process_flights_from_excel.ProcessFlightsFromExcelUseCase.get_total_rows"><code class="docutils literal notranslate"><span class="pre">ProcessFlightsFromExcelUseCase.get_total_rows()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.use_cases.sector_analysis_use_cases.GetAllSectorsUseCase"><code class="docutils literal notranslate"><span class="pre">GetAllSectorsUseCase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.sector_analysis_use_cases.GetAllSectorsUseCase.sector_analysis_repository"><code class="docutils literal notranslate"><span class="pre">GetAllSectorsUseCase.sector_analysis_repository</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.sector_analysis_use_cases.GetAllSectorsUseCase.execute"><code class="docutils literal notranslate"><span class="pre">GetAllSectorsUseCase.execute()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.use_cases.sector_analysis_use_cases.GetSectorAnalysisByDateRangeUseCase"><code class="docutils literal notranslate"><span class="pre">GetSectorAnalysisByDateRangeUseCase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.sector_analysis_use_cases.GetSectorAnalysisByDateRangeUseCase.sector_analysis_repository"><code class="docutils literal notranslate"><span class="pre">GetSectorAnalysisByDateRangeUseCase.sector_analysis_repository</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.sector_analysis_use_cases.GetSectorAnalysisByDateRangeUseCase.execute"><code class="docutils literal notranslate"><span class="pre">GetSectorAnalysisByDateRangeUseCase.execute()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.use_cases.sector_analysis_use_cases.GetSectorAnalysisByDateUseCase"><code class="docutils literal notranslate"><span class="pre">GetSectorAnalysisByDateUseCase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.sector_analysis_use_cases.GetSectorAnalysisByDateUseCase.sector_analysis_repository"><code class="docutils literal notranslate"><span class="pre">GetSectorAnalysisByDateUseCase.sector_analysis_repository</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.sector_analysis_use_cases.GetSectorAnalysisByDateUseCase.execute"><code class="docutils literal notranslate"><span class="pre">GetSectorAnalysisByDateUseCase.execute()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.use_cases.sector_analysis_use_cases.GetSectorAnalysisUseCase"><code class="docutils literal notranslate"><span class="pre">GetSectorAnalysisUseCase</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.sector_analysis_use_cases.GetSectorAnalysisUseCase.sector_analysis_repository"><code class="docutils literal notranslate"><span class="pre">GetSectorAnalysisUseCase.sector_analysis_repository</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.use_cases.sector_analysis_use_cases.GetSectorAnalysisUseCase.execute"><code class="docutils literal notranslate"><span class="pre">GetSectorAnalysisUseCase.execute()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../infrastructure/adapters.html">Infrastructure Adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../infrastructure/config.html">Infrastructure Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../entrypoints/api.html">Puntos de Entrada de la API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">TSIS UMB Data Science</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Core Use Cases</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/modules/core/use_cases.rst.txt" rel="nofollow"> Ver código fuente de la página</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="core-use-cases">
+<h1>Core Use Cases<a class="headerlink" href="#core-use-cases" title="Link to this heading"></a></h1>
+<p id="module-src.core.use_cases.config_use_cases">Módulo que implementa los casos de uso relacionados con la configuración del sistema,
+siguiendo los principios de arquitectura hexagonal y clean architecture.</p>
+<p>Este módulo contiene los casos de uso que definen las operaciones de negocio
+para la gestión de configuraciones, manteniendo la lógica de negocio independiente
+de los detalles de implementación.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.use_cases.config_use_cases.CreateConfigUseCase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.use_cases.config_use_cases.</span></span><span class="sig-name descname"><span class="pre">CreateConfigUseCase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_repository</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/use_cases/config_use_cases.html#CreateConfigUseCase"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.config_use_cases.CreateConfigUseCase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Caso de uso para crear una nueva configuración en el sistema.</p>
+<p>Esta clase implementa la lógica de negocio para crear nuevas configuraciones,
+siguiendo el principio de responsabilidad única.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.use_cases.config_use_cases.CreateConfigUseCase.config_repository">
+<span class="sig-name descname"><span class="pre">config_repository</span></span><a class="headerlink" href="#src.core.use_cases.config_use_cases.CreateConfigUseCase.config_repository" title="Link to this definition"></a></dt>
+<dd><p>Repositorio de configuraciones</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ports.html#src.core.ports.config_repository.ConfigRepository" title="src.core.ports.config_repository.ConfigRepository">ConfigRepository</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.core.use_cases.config_use_cases.CreateConfigUseCase.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/use_cases/config_use_cases.html#CreateConfigUseCase.execute"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.config_use_cases.CreateConfigUseCase.execute" title="Link to this definition"></a></dt>
+<dd><p>Ejecuta la creación de una nueva configuración.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_data</strong> (<em>dict</em>) – Diccionario con los datos de la configuración</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Configuración creada y almacenada</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="entities.html#src.core.entities.config.Config" title="src.core.entities.config.Config">Config</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.use_cases.config_use_cases.DeleteConfigUseCase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.use_cases.config_use_cases.</span></span><span class="sig-name descname"><span class="pre">DeleteConfigUseCase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_repository</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ports.html#src.core.ports.config_repository.ConfigRepository" title="src.core.ports.config_repository.ConfigRepository"><span class="pre">ConfigRepository</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/use_cases/config_use_cases.html#DeleteConfigUseCase"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.config_use_cases.DeleteConfigUseCase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Caso de uso para eliminar una configuración del sistema.</p>
+<p>Esta clase implementa la lógica para eliminar una configuración
+específica del sistema.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.use_cases.config_use_cases.DeleteConfigUseCase.config_repository">
+<span class="sig-name descname"><span class="pre">config_repository</span></span><a class="headerlink" href="#src.core.use_cases.config_use_cases.DeleteConfigUseCase.config_repository" title="Link to this definition"></a></dt>
+<dd><p>Repositorio de configuraciones</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ports.html#src.core.ports.config_repository.ConfigRepository" title="src.core.ports.config_repository.ConfigRepository">ConfigRepository</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.core.use_cases.config_use_cases.DeleteConfigUseCase.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/src/core/use_cases/config_use_cases.html#DeleteConfigUseCase.execute"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.config_use_cases.DeleteConfigUseCase.execute" title="Link to this definition"></a></dt>
+<dd><p>Ejecuta la eliminación de una configuración.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<em>str</em>) – Clave de la configuración a eliminar</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>True si se eliminó correctamente, False si no</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.use_cases.config_use_cases.GetAllConfigsUseCase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.use_cases.config_use_cases.</span></span><span class="sig-name descname"><span class="pre">GetAllConfigsUseCase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_repository</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ports.html#src.core.ports.config_repository.ConfigRepository" title="src.core.ports.config_repository.ConfigRepository"><span class="pre">ConfigRepository</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/use_cases/config_use_cases.html#GetAllConfigsUseCase"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.config_use_cases.GetAllConfigsUseCase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Caso de uso para obtener todas las configuraciones del sistema.</p>
+<p>Esta clase implementa la lógica para recuperar todas las
+configuraciones almacenadas.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.use_cases.config_use_cases.GetAllConfigsUseCase.config_repository">
+<span class="sig-name descname"><span class="pre">config_repository</span></span><a class="headerlink" href="#src.core.use_cases.config_use_cases.GetAllConfigsUseCase.config_repository" title="Link to this definition"></a></dt>
+<dd><p>Repositorio de configuraciones</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ports.html#src.core.ports.config_repository.ConfigRepository" title="src.core.ports.config_repository.ConfigRepository">ConfigRepository</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.core.use_cases.config_use_cases.GetAllConfigsUseCase.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/use_cases/config_use_cases.html#GetAllConfigsUseCase.execute"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.config_use_cases.GetAllConfigsUseCase.execute" title="Link to this definition"></a></dt>
+<dd><p>Ejecuta la obtención de todas las configuraciones.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Devuelve<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Lista de todas las configuraciones</p>
+</dd>
+<dt class="field-even">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="entities.html#src.core.entities.config.Config" title="src.core.entities.config.Config">Config</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.use_cases.config_use_cases.GetConfigUseCase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.use_cases.config_use_cases.</span></span><span class="sig-name descname"><span class="pre">GetConfigUseCase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_repository</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ports.html#src.core.ports.config_repository.ConfigRepository" title="src.core.ports.config_repository.ConfigRepository"><span class="pre">ConfigRepository</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/use_cases/config_use_cases.html#GetConfigUseCase"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.config_use_cases.GetConfigUseCase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Caso de uso para obtener una configuración específica.</p>
+<p>Esta clase implementa la lógica para recuperar una configuración
+específica del sistema.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.use_cases.config_use_cases.GetConfigUseCase.config_repository">
+<span class="sig-name descname"><span class="pre">config_repository</span></span><a class="headerlink" href="#src.core.use_cases.config_use_cases.GetConfigUseCase.config_repository" title="Link to this definition"></a></dt>
+<dd><p>Repositorio de configuraciones</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ports.html#src.core.ports.config_repository.ConfigRepository" title="src.core.ports.config_repository.ConfigRepository">ConfigRepository</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.core.use_cases.config_use_cases.GetConfigUseCase.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="entities.html#src.core.entities.config.Config" title="src.core.entities.config.Config"><span class="pre">Config</span></a></span></span><a class="reference internal" href="../../_modules/src/core/use_cases/config_use_cases.html#GetConfigUseCase.execute"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.config_use_cases.GetConfigUseCase.execute" title="Link to this definition"></a></dt>
+<dd><p>Ejecuta la búsqueda de una configuración.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<em>str</em>) – Clave de la configuración a buscar</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Configuración encontrada</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="entities.html#src.core.entities.config.Config" title="src.core.entities.config.Config">Config</a></p>
+</dd>
+<dt class="field-even">Muestra<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – Si la configuración no existe</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.use_cases.config_use_cases.UpdateConfigUseCase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.use_cases.config_use_cases.</span></span><span class="sig-name descname"><span class="pre">UpdateConfigUseCase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_repository</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ports.html#src.core.ports.config_repository.ConfigRepository" title="src.core.ports.config_repository.ConfigRepository"><span class="pre">ConfigRepository</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/use_cases/config_use_cases.html#UpdateConfigUseCase"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.config_use_cases.UpdateConfigUseCase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Caso de uso para actualizar una configuración existente.</p>
+<p>Esta clase maneja la lógica de actualización de configuraciones,
+validando la existencia de la configuración antes de actualizarla.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.use_cases.config_use_cases.UpdateConfigUseCase.config_repository">
+<span class="sig-name descname"><span class="pre">config_repository</span></span><a class="headerlink" href="#src.core.use_cases.config_use_cases.UpdateConfigUseCase.config_repository" title="Link to this definition"></a></dt>
+<dd><p>Repositorio de configuraciones</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ports.html#src.core.ports.config_repository.ConfigRepository" title="src.core.ports.config_repository.ConfigRepository">ConfigRepository</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.core.use_cases.config_use_cases.UpdateConfigUseCase.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="entities.html#src.core.entities.config.Config" title="src.core.entities.config.Config"><span class="pre">Config</span></a></span></span><a class="reference internal" href="../../_modules/src/core/use_cases/config_use_cases.html#UpdateConfigUseCase.execute"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.config_use_cases.UpdateConfigUseCase.execute" title="Link to this definition"></a></dt>
+<dd><p>Ejecuta la actualización de una configuración.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>) – Clave de la configuración a actualizar</p></li>
+<li><p><strong>new_value</strong> (<em>str</em>) – Nuevo valor para la configuración</p></li>
+</ul>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Configuración actualizada</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="entities.html#src.core.entities.config.Config" title="src.core.entities.config.Config">Config</a></p>
+</dd>
+<dt class="field-even">Muestra<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – Si la configuración no existe</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<p id="module-src.core.use_cases.create_flight">Módulo que implementa el caso de uso para la creación de vuelos,
+siguiendo los principios de arquitectura hexagonal y clean architecture.</p>
+<p>Este módulo contiene la lógica de negocio para la creación de nuevos
+vuelos en el sistema, manteniendo la independencia de los detalles
+de implementación.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.use_cases.create_flight.CreateFlightUseCase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.use_cases.create_flight.</span></span><span class="sig-name descname"><span class="pre">CreateFlightUseCase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flight_repository</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ports.html#src.core.ports.flight_repository.FlightRepository" title="src.core.ports.flight_repository.FlightRepository"><span class="pre">FlightRepository</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/use_cases/create_flight.html#CreateFlightUseCase"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.create_flight.CreateFlightUseCase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Caso de uso para crear un nuevo vuelo en el sistema.</p>
+<p>Esta clase implementa la lógica de negocio para la creación de vuelos,
+siguiendo el principio de responsabilidad única y manteniéndose
+independiente de los detalles de infraestructura.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.use_cases.create_flight.CreateFlightUseCase.flight_repository">
+<span class="sig-name descname"><span class="pre">flight_repository</span></span><a class="headerlink" href="#src.core.use_cases.create_flight.CreateFlightUseCase.flight_repository" title="Link to this definition"></a></dt>
+<dd><p>Repositorio de vuelos</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ports.html#src.core.ports.flight_repository.FlightRepository" title="src.core.ports.flight_repository.FlightRepository">FlightRepository</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.core.use_cases.create_flight.CreateFlightUseCase.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flight_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="entities.html#src.core.entities.flight.Flight" title="src.core.entities.flight.Flight"><span class="pre">Flight</span></a></span></span><a class="reference internal" href="../../_modules/src/core/use_cases/create_flight.html#CreateFlightUseCase.execute"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.create_flight.CreateFlightUseCase.execute" title="Link to this definition"></a></dt>
+<dd><p>Ejecuta la creación de un nuevo vuelo.</p>
+<p>Este método implementa la lógica principal del caso de uso,
+validando los datos recibidos y delegando el almacenamiento
+al repositorio correspondiente.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>flight_data</strong> (<em>dict</em>) – Diccionario con los datos del vuelo</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Vuelo creado y almacenado en el sistema</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="entities.html#src.core.entities.flight.Flight" title="src.core.entities.flight.Flight">Flight</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<p id="module-src.core.use_cases.get_flight_hourly_counts">Módulo que implementa el caso de uso para obtener conteos horarios de vuelos,
+siguiendo los principios de arquitectura hexagonal y clean architecture.</p>
+<p>Este módulo contiene la lógica de negocio para obtener estadísticas
+de vuelos por hora, manteniendo la independencia de los detalles de
+implementación de infraestructura.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.use_cases.get_flight_hourly_counts.GetFlightHourlyCountsUseCase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.use_cases.get_flight_hourly_counts.</span></span><span class="sig-name descname"><span class="pre">GetFlightHourlyCountsUseCase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flight_repository</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ports.html#src.core.ports.flight_repository.FlightRepository" title="src.core.ports.flight_repository.FlightRepository"><span class="pre">FlightRepository</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/use_cases/get_flight_hourly_counts.html#GetFlightHourlyCountsUseCase"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.get_flight_hourly_counts.GetFlightHourlyCountsUseCase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Caso de uso para obtener conteos horarios de vuelos.</p>
+<p>Esta clase implementa la lógica de negocio para obtener estadísticas
+de vuelos agrupados por hora, siguiendo el principio de responsabilidad
+única y manteniéndose independiente de los detalles de infraestructura.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.use_cases.get_flight_hourly_counts.GetFlightHourlyCountsUseCase._flight_repository">
+<span class="sig-name descname"><span class="pre">_flight_repository</span></span><a class="headerlink" href="#src.core.use_cases.get_flight_hourly_counts.GetFlightHourlyCountsUseCase._flight_repository" title="Link to this definition"></a></dt>
+<dd><p>Repositorio de vuelos</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ports.html#src.core.ports.flight_repository.FlightRepository" title="src.core.ports.flight_repository.FlightRepository">FlightRepository</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.core.use_cases.get_flight_hourly_counts.GetFlightHourlyCountsUseCase.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dtos.html#src.core.dtos.flight_dtos.DateRangesAnalysisRequestDTO" title="src.core.dtos.flight_dtos.DateRangesAnalysisRequestDTO"><span class="pre">DateRangesAnalysisRequestDTO</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="dtos.html#src.core.dtos.flight_dtos.FlightHourlyCountDTO" title="src.core.dtos.flight_dtos.FlightHourlyCountDTO"><span class="pre">FlightHourlyCountDTO</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/src/core/use_cases/get_flight_hourly_counts.html#GetFlightHourlyCountsUseCase.execute"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.get_flight_hourly_counts.GetFlightHourlyCountsUseCase.execute" title="Link to this definition"></a></dt>
+<dd><p>Ejecuta la obtención de conteos horarios de vuelos.</p>
+<p>Este método implementa la lógica principal del caso de uso,
+delegando la consulta al repositorio y procesando los resultados
+según los rangos de fechas especificados.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request</strong> (<a class="reference internal" href="dtos.html#src.core.dtos.flight_dtos.DateRangesAnalysisRequestDTO" title="src.core.dtos.flight_dtos.DateRangesAnalysisRequestDTO"><em>DateRangesAnalysisRequestDTO</em></a>) – DTO con los rangos de fechas a analizar</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Lista de conteos de vuelos por hora</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="dtos.html#src.core.dtos.flight_dtos.FlightHourlyCountDTO" title="src.core.dtos.flight_dtos.FlightHourlyCountDTO">FlightHourlyCountDTO</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<p id="module-src.core.use_cases.get_flight_origins_count">Módulo que implementa el caso de uso para obtener el conteo de vuelos por origen,
+siguiendo los principios de arquitectura hexagonal y clean architecture.</p>
+<p>Este módulo contiene la lógica de negocio para obtener estadísticas
+de vuelos agrupados por origen, manteniendo la independencia de los
+detalles de implementación.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.use_cases.get_flight_origins_count.GetFlightOriginsCountUseCase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.use_cases.get_flight_origins_count.</span></span><span class="sig-name descname"><span class="pre">GetFlightOriginsCountUseCase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flight_repository</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ports.html#src.core.ports.flight_repository.FlightRepository" title="src.core.ports.flight_repository.FlightRepository"><span class="pre">FlightRepository</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/use_cases/get_flight_origins_count.html#GetFlightOriginsCountUseCase"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.get_flight_origins_count.GetFlightOriginsCountUseCase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Caso de uso para obtener el conteo de vuelos por origen.</p>
+<p>Esta clase implementa la lógica de negocio para obtener estadísticas
+de vuelos agrupados por aeropuerto de origen, siguiendo el principio
+de responsabilidad única y manteniéndose independiente de los detalles
+de infraestructura.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.use_cases.get_flight_origins_count.GetFlightOriginsCountUseCase._flight_repository">
+<span class="sig-name descname"><span class="pre">_flight_repository</span></span><a class="headerlink" href="#src.core.use_cases.get_flight_origins_count.GetFlightOriginsCountUseCase._flight_repository" title="Link to this definition"></a></dt>
+<dd><p>Repositorio de vuelos</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ports.html#src.core.ports.flight_repository.FlightRepository" title="src.core.ports.flight_repository.FlightRepository">FlightRepository</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.core.use_cases.get_flight_origins_count.GetFlightOriginsCountUseCase.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="dtos.html#src.core.dtos.flight_dtos.FlightFilterDTO" title="src.core.dtos.flight_dtos.FlightFilterDTO"><span class="pre">FlightFilterDTO</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="dtos.html#src.core.dtos.flight_dtos.FlightOriginCountDTO" title="src.core.dtos.flight_dtos.FlightOriginCountDTO"><span class="pre">FlightOriginCountDTO</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/src/core/use_cases/get_flight_origins_count.html#GetFlightOriginsCountUseCase.execute"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.get_flight_origins_count.GetFlightOriginsCountUseCase.execute" title="Link to this definition"></a></dt>
+<dd><p>Ejecuta la obtención del conteo de vuelos por origen.</p>
+<p>Este método implementa la lógica principal del caso de uso,
+aplicando los filtros especificados y delegando la consulta
+al repositorio correspondiente.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filters</strong> (<a class="reference internal" href="dtos.html#src.core.dtos.flight_dtos.FlightFilterDTO" title="src.core.dtos.flight_dtos.FlightFilterDTO"><em>FlightFilterDTO</em></a>) – DTO con los criterios de filtrado</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Lista de conteos de vuelos por origen</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="dtos.html#src.core.dtos.flight_dtos.FlightOriginCountDTO" title="src.core.dtos.flight_dtos.FlightOriginCountDTO">FlightOriginCountDTO</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<p id="module-src.core.use_cases.get_sector_capacity">Módulo que implementa el caso de uso para obtener la capacidad de sectores aéreos,
+siguiendo los principios de arquitectura hexagonal y clean architecture.</p>
+<p>Este módulo contiene la lógica de negocio para consultar la capacidad
+operativa de los sectores aéreos, manteniendo la independencia de los
+detalles de implementación.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.use_cases.get_sector_capacity.GetSectorCapacityUseCase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.use_cases.get_sector_capacity.</span></span><span class="sig-name descname"><span class="pre">GetSectorCapacityUseCase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">repository</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ports.html#src.core.ports.sector_capacity_repository.SectorCapacityRepository" title="src.core.ports.sector_capacity_repository.SectorCapacityRepository"><span class="pre">SectorCapacityRepository</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/use_cases/get_sector_capacity.html#GetSectorCapacityUseCase"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.get_sector_capacity.GetSectorCapacityUseCase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Caso de uso para obtener la capacidad de sectores aéreos.</p>
+<p>Esta clase implementa la lógica de negocio para consultar la capacidad
+de los sectores aéreos, siguiendo el principio de responsabilidad única
+y manteniéndose independiente de los detalles de infraestructura.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.use_cases.get_sector_capacity.GetSectorCapacityUseCase._repository">
+<span class="sig-name descname"><span class="pre">_repository</span></span><a class="headerlink" href="#src.core.use_cases.get_sector_capacity.GetSectorCapacityUseCase._repository" title="Link to this definition"></a></dt>
+<dd><p>Repositorio de capacidad de sectores</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ports.html#src.core.ports.sector_capacity_repository.SectorCapacityRepository" title="src.core.ports.sector_capacity_repository.SectorCapacityRepository">SectorCapacityRepository</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.core.use_cases.get_sector_capacity.GetSectorCapacityUseCase.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="entities.html#src.core.entities.sector_capacity.SectorCapacityResponse" title="src.core.entities.sector_capacity.SectorCapacityResponse"><span class="pre">SectorCapacityResponse</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/src/core/use_cases/get_sector_capacity.html#GetSectorCapacityUseCase.execute"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.get_sector_capacity.GetSectorCapacityUseCase.execute" title="Link to this definition"></a></dt>
+<dd><p>Ejecuta la consulta de capacidad de un sector.</p>
+<p>Este método implementa la lógica principal del caso de uso,
+validando los parámetros de entrada y delegando la consulta
+al repositorio correspondiente.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sector</strong> (<em>str</em>) – Identificador del sector</p></li>
+<li><p><strong>date</strong> (<em>datetime</em>) – Fecha para la cual se requiere la capacidad</p></li>
+</ul>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Capacidad del sector o None si no existe</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[<a class="reference internal" href="entities.html#src.core.entities.sector_capacity.SectorCapacityResponse" title="src.core.entities.sector_capacity.SectorCapacityResponse">SectorCapacityResponse</a>]</p>
+</dd>
+<dt class="field-even">Muestra<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – Si la fecha proporcionada no es un objeto datetime válido</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.core.use_cases.get_sector_capacity.GetSectorCapacityUseCase.get_sectors">
+<span class="sig-name descname"><span class="pre">get_sectors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/src/core/use_cases/get_sector_capacity.html#GetSectorCapacityUseCase.get_sectors"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.get_sector_capacity.GetSectorCapacityUseCase.get_sectors" title="Link to this definition"></a></dt>
+<dd><p>Obtiene la lista de todos los sectores disponibles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Devuelve<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Lista de identificadores de sectores</p>
+</dd>
+<dt class="field-even">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<p id="module-src.core.use_cases.level_range_use_cases">Módulo que implementa los casos de uso relacionados con los rangos de niveles,
+siguiendo los principios de arquitectura hexagonal y clean architecture.</p>
+<p>Este módulo contiene la lógica de negocio para la gestión completa de rangos
+de niveles, manteniendo la independencia de los detalles de implementación.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.use_cases.level_range_use_cases.CreateLevelRangeUseCase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.use_cases.level_range_use_cases.</span></span><span class="sig-name descname"><span class="pre">CreateLevelRangeUseCase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level_range_repository</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ports.html#src.core.ports.level_range_repository.LevelRangeRepository" title="src.core.ports.level_range_repository.LevelRangeRepository"><span class="pre">LevelRangeRepository</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/use_cases/level_range_use_cases.html#CreateLevelRangeUseCase"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.level_range_use_cases.CreateLevelRangeUseCase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Caso de uso para crear un nuevo rango de niveles.</p>
+<p>Esta clase implementa la lógica de negocio para la creación de rangos
+de niveles, siguiendo el principio de responsabilidad única.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.use_cases.level_range_use_cases.CreateLevelRangeUseCase.level_range_repository">
+<span class="sig-name descname"><span class="pre">level_range_repository</span></span><a class="headerlink" href="#src.core.use_cases.level_range_use_cases.CreateLevelRangeUseCase.level_range_repository" title="Link to this definition"></a></dt>
+<dd><p>Repositorio de rangos de niveles</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ports.html#src.core.ports.level_range_repository.LevelRangeRepository" title="src.core.ports.level_range_repository.LevelRangeRepository">LevelRangeRepository</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.core.use_cases.level_range_use_cases.CreateLevelRangeUseCase.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level_range_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/use_cases/level_range_use_cases.html#CreateLevelRangeUseCase.execute"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.level_range_use_cases.CreateLevelRangeUseCase.execute" title="Link to this definition"></a></dt>
+<dd><p>Ejecuta la creación de un nuevo rango de niveles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>level_range_data</strong> (<em>dict</em>) – Datos del rango de niveles a crear</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Rango de niveles creado</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="entities.html#src.core.entities.level_range.LevelRange" title="src.core.entities.level_range.LevelRange">LevelRange</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.use_cases.level_range_use_cases.DeleteLevelRangeUseCase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.use_cases.level_range_use_cases.</span></span><span class="sig-name descname"><span class="pre">DeleteLevelRangeUseCase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level_range_repository</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ports.html#src.core.ports.level_range_repository.LevelRangeRepository" title="src.core.ports.level_range_repository.LevelRangeRepository"><span class="pre">LevelRangeRepository</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/use_cases/level_range_use_cases.html#DeleteLevelRangeUseCase"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.level_range_use_cases.DeleteLevelRangeUseCase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Caso de uso para eliminar un rango de niveles.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.use_cases.level_range_use_cases.DeleteLevelRangeUseCase.level_range_repository">
+<span class="sig-name descname"><span class="pre">level_range_repository</span></span><a class="headerlink" href="#src.core.use_cases.level_range_use_cases.DeleteLevelRangeUseCase.level_range_repository" title="Link to this definition"></a></dt>
+<dd><p>Repositorio de rangos de niveles</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ports.html#src.core.ports.level_range_repository.LevelRangeRepository" title="src.core.ports.level_range_repository.LevelRangeRepository">LevelRangeRepository</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.core.use_cases.level_range_use_cases.DeleteLevelRangeUseCase.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/src/core/use_cases/level_range_use_cases.html#DeleteLevelRangeUseCase.execute"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.level_range_use_cases.DeleteLevelRangeUseCase.execute" title="Link to this definition"></a></dt>
+<dd><p>Ejecuta la eliminación de un rango de niveles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id</strong> (<em>int</em>) – Identificador del rango de niveles a eliminar</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>True si se eliminó correctamente, False si no</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.use_cases.level_range_use_cases.GetAllLevelRangesUseCase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.use_cases.level_range_use_cases.</span></span><span class="sig-name descname"><span class="pre">GetAllLevelRangesUseCase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level_range_repository</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ports.html#src.core.ports.level_range_repository.LevelRangeRepository" title="src.core.ports.level_range_repository.LevelRangeRepository"><span class="pre">LevelRangeRepository</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/use_cases/level_range_use_cases.html#GetAllLevelRangesUseCase"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.level_range_use_cases.GetAllLevelRangesUseCase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Caso de uso para obtener todos los rangos de niveles.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.use_cases.level_range_use_cases.GetAllLevelRangesUseCase.level_range_repository">
+<span class="sig-name descname"><span class="pre">level_range_repository</span></span><a class="headerlink" href="#src.core.use_cases.level_range_use_cases.GetAllLevelRangesUseCase.level_range_repository" title="Link to this definition"></a></dt>
+<dd><p>Repositorio de rangos de niveles</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ports.html#src.core.ports.level_range_repository.LevelRangeRepository" title="src.core.ports.level_range_repository.LevelRangeRepository">LevelRangeRepository</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.core.use_cases.level_range_use_cases.GetAllLevelRangesUseCase.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/use_cases/level_range_use_cases.html#GetAllLevelRangesUseCase.execute"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.level_range_use_cases.GetAllLevelRangesUseCase.execute" title="Link to this definition"></a></dt>
+<dd><p>Ejecuta la obtención de todos los rangos de niveles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Devuelve<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Lista de todos los rangos de niveles</p>
+</dd>
+<dt class="field-even">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="entities.html#src.core.entities.level_range.LevelRange" title="src.core.entities.level_range.LevelRange">LevelRange</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.use_cases.level_range_use_cases.GetLevelRangeByRouteUseCase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.use_cases.level_range_use_cases.</span></span><span class="sig-name descname"><span class="pre">GetLevelRangeByRouteUseCase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level_range_repository</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ports.html#src.core.ports.level_range_repository.LevelRangeRepository" title="src.core.ports.level_range_repository.LevelRangeRepository"><span class="pre">LevelRangeRepository</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/use_cases/level_range_use_cases.html#GetLevelRangeByRouteUseCase"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.level_range_use_cases.GetLevelRangeByRouteUseCase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Caso de uso para obtener un rango de niveles por ruta.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.use_cases.level_range_use_cases.GetLevelRangeByRouteUseCase.level_range_repository">
+<span class="sig-name descname"><span class="pre">level_range_repository</span></span><a class="headerlink" href="#src.core.use_cases.level_range_use_cases.GetLevelRangeByRouteUseCase.level_range_repository" title="Link to this definition"></a></dt>
+<dd><p>Repositorio de rangos de niveles</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ports.html#src.core.ports.level_range_repository.LevelRangeRepository" title="src.core.ports.level_range_repository.LevelRangeRepository">LevelRangeRepository</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.core.use_cases.level_range_use_cases.GetLevelRangeByRouteUseCase.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">origen</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destino</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="entities.html#src.core.entities.level_range.LevelRange" title="src.core.entities.level_range.LevelRange"><span class="pre">LevelRange</span></a></span></span><a class="reference internal" href="../../_modules/src/core/use_cases/level_range_use_cases.html#GetLevelRangeByRouteUseCase.execute"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.level_range_use_cases.GetLevelRangeByRouteUseCase.execute" title="Link to this definition"></a></dt>
+<dd><p>Ejecuta la búsqueda de un rango de niveles por ruta.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>origen</strong> (<em>str</em>) – Punto de origen de la ruta</p></li>
+<li><p><strong>destino</strong> (<em>str</em>) – Punto de destino de la ruta</p></li>
+</ul>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Rango de niveles encontrado</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="entities.html#src.core.entities.level_range.LevelRange" title="src.core.entities.level_range.LevelRange">LevelRange</a></p>
+</dd>
+<dt class="field-even">Muestra<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – Si no se encuentra el rango de niveles para la ruta</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.use_cases.level_range_use_cases.GetLevelRangeUseCase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.use_cases.level_range_use_cases.</span></span><span class="sig-name descname"><span class="pre">GetLevelRangeUseCase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level_range_repository</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ports.html#src.core.ports.level_range_repository.LevelRangeRepository" title="src.core.ports.level_range_repository.LevelRangeRepository"><span class="pre">LevelRangeRepository</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/use_cases/level_range_use_cases.html#GetLevelRangeUseCase"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.level_range_use_cases.GetLevelRangeUseCase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Caso de uso para obtener un rango de niveles por su ID.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.use_cases.level_range_use_cases.GetLevelRangeUseCase.level_range_repository">
+<span class="sig-name descname"><span class="pre">level_range_repository</span></span><a class="headerlink" href="#src.core.use_cases.level_range_use_cases.GetLevelRangeUseCase.level_range_repository" title="Link to this definition"></a></dt>
+<dd><p>Repositorio de rangos de niveles</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ports.html#src.core.ports.level_range_repository.LevelRangeRepository" title="src.core.ports.level_range_repository.LevelRangeRepository">LevelRangeRepository</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.core.use_cases.level_range_use_cases.GetLevelRangeUseCase.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="entities.html#src.core.entities.level_range.LevelRange" title="src.core.entities.level_range.LevelRange"><span class="pre">LevelRange</span></a></span></span><a class="reference internal" href="../../_modules/src/core/use_cases/level_range_use_cases.html#GetLevelRangeUseCase.execute"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.level_range_use_cases.GetLevelRangeUseCase.execute" title="Link to this definition"></a></dt>
+<dd><p>Ejecuta la búsqueda de un rango de niveles por ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id</strong> (<em>int</em>) – Identificador del rango de niveles</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Rango de niveles encontrado</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="entities.html#src.core.entities.level_range.LevelRange" title="src.core.entities.level_range.LevelRange">LevelRange</a></p>
+</dd>
+<dt class="field-even">Muestra<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – Si el rango de niveles no existe</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.use_cases.level_range_use_cases.GetLevelRangesByZoneUseCase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.use_cases.level_range_use_cases.</span></span><span class="sig-name descname"><span class="pre">GetLevelRangesByZoneUseCase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level_range_repository</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ports.html#src.core.ports.level_range_repository.LevelRangeRepository" title="src.core.ports.level_range_repository.LevelRangeRepository"><span class="pre">LevelRangeRepository</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/use_cases/level_range_use_cases.html#GetLevelRangesByZoneUseCase"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.level_range_use_cases.GetLevelRangesByZoneUseCase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Caso de uso para obtener rangos de niveles por zona.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.use_cases.level_range_use_cases.GetLevelRangesByZoneUseCase.level_range_repository">
+<span class="sig-name descname"><span class="pre">level_range_repository</span></span><a class="headerlink" href="#src.core.use_cases.level_range_use_cases.GetLevelRangesByZoneUseCase.level_range_repository" title="Link to this definition"></a></dt>
+<dd><p>Repositorio de rangos de niveles</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ports.html#src.core.ports.level_range_repository.LevelRangeRepository" title="src.core.ports.level_range_repository.LevelRangeRepository">LevelRangeRepository</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.core.use_cases.level_range_use_cases.GetLevelRangesByZoneUseCase.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zona</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="entities.html#src.core.entities.level_range.LevelRange" title="src.core.entities.level_range.LevelRange"><span class="pre">LevelRange</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/src/core/use_cases/level_range_use_cases.html#GetLevelRangesByZoneUseCase.execute"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.level_range_use_cases.GetLevelRangesByZoneUseCase.execute" title="Link to this definition"></a></dt>
+<dd><p>Ejecuta la búsqueda de rangos de niveles por zona.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>zona</strong> (<em>str</em>) – Identificador de la zona</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Lista de rangos de niveles en la zona</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[<a class="reference internal" href="entities.html#src.core.entities.level_range.LevelRange" title="src.core.entities.level_range.LevelRange">LevelRange</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.use_cases.level_range_use_cases.UpdateLevelRangeUseCase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.use_cases.level_range_use_cases.</span></span><span class="sig-name descname"><span class="pre">UpdateLevelRangeUseCase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level_range_repository</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ports.html#src.core.ports.level_range_repository.LevelRangeRepository" title="src.core.ports.level_range_repository.LevelRangeRepository"><span class="pre">LevelRangeRepository</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/use_cases/level_range_use_cases.html#UpdateLevelRangeUseCase"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.level_range_use_cases.UpdateLevelRangeUseCase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Caso de uso para actualizar un rango de niveles existente.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.use_cases.level_range_use_cases.UpdateLevelRangeUseCase.level_range_repository">
+<span class="sig-name descname"><span class="pre">level_range_repository</span></span><a class="headerlink" href="#src.core.use_cases.level_range_use_cases.UpdateLevelRangeUseCase.level_range_repository" title="Link to this definition"></a></dt>
+<dd><p>Repositorio de rangos de niveles</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ports.html#src.core.ports.level_range_repository.LevelRangeRepository" title="src.core.ports.level_range_repository.LevelRangeRepository">LevelRangeRepository</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.core.use_cases.level_range_use_cases.UpdateLevelRangeUseCase.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level_range_data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="entities.html#src.core.entities.level_range.LevelRange" title="src.core.entities.level_range.LevelRange"><span class="pre">LevelRange</span></a></span></span><a class="reference internal" href="../../_modules/src/core/use_cases/level_range_use_cases.html#UpdateLevelRangeUseCase.execute"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.level_range_use_cases.UpdateLevelRangeUseCase.execute" title="Link to this definition"></a></dt>
+<dd><p>Ejecuta la actualización de un rango de niveles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>int</em>) – Identificador del rango de niveles</p></li>
+<li><p><strong>level_range_data</strong> (<em>dict</em>) – Nuevos datos del rango de niveles</p></li>
+</ul>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Rango de niveles actualizado</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="entities.html#src.core.entities.level_range.LevelRange" title="src.core.entities.level_range.LevelRange">LevelRange</a></p>
+</dd>
+<dt class="field-even">Muestra<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – Si el rango de niveles no existe</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<p id="module-src.core.use_cases.process_directory_flights">Módulo que implementa el caso de uso para procesar vuelos desde un directorio,
+siguiendo los principios de arquitectura hexagonal y clean architecture.</p>
+<p>Este módulo contiene la lógica de negocio para procesar archivos Excel con
+información de vuelos desde un directorio específico, manteniendo la independencia
+de los detalles de implementación.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.use_cases.process_directory_flights.ProcessDirectoryFlightsUseCase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.use_cases.process_directory_flights.</span></span><span class="sig-name descname"><span class="pre">ProcessDirectoryFlightsUseCase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flight_repository</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ports.html#src.core.ports.flight_repository.FlightRepository" title="src.core.ports.flight_repository.FlightRepository"><span class="pre">FlightRepository</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_repository</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ports.html#src.core.ports.file_processing_control_repository.FileProcessingControlRepository" title="src.core.ports.file_processing_control_repository.FileProcessingControlRepository"><span class="pre">FileProcessingControlRepository</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_system_repository</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ports.html#src.core.ports.file_system_repository.FileSystemRepository" title="src.core.ports.file_system_repository.FileSystemRepository"><span class="pre">FileSystemRepository</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/use_cases/process_directory_flights.html#ProcessDirectoryFlightsUseCase"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.process_directory_flights.ProcessDirectoryFlightsUseCase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Caso de uso para procesar archivos de vuelos desde un directorio.</p>
+<p>Esta clase implementa la lógica de negocio para procesar múltiples archivos
+Excel que contienen información de vuelos, siguiendo el principio de
+responsabilidad única y manteniendo la independencia de la infraestructura.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.use_cases.process_directory_flights.ProcessDirectoryFlightsUseCase._flight_repository">
+<span class="sig-name descname"><span class="pre">_flight_repository</span></span><a class="headerlink" href="#src.core.use_cases.process_directory_flights.ProcessDirectoryFlightsUseCase._flight_repository" title="Link to this definition"></a></dt>
+<dd><p>Repositorio de vuelos</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ports.html#src.core.ports.flight_repository.FlightRepository" title="src.core.ports.flight_repository.FlightRepository">FlightRepository</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.use_cases.process_directory_flights.ProcessDirectoryFlightsUseCase._file_repository">
+<span class="sig-name descname"><span class="pre">_file_repository</span></span><a class="headerlink" href="#src.core.use_cases.process_directory_flights.ProcessDirectoryFlightsUseCase._file_repository" title="Link to this definition"></a></dt>
+<dd><p>Repositorio de control de archivos</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ports.html#src.core.ports.file_processing_control_repository.FileProcessingControlRepository" title="src.core.ports.file_processing_control_repository.FileProcessingControlRepository">FileProcessingControlRepository</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.use_cases.process_directory_flights.ProcessDirectoryFlightsUseCase._file_system_repository">
+<span class="sig-name descname"><span class="pre">_file_system_repository</span></span><a class="headerlink" href="#src.core.use_cases.process_directory_flights.ProcessDirectoryFlightsUseCase._file_system_repository" title="Link to this definition"></a></dt>
+<dd><p>Repositorio del sistema de archivos</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ports.html#src.core.ports.file_system_repository.FileSystemRepository" title="src.core.ports.file_system_repository.FileSystemRepository">FileSystemRepository</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.use_cases.process_directory_flights.ProcessDirectoryFlightsUseCase._process_flights_uc">
+<span class="sig-name descname"><span class="pre">_process_flights_uc</span></span><a class="headerlink" href="#src.core.use_cases.process_directory_flights.ProcessDirectoryFlightsUseCase._process_flights_uc" title="Link to this definition"></a></dt>
+<dd><p>Caso de uso para procesar Excel</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#src.core.use_cases.process_flights_from_excel.ProcessFlightsFromExcelUseCase" title="src.core.use_cases.process_flights_from_excel.ProcessFlightsFromExcelUseCase">ProcessFlightsFromExcelUseCase</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.core.use_cases.process_directory_flights.ProcessDirectoryFlightsUseCase.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/src/core/use_cases/process_directory_flights.html#ProcessDirectoryFlightsUseCase.execute"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.process_directory_flights.ProcessDirectoryFlightsUseCase.execute" title="Link to this definition"></a></dt>
+<dd><p>Ejecuta el procesamiento de todos los archivos Excel en un directorio.</p>
+<p>Este método implementa la lógica principal del caso de uso, procesando
+todos los archivos Excel encontrados en el directorio especificado y
+manteniendo un registro de éxitos y errores.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>directory_path</strong> (<em>str</em>) – Ruta del directorio a procesar</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Diccionario con archivos procesados y errores</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, List[Any]]</p>
+</dd>
+<dt class="field-even">Muestra<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – Si la ruta del directorio está vacía o hay error en el procesamiento</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<p id="module-src.core.use_cases.process_flights_from_excel">Módulo que implementa el caso de uso para procesar vuelos desde archivos Excel,
+siguiendo los principios de arquitectura hexagonal y clean architecture.</p>
+<p>Este módulo contiene la lógica de negocio para transformar y procesar datos
+de vuelos desde archivos Excel, manteniendo la independencia de los detalles
+de implementación y la separación de responsabilidades.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.use_cases.process_flights_from_excel.ProcessFlightsFromExcelUseCase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.use_cases.process_flights_from_excel.</span></span><span class="sig-name descname"><span class="pre">ProcessFlightsFromExcelUseCase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flight_repository</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ports.html#src.core.ports.flight_repository.FlightRepository" title="src.core.ports.flight_repository.FlightRepository"><span class="pre">FlightRepository</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_repository</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ports.html#src.core.ports.file_processing_control_repository.FileProcessingControlRepository" title="src.core.ports.file_processing_control_repository.FileProcessingControlRepository"><span class="pre">FileProcessingControlRepository</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/use_cases/process_flights_from_excel.html#ProcessFlightsFromExcelUseCase"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.process_flights_from_excel.ProcessFlightsFromExcelUseCase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Caso de uso para procesar vuelos desde archivos Excel.</p>
+<p>Esta clase implementa la lógica de negocio para la extracción y procesamiento
+de datos de vuelos desde archivos Excel, siguiendo el principio de
+responsabilidad única y manteniéndose independiente de la infraestructura.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.use_cases.process_flights_from_excel.ProcessFlightsFromExcelUseCase.flight_repository">
+<span class="sig-name descname"><span class="pre">flight_repository</span></span><a class="headerlink" href="#src.core.use_cases.process_flights_from_excel.ProcessFlightsFromExcelUseCase.flight_repository" title="Link to this definition"></a></dt>
+<dd><p>Repositorio de vuelos</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ports.html#src.core.ports.flight_repository.FlightRepository" title="src.core.ports.flight_repository.FlightRepository">FlightRepository</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.use_cases.process_flights_from_excel.ProcessFlightsFromExcelUseCase.file_repository">
+<span class="sig-name descname"><span class="pre">file_repository</span></span><a class="headerlink" href="#src.core.use_cases.process_flights_from_excel.ProcessFlightsFromExcelUseCase.file_repository" title="Link to this definition"></a></dt>
+<dd><p>Repositorio de control de archivos</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ports.html#src.core.ports.file_processing_control_repository.FileProcessingControlRepository" title="src.core.ports.file_processing_control_repository.FileProcessingControlRepository">FileProcessingControlRepository</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.use_cases.process_flights_from_excel.ProcessFlightsFromExcelUseCase.update_progress">
+<span class="sig-name descname"><span class="pre">update_progress</span></span><a class="headerlink" href="#src.core.use_cases.process_flights_from_excel.ProcessFlightsFromExcelUseCase.update_progress" title="Link to this definition"></a></dt>
+<dd><p>Función para actualizar el progreso del procesamiento</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>callable, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.core.use_cases.process_flights_from_excel.ProcessFlightsFromExcelUseCase.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/use_cases/process_flights_from_excel.html#ProcessFlightsFromExcelUseCase.execute"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.process_flights_from_excel.ProcessFlightsFromExcelUseCase.execute" title="Link to this definition"></a></dt>
+<dd><p>Ejecuta el procesamiento de vuelos desde un archivo Excel.</p>
+<p>Este método implementa la lógica principal del caso de uso, transformando
+los datos del Excel en entidades de vuelo y almacenándolas en el repositorio.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_path</strong> (<em>str</em>) – Ruta del archivo Excel a procesar</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Diccionario con estadísticas del procesamiento</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+<dt class="field-even">Muestra<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – Si hay error durante el procesamiento</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.core.use_cases.process_flights_from_excel.ProcessFlightsFromExcelUseCase.get_total_rows">
+<span class="sig-name descname"><span class="pre">get_total_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/use_cases/process_flights_from_excel.html#ProcessFlightsFromExcelUseCase.get_total_rows"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.process_flights_from_excel.ProcessFlightsFromExcelUseCase.get_total_rows" title="Link to this definition"></a></dt>
+<dd><p>Obtiene el número total de filas a procesar en el archivo Excel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_path</strong> (<em>str</em>) – Ruta del archivo Excel</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Número total de filas</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+<dt class="field-even">Muestra<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – Si hay error al leer el archivo</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<p id="module-src.core.use_cases.sector_analysis_use_cases">Módulo que implementa los casos de uso para el análisis de sectores aéreos,
+siguiendo los principios de arquitectura hexagonal y clean architecture.</p>
+<p>Este módulo contiene la lógica de negocio para consultar y analizar
+información de sectores aéreos, manteniendo la independencia de los
+detalles de implementación.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.use_cases.sector_analysis_use_cases.GetAllSectorsUseCase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.use_cases.sector_analysis_use_cases.</span></span><span class="sig-name descname"><span class="pre">GetAllSectorsUseCase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sector_analysis_repository</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ports.html#src.core.ports.sector_analysis_repository.SectorAnalysisRepository" title="src.core.ports.sector_analysis_repository.SectorAnalysisRepository"><span class="pre">SectorAnalysisRepository</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/use_cases/sector_analysis_use_cases.html#GetAllSectorsUseCase"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.sector_analysis_use_cases.GetAllSectorsUseCase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Caso de uso para obtener todos los sectores disponibles.</p>
+<p>Esta clase implementa la lógica de negocio para obtener la lista
+completa de sectores en el sistema.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.use_cases.sector_analysis_use_cases.GetAllSectorsUseCase.sector_analysis_repository">
+<span class="sig-name descname"><span class="pre">sector_analysis_repository</span></span><a class="headerlink" href="#src.core.use_cases.sector_analysis_use_cases.GetAllSectorsUseCase.sector_analysis_repository" title="Link to this definition"></a></dt>
+<dd><p>Repositorio de análisis de sectores</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ports.html#src.core.ports.sector_analysis_repository.SectorAnalysisRepository" title="src.core.ports.sector_analysis_repository.SectorAnalysisRepository">SectorAnalysisRepository</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.core.use_cases.sector_analysis_use_cases.GetAllSectorsUseCase.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/src/core/use_cases/sector_analysis_use_cases.html#GetAllSectorsUseCase.execute"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.sector_analysis_use_cases.GetAllSectorsUseCase.execute" title="Link to this definition"></a></dt>
+<dd><p>Ejecuta la consulta de todos los sectores.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Devuelve<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Lista de identificadores de sectores</p>
+</dd>
+<dt class="field-even">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.use_cases.sector_analysis_use_cases.GetSectorAnalysisByDateRangeUseCase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.use_cases.sector_analysis_use_cases.</span></span><span class="sig-name descname"><span class="pre">GetSectorAnalysisByDateRangeUseCase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sector_analysis_repository</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ports.html#src.core.ports.sector_analysis_repository.SectorAnalysisRepository" title="src.core.ports.sector_analysis_repository.SectorAnalysisRepository"><span class="pre">SectorAnalysisRepository</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/use_cases/sector_analysis_use_cases.html#GetSectorAnalysisByDateRangeUseCase"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.sector_analysis_use_cases.GetSectorAnalysisByDateRangeUseCase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Caso de uso para obtener análisis de un sector en un rango de fechas.</p>
+<p>Esta clase implementa la lógica de negocio para consultar los análisis
+de un sector dentro de un período específico.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.use_cases.sector_analysis_use_cases.GetSectorAnalysisByDateRangeUseCase.sector_analysis_repository">
+<span class="sig-name descname"><span class="pre">sector_analysis_repository</span></span><a class="headerlink" href="#src.core.use_cases.sector_analysis_use_cases.GetSectorAnalysisByDateRangeUseCase.sector_analysis_repository" title="Link to this definition"></a></dt>
+<dd><p>Repositorio de análisis de sectores</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ports.html#src.core.ports.sector_analysis_repository.SectorAnalysisRepository" title="src.core.ports.sector_analysis_repository.SectorAnalysisRepository">SectorAnalysisRepository</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.core.use_cases.sector_analysis_use_cases.GetSectorAnalysisByDateRangeUseCase.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="entities.html#src.core.entities.sector_analysis.SectorDetailedAnalysis" title="src.core.entities.sector_analysis.SectorDetailedAnalysis"><span class="pre">SectorDetailedAnalysis</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/src/core/use_cases/sector_analysis_use_cases.html#GetSectorAnalysisByDateRangeUseCase.execute"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.sector_analysis_use_cases.GetSectorAnalysisByDateRangeUseCase.execute" title="Link to this definition"></a></dt>
+<dd><p>Ejecuta la consulta de análisis por rango de fechas.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sector</strong> (<em>str</em>) – Identificador del sector</p></li>
+<li><p><strong>start_date</strong> (<em>datetime</em>) – Fecha inicial del rango</p></li>
+<li><p><strong>end_date</strong> (<em>datetime</em>) – Fecha final del rango</p></li>
+</ul>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Lista de análisis en el rango de fechas</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="entities.html#src.core.entities.sector_analysis.SectorDetailedAnalysis" title="src.core.entities.sector_analysis.SectorDetailedAnalysis">SectorDetailedAnalysis</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.use_cases.sector_analysis_use_cases.GetSectorAnalysisByDateUseCase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.use_cases.sector_analysis_use_cases.</span></span><span class="sig-name descname"><span class="pre">GetSectorAnalysisByDateUseCase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sector_analysis_repository</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ports.html#src.core.ports.sector_analysis_repository.SectorAnalysisRepository" title="src.core.ports.sector_analysis_repository.SectorAnalysisRepository"><span class="pre">SectorAnalysisRepository</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/use_cases/sector_analysis_use_cases.html#GetSectorAnalysisByDateUseCase"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.sector_analysis_use_cases.GetSectorAnalysisByDateUseCase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Caso de uso para obtener el análisis de un sector en una fecha específica.</p>
+<p>Esta clase implementa la lógica de negocio para consultar el análisis
+detallado de un sector aéreo en una fecha determinada.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.use_cases.sector_analysis_use_cases.GetSectorAnalysisByDateUseCase.sector_analysis_repository">
+<span class="sig-name descname"><span class="pre">sector_analysis_repository</span></span><a class="headerlink" href="#src.core.use_cases.sector_analysis_use_cases.GetSectorAnalysisByDateUseCase.sector_analysis_repository" title="Link to this definition"></a></dt>
+<dd><p>Repositorio de análisis de sectores</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ports.html#src.core.ports.sector_analysis_repository.SectorAnalysisRepository" title="src.core.ports.sector_analysis_repository.SectorAnalysisRepository">SectorAnalysisRepository</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.core.use_cases.sector_analysis_use_cases.GetSectorAnalysisByDateUseCase.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="entities.html#src.core.entities.sector_analysis.SectorDetailedAnalysis" title="src.core.entities.sector_analysis.SectorDetailedAnalysis"><span class="pre">SectorDetailedAnalysis</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/src/core/use_cases/sector_analysis_use_cases.html#GetSectorAnalysisByDateUseCase.execute"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.sector_analysis_use_cases.GetSectorAnalysisByDateUseCase.execute" title="Link to this definition"></a></dt>
+<dd><p>Ejecuta la consulta de análisis por sector y fecha.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sector</strong> (<em>str</em>) – Identificador del sector</p></li>
+<li><p><strong>date</strong> (<em>datetime</em>) – Fecha del análisis</p></li>
+</ul>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Análisis detallado o None si no existe</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[<a class="reference internal" href="entities.html#src.core.entities.sector_analysis.SectorDetailedAnalysis" title="src.core.entities.sector_analysis.SectorDetailedAnalysis">SectorDetailedAnalysis</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.use_cases.sector_analysis_use_cases.GetSectorAnalysisUseCase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.use_cases.sector_analysis_use_cases.</span></span><span class="sig-name descname"><span class="pre">GetSectorAnalysisUseCase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sector_analysis_repository</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="ports.html#src.core.ports.sector_analysis_repository.SectorAnalysisRepository" title="src.core.ports.sector_analysis_repository.SectorAnalysisRepository"><span class="pre">SectorAnalysisRepository</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/use_cases/sector_analysis_use_cases.html#GetSectorAnalysisUseCase"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.sector_analysis_use_cases.GetSectorAnalysisUseCase" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Caso de uso para obtener todos los análisis de un sector.</p>
+<p>Esta clase implementa la lógica de negocio para consultar todos
+los análisis históricos de un sector específico.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.use_cases.sector_analysis_use_cases.GetSectorAnalysisUseCase.sector_analysis_repository">
+<span class="sig-name descname"><span class="pre">sector_analysis_repository</span></span><a class="headerlink" href="#src.core.use_cases.sector_analysis_use_cases.GetSectorAnalysisUseCase.sector_analysis_repository" title="Link to this definition"></a></dt>
+<dd><p>Repositorio de análisis de sectores</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="ports.html#src.core.ports.sector_analysis_repository.SectorAnalysisRepository" title="src.core.ports.sector_analysis_repository.SectorAnalysisRepository">SectorAnalysisRepository</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.core.use_cases.sector_analysis_use_cases.GetSectorAnalysisUseCase.execute">
+<span class="sig-name descname"><span class="pre">execute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="entities.html#src.core.entities.sector_analysis.SectorDetailedAnalysis" title="src.core.entities.sector_analysis.SectorDetailedAnalysis"><span class="pre">SectorDetailedAnalysis</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/src/core/use_cases/sector_analysis_use_cases.html#GetSectorAnalysisUseCase.execute"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.use_cases.sector_analysis_use_cases.GetSectorAnalysisUseCase.execute" title="Link to this definition"></a></dt>
+<dd><p>Ejecuta la consulta de todos los análisis de un sector.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sector</strong> (<em>str</em>) – Identificador del sector</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Lista de análisis detallados del sector</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="entities.html#src.core.entities.sector_analysis.SectorDetailedAnalysis" title="src.core.entities.sector_analysis.SectorDetailedAnalysis">SectorDetailedAnalysis</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pie de página">
+        <a href="ports.html" class="btn btn-neutral float-left" title="Core Ports" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Anterior</a>
+        <a href="../infrastructure/adapters.html" class="btn btn-neutral float-right" title="Infrastructure Adapters" accesskey="n" rel="next">Siguiente <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2025, Iván Forero.</p>
+  </div>
+
+  Compilado con <a href="https://www.sphinx-doc.org/">Sphinx</a> usando un
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">tema</a>
+    proporcionado por <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

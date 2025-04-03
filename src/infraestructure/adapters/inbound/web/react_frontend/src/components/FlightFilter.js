@@ -1,7 +1,59 @@
+/**
+ * Módulo que implementa los filtros de búsqueda para vuelos,
+ * siguiendo los principios de arquitectura hexagonal y clean architecture.
+ * 
+ * Este componente actúa como un adaptador de interfaz de usuario en la capa
+ * de infraestructura, gestionando los criterios de filtrado y comunicándose
+ * con los puertos primarios para obtener las opciones disponibles.
+ */
+
 import React, { useState, useEffect } from 'react';
 import './FlightFilter.css';
 
+/**
+ * Componente para filtrado de vuelos.
+ * 
+ * Implementa la interfaz de usuario para la selección de múltiples criterios
+ * de filtrado, actuando como un adaptador primario que obtiene las opciones
+ * disponibles a través de la API REST y comunica los cambios al componente padre.
+ * 
+ * @component
+ * @param {Object} props - Propiedades del componente
+ * @param {Function} props.onFilterChange - Callback para notificar cambios en los filtros
+ */
 function FlightFilter({ onFilterChange }) {
+    /**
+     * Obtiene las opciones disponibles para cada criterio de filtrado.
+     * 
+     * @async
+     * @function
+     * @throws {Error} Error en la obtención de datos
+     */
+    const fetchOptions = async () => {
+        // Agrupa todas las funciones fetch
+        await Promise.all([
+            fetchYears(),
+            fetchMonths(),
+            fetchOrigins(),
+            fetchDestinations(),
+            fetchFlightTypes(),
+            fetchAirlines(),
+            fetchAircraftTypes(),
+            fetchLevelRanges()
+        ]);
+    };
+
+    /**
+     * Maneja los cambios en cualquier filtro y notifica al componente padre.
+     * 
+     * @function
+     * @param {string} filterType - Tipo de filtro modificado
+     * @param {Array} selectedOptions - Opciones seleccionadas
+     */
+    const handleFilterChange = (filterType, selectedOptions) => {
+        // Las funciones handle*Change existentes implementan esta lógica
+    };
+
     // State declarations
     const [airlines, setAirlines] = useState([]);
     const [selectedAirlines, setSelectedAirlines] = useState([]);

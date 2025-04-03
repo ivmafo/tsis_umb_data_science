@@ -1,0 +1,891 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Infrastructure Adapters &mdash; documentación de TSIS UMB Data Science - </title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=e2bb6099"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/translations.js?v=f85f4cfb"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../search.html" />
+    <link rel="next" title="Infrastructure Configuration" href="config.html" />
+    <link rel="prev" title="Core Use Cases" href="../core/use_cases.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            TSIS UMB Data Science
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" aria-label="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../core/dtos.html">Core DTOs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/entities.html">Core Entities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/ports.html">Core Ports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/use_cases.html">Core Use Cases</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Infrastructure Adapters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#inbound-adapters">Inbound Adapters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#react-frontend-components">React Frontend Components</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#outbound-adapters">Outbound Adapters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#database-repositories">Database Repositories</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#src.infraestructure.adapters.outbound.postgres_config_repository.PostgresConfigRepository"><code class="docutils literal notranslate"><span class="pre">PostgresConfigRepository</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.infraestructure.adapters.outbound.postgres_file_processing_control_repository.PostgresFileProcessingControlRepository"><code class="docutils literal notranslate"><span class="pre">PostgresFileProcessingControlRepository</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository"><code class="docutils literal notranslate"><span class="pre">PostgresFlightRepository</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.infraestructure.adapters.outbound.postgres_level_range_repository.PostgresLevelRangeRepository"><code class="docutils literal notranslate"><span class="pre">PostgresLevelRangeRepository</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.infraestructure.adapters.outbound.postgres_sector_analysis_repository.PostgresSectorAnalysisRepository"><code class="docutils literal notranslate"><span class="pre">PostgresSectorAnalysisRepository</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#src.infraestructure.adapters.outbound.postgres_sector_capacity_repository.PostgresSectorCapacityRepository"><code class="docutils literal notranslate"><span class="pre">PostgresSectorCapacityRepository</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#file-system-adapters">File System Adapters</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#src.infraestructure.adapters.outbound.file_system_repository.LocalFileSystemRepository"><code class="docutils literal notranslate"><span class="pre">LocalFileSystemRepository</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="config.html">Infrastructure Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../frontend/components.html">Frontend Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../entrypoints/api.html">Puntos de Entrada de la API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">TSIS UMB Data Science</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Infrastructure Adapters</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/modules/infrastructure/adapters.rst.txt" rel="nofollow"> Ver código fuente de la página</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="infrastructure-adapters">
+<h1>Infrastructure Adapters<a class="headerlink" href="#infrastructure-adapters" title="Link to this heading"></a></h1>
+<section id="inbound-adapters">
+<h2>Inbound Adapters<a class="headerlink" href="#inbound-adapters" title="Link to this heading"></a></h2>
+<section id="react-frontend-components">
+<h3>React Frontend Components<a class="headerlink" href="#react-frontend-components" title="Link to this heading"></a></h3>
+</section>
+</section>
+<section id="outbound-adapters">
+<h2>Outbound Adapters<a class="headerlink" href="#outbound-adapters" title="Link to this heading"></a></h2>
+<section id="database-repositories">
+<h3>Database Repositories<a class="headerlink" href="#database-repositories" title="Link to this heading"></a></h3>
+<p id="module-src.infraestructure.adapters.outbound.postgres_config_repository">Módulo que implementa el repositorio de configuración usando PostgreSQL,
+siguiendo los principios de arquitectura hexagonal y clean architecture.</p>
+<p>Este módulo actúa como un adaptador secundario en la capa de infraestructura,
+implementando el puerto de salida ConfigRepository definido en el dominio.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_config_repository.PostgresConfigRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.infraestructure.adapters.outbound.postgres_config_repository.</span></span><span class="sig-name descname"><span class="pre">PostgresConfigRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_config_repository.html#PostgresConfigRepository"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_config_repository.PostgresConfigRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../core/ports.html#src.core.ports.config_repository.ConfigRepository" title="src.core.ports.config_repository.ConfigRepository"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigRepository</span></code></a></p>
+<p>Implementación del repositorio de configuración usando PostgreSQL.</p>
+<p>Esta clase actúa como un adaptador secundario que implementa las operaciones
+definidas en el puerto ConfigRepository del dominio, permitiendo la
+persistencia y recuperación de configuraciones en PostgreSQL.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>connection</strong> (<em>psycopg2.extensions.connection</em>) – Conexión a la base de datos PostgreSQL</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_config_repository.PostgresConfigRepository.create">
+<span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_config_repository.html#PostgresConfigRepository.create"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_config_repository.PostgresConfigRepository.create" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_config_repository.PostgresConfigRepository.delete_by_key">
+<span class="sig-name descname"><span class="pre">delete_by_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_config_repository.html#PostgresConfigRepository.delete_by_key"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_config_repository.PostgresConfigRepository.delete_by_key" title="Link to this definition"></a></dt>
+<dd><p>Elimina una configuración por su clave.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<em>str</em>) – Clave de la configuración a eliminar</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>True si se eliminó correctamente, False en caso contrario</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+<dt class="field-even">Muestra<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – Error en la operación de eliminación</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_config_repository.PostgresConfigRepository.find_by_key">
+<span class="sig-name descname"><span class="pre">find_by_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../core/entities.html#src.core.entities.config.Config" title="src.core.entities.config.Config"><span class="pre">Config</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_config_repository.html#PostgresConfigRepository.find_by_key"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_config_repository.PostgresConfigRepository.find_by_key" title="Link to this definition"></a></dt>
+<dd><p>Busca una configuración por su clave.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>key</strong> (<em>str</em>) – Clave de configuración a buscar</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Configuración encontrada o None si no existe</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[<a class="reference internal" href="../core/entities.html#src.core.entities.config.Config" title="src.core.entities.config.Config">Config</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_config_repository.PostgresConfigRepository.get_all">
+<span class="sig-name descname"><span class="pre">get_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../core/entities.html#src.core.entities.config.Config" title="src.core.entities.config.Config"><span class="pre">Config</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_config_repository.html#PostgresConfigRepository.get_all"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_config_repository.PostgresConfigRepository.get_all" title="Link to this definition"></a></dt>
+<dd><p>Obtiene todas las configuraciones almacenadas.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Devuelve<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Lista de todas las configuraciones</p>
+</dd>
+<dt class="field-even">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../core/entities.html#src.core.entities.config.Config" title="src.core.entities.config.Config">Config</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_config_repository.PostgresConfigRepository.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../core/entities.html#src.core.entities.config.Config" title="src.core.entities.config.Config"><span class="pre">Config</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../core/entities.html#src.core.entities.config.Config" title="src.core.entities.config.Config"><span class="pre">Config</span></a></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_config_repository.html#PostgresConfigRepository.save"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_config_repository.PostgresConfigRepository.save" title="Link to this definition"></a></dt>
+<dd><p>Guarda una nueva configuración en la base de datos.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<a class="reference internal" href="../core/entities.html#src.core.entities.config.Config" title="src.core.entities.config.Config"><em>Config</em></a>) – Entidad de configuración a guardar</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Configuración guardada con datos actualizados</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../core/entities.html#src.core.entities.config.Config" title="src.core.entities.config.Config">Config</a></p>
+</dd>
+<dt class="field-even">Muestra<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – Error en la operación de base de datos</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_config_repository.PostgresConfigRepository.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../core/entities.html#src.core.entities.config.Config" title="src.core.entities.config.Config"><span class="pre">Config</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../core/entities.html#src.core.entities.config.Config" title="src.core.entities.config.Config"><span class="pre">Config</span></a></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_config_repository.html#PostgresConfigRepository.update"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_config_repository.PostgresConfigRepository.update" title="Link to this definition"></a></dt>
+<dd><p>Actualiza una configuración existente.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<a class="reference internal" href="../core/entities.html#src.core.entities.config.Config" title="src.core.entities.config.Config"><em>Config</em></a>) – Configuración con datos actualizados</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Configuración actualizada</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../core/entities.html#src.core.entities.config.Config" title="src.core.entities.config.Config">Config</a></p>
+</dd>
+<dt class="field-even">Muestra<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – Error en la operación de actualización</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<p id="module-src.infraestructure.adapters.outbound.postgres_file_processing_control_repository">Módulo que implementa el repositorio de control de procesamiento de archivos usando PostgreSQL,
+siguiendo los principios de arquitectura hexagonal y clean architecture.</p>
+<p>Este módulo actúa como un adaptador secundario en la capa de infraestructura,
+implementando el puerto de salida FileProcessingControlRepository definido en el dominio.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_file_processing_control_repository.PostgresFileProcessingControlRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.infraestructure.adapters.outbound.postgres_file_processing_control_repository.</span></span><span class="sig-name descname"><span class="pre">PostgresFileProcessingControlRepository</span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_file_processing_control_repository.html#PostgresFileProcessingControlRepository"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_file_processing_control_repository.PostgresFileProcessingControlRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../core/ports.html#src.core.ports.file_processing_control_repository.FileProcessingControlRepository" title="src.core.ports.file_processing_control_repository.FileProcessingControlRepository"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileProcessingControlRepository</span></code></a></p>
+<p>Implementación del repositorio de control de procesamiento de archivos usando PostgreSQL.</p>
+<p>Esta clase actúa como un adaptador secundario que implementa las operaciones
+definidas en el puerto FileProcessingControlRepository del dominio, permitiendo
+el seguimiento y control de archivos procesados en la base de datos.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>connection</strong> (<em>psycopg2.extensions.connection</em>) – Conexión a la base de datos PostgreSQL</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_file_processing_control_repository.PostgresFileProcessingControlRepository.add_file">
+<span class="sig-name descname"><span class="pre">add_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_file_processing_control_repository.html#PostgresFileProcessingControlRepository.add_file"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_file_processing_control_repository.PostgresFileProcessingControlRepository.add_file" title="Link to this definition"></a></dt>
+<dd><p>Registra un nuevo archivo como procesado.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_name</strong> (<em>str</em>) – Nombre del archivo procesado</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_file_processing_control_repository.PostgresFileProcessingControlRepository.get_all_files">
+<span class="sig-name descname"><span class="pre">get_all_files</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_file_processing_control_repository.html#PostgresFileProcessingControlRepository.get_all_files"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_file_processing_control_repository.PostgresFileProcessingControlRepository.get_all_files" title="Link to this definition"></a></dt>
+<dd><p>Obtiene la lista de todos los archivos procesados.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Devuelve<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Lista de nombres de archivos procesados</p>
+</dd>
+<dt class="field-even">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_file_processing_control_repository.PostgresFileProcessingControlRepository.is_file_processed">
+<span class="sig-name descname"><span class="pre">is_file_processed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_file_processing_control_repository.html#PostgresFileProcessingControlRepository.is_file_processed"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_file_processing_control_repository.PostgresFileProcessingControlRepository.is_file_processed" title="Link to this definition"></a></dt>
+<dd><p>Verifica si un archivo ya ha sido procesado.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_name</strong> (<em>str</em>) – Nombre del archivo a verificar</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>True si el archivo ya fue procesado, False en caso contrario</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class" id="module-src.infraestructure.adapters.outbound.postgres_flight_repository">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.infraestructure.adapters.outbound.postgres_flight_repository.</span></span><span class="sig-name descname"><span class="pre">PostgresFlightRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">connection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_flight_repository.html#PostgresFlightRepository"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../core/ports.html#src.core.ports.flight_repository.FlightRepository" title="src.core.ports.flight_repository.FlightRepository"><code class="xref py py-class docutils literal notranslate"><span class="pre">FlightRepository</span></code></a></p>
+<p>Implementación del repositorio de vuelos usando PostgreSQL.</p>
+<p>Esta clase actúa como un adaptador secundario que implementa las operaciones
+definidas en el puerto FlightRepository del dominio, permitiendo la
+persistencia y consulta de datos de vuelos en PostgreSQL.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.connection">
+<span class="sig-name descname"><span class="pre">connection</span></span><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.connection" title="Link to this definition"></a></dt>
+<dd><p>Instancia de conexión a la base de datos</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>psycopg2.extensions.connection</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.find_by_callsign">
+<span class="sig-name descname"><span class="pre">find_by_callsign</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">callsign</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../core/entities.html#src.core.entities.flight.Flight" title="src.core.entities.flight.Flight"><span class="pre">Flight</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_flight_repository.html#PostgresFlightRepository.find_by_callsign"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.find_by_callsign" title="Link to this definition"></a></dt>
+<dd><p>Busca un vuelo por su señal distintiva.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>callsign</strong> (<em>str</em>) – Señal distintiva del vuelo</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Vuelo encontrado o None si no existe</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[<a class="reference internal" href="../core/entities.html#src.core.entities.flight.Flight" title="src.core.entities.flight.Flight">Flight</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.find_by_id">
+<span class="sig-name descname"><span class="pre">find_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flight_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../core/entities.html#src.core.entities.flight.Flight" title="src.core.entities.flight.Flight"><span class="pre">Flight</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_flight_repository.html#PostgresFlightRepository.find_by_id"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.find_by_id" title="Link to this definition"></a></dt>
+<dd><p>Busca un vuelo por su identificador.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>flight_id</strong> (<em>str</em>) – Identificador del vuelo</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Vuelo encontrado o None si no existe</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[<a class="reference internal" href="../core/entities.html#src.core.entities.flight.Flight" title="src.core.entities.flight.Flight">Flight</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.get_airlines_count">
+<span class="sig-name descname"><span class="pre">get_airlines_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../core/dtos.html#src.core.dtos.flight_dtos.FlightFilterDTO" title="src.core.dtos.flight_dtos.FlightFilterDTO"><span class="pre">FlightFilterDTO</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../core/dtos.html#src.core.dtos.flight_dtos.FlightAirlineCountDTO" title="src.core.dtos.flight_dtos.FlightAirlineCountDTO"><span class="pre">FlightAirlineCountDTO</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_flight_repository.html#PostgresFlightRepository.get_airlines_count"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.get_airlines_count" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.get_destinations_count">
+<span class="sig-name descname"><span class="pre">get_destinations_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../core/dtos.html#src.core.dtos.flight_dtos.FlightFilterDTO" title="src.core.dtos.flight_dtos.FlightFilterDTO"><span class="pre">FlightFilterDTO</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../core/dtos.html#src.core.dtos.flight_dtos.FlightDestinationCountDTO" title="src.core.dtos.flight_dtos.FlightDestinationCountDTO"><span class="pre">FlightDestinationCountDTO</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_flight_repository.html#PostgresFlightRepository.get_destinations_count"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.get_destinations_count" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.get_distinct_aircraft_types">
+<span class="sig-name descname"><span class="pre">get_distinct_aircraft_types</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_flight_repository.html#PostgresFlightRepository.get_distinct_aircraft_types"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.get_distinct_aircraft_types" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.get_distinct_airlines">
+<span class="sig-name descname"><span class="pre">get_distinct_airlines</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_flight_repository.html#PostgresFlightRepository.get_distinct_airlines"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.get_distinct_airlines" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.get_distinct_destinations">
+<span class="sig-name descname"><span class="pre">get_distinct_destinations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_flight_repository.html#PostgresFlightRepository.get_distinct_destinations"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.get_distinct_destinations" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.get_distinct_flight_types">
+<span class="sig-name descname"><span class="pre">get_distinct_flight_types</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_flight_repository.html#PostgresFlightRepository.get_distinct_flight_types"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.get_distinct_flight_types" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.get_distinct_months">
+<span class="sig-name descname"><span class="pre">get_distinct_months</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_flight_repository.html#PostgresFlightRepository.get_distinct_months"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.get_distinct_months" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.get_distinct_origins">
+<span class="sig-name descname"><span class="pre">get_distinct_origins</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_flight_repository.html#PostgresFlightRepository.get_distinct_origins"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.get_distinct_origins" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.get_distinct_years">
+<span class="sig-name descname"><span class="pre">get_distinct_years</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_flight_repository.html#PostgresFlightRepository.get_distinct_years"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.get_distinct_years" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.get_flight_types_count">
+<span class="sig-name descname"><span class="pre">get_flight_types_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../core/dtos.html#src.core.dtos.flight_dtos.FlightFilterDTO" title="src.core.dtos.flight_dtos.FlightFilterDTO"><span class="pre">FlightFilterDTO</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../core/dtos.html#src.core.dtos.flight_dtos.FlightTypeCountDTO" title="src.core.dtos.flight_dtos.FlightTypeCountDTO"><span class="pre">FlightTypeCountDTO</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_flight_repository.html#PostgresFlightRepository.get_flight_types_count"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.get_flight_types_count" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.get_hourly_counts_by_date_ranges">
+<span class="sig-name descname"><span class="pre">get_hourly_counts_by_date_ranges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_ranges</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../core/dtos.html#src.core.dtos.flight_dtos.DateRangeDTO" title="src.core.dtos.flight_dtos.DateRangeDTO"><span class="pre">DateRangeDTO</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">airport</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../core/dtos.html#src.core.dtos.flight_dtos.FlightHourlyCountDTO" title="src.core.dtos.flight_dtos.FlightHourlyCountDTO"><span class="pre">FlightHourlyCountDTO</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_flight_repository.html#PostgresFlightRepository.get_hourly_counts_by_date_ranges"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.get_hourly_counts_by_date_ranges" title="Link to this definition"></a></dt>
+<dd><p>Get hourly flight counts for specified date ranges and origin airport.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>date_ranges</strong> (<em>List</em><em>[</em><a class="reference internal" href="../core/dtos.html#src.core.dtos.flight_dtos.DateRangeDTO" title="src.core.dtos.flight_dtos.DateRangeDTO"><em>DateRangeDTO</em></a><em>]</em>) – List of date ranges to analyze</p></li>
+<li><p><strong>airport</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Origin airport code to filter by</p></li>
+</ul>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Hourly flight counts for each date range</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="../core/dtos.html#src.core.dtos.flight_dtos.FlightHourlyCountDTO" title="src.core.dtos.flight_dtos.FlightHourlyCountDTO">FlightHourlyCountDTO</a>]</p>
+</dd>
+<dt class="field-even">Muestra<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – If there’s an error executing the query</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.get_hourly_counts_by_date_ranges_destination">
+<span class="sig-name descname"><span class="pre">get_hourly_counts_by_date_ranges_destination</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_ranges</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../core/dtos.html#src.core.dtos.flight_dtos.DateRangeDTO" title="src.core.dtos.flight_dtos.DateRangeDTO"><span class="pre">DateRangeDTO</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">airport</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../core/dtos.html#src.core.dtos.flight_dtos.FlightHourlyCountDTO" title="src.core.dtos.flight_dtos.FlightHourlyCountDTO"><span class="pre">FlightHourlyCountDTO</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_flight_repository.html#PostgresFlightRepository.get_hourly_counts_by_date_ranges_destination"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.get_hourly_counts_by_date_ranges_destination" title="Link to this definition"></a></dt>
+<dd><p>Get hourly flight counts for specified date ranges and destination airport.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>date_ranges</strong> (<em>List</em><em>[</em><a class="reference internal" href="../core/dtos.html#src.core.dtos.flight_dtos.DateRangeDTO" title="src.core.dtos.flight_dtos.DateRangeDTO"><em>DateRangeDTO</em></a><em>]</em>) – List of date ranges to analyze</p></li>
+<li><p><strong>airport</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – Destination airport code to filter by</p></li>
+</ul>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Hourly flight counts for each date range</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="../core/dtos.html#src.core.dtos.flight_dtos.FlightHourlyCountDTO" title="src.core.dtos.flight_dtos.FlightHourlyCountDTO">FlightHourlyCountDTO</a>]</p>
+</dd>
+<dt class="field-even">Muestra<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – If there’s an error executing the query</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.get_origins_count">
+<span class="sig-name descname"><span class="pre">get_origins_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filters</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../core/dtos.html#src.core.dtos.flight_dtos.FlightFilterDTO" title="src.core.dtos.flight_dtos.FlightFilterDTO"><span class="pre">FlightFilterDTO</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../core/dtos.html#src.core.dtos.flight_dtos.FlightOriginCountDTO" title="src.core.dtos.flight_dtos.FlightOriginCountDTO"><span class="pre">FlightOriginCountDTO</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_flight_repository.html#PostgresFlightRepository.get_origins_count"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.get_origins_count" title="Link to this definition"></a></dt>
+<dd><p>Obtiene el conteo de vuelos por origen.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filters</strong> (<a class="reference internal" href="../core/dtos.html#src.core.dtos.flight_dtos.FlightFilterDTO" title="src.core.dtos.flight_dtos.FlightFilterDTO"><em>FlightFilterDTO</em></a>) – Filtros a aplicar en la búsqueda</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Lista de conteos por origen</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="../core/dtos.html#src.core.dtos.flight_dtos.FlightOriginCountDTO" title="src.core.dtos.flight_dtos.FlightOriginCountDTO">FlightOriginCountDTO</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flight</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../core/entities.html#src.core.entities.flight.Flight" title="src.core.entities.flight.Flight"><span class="pre">Flight</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../core/entities.html#src.core.entities.flight.Flight" title="src.core.entities.flight.Flight"><span class="pre">Flight</span></a></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_flight_repository.html#PostgresFlightRepository.save"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_flight_repository.PostgresFlightRepository.save" title="Link to this definition"></a></dt>
+<dd><p>Guarda un nuevo vuelo en la base de datos.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>flight</strong> (<a class="reference internal" href="../core/entities.html#src.core.entities.flight.Flight" title="src.core.entities.flight.Flight"><em>Flight</em></a>) – Entidad de vuelo a guardar</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Vuelo guardado con datos actualizados</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../core/entities.html#src.core.entities.flight.Flight" title="src.core.entities.flight.Flight">Flight</a></p>
+</dd>
+<dt class="field-even">Muestra<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – Error en la operación de guardado</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class" id="module-src.infraestructure.adapters.outbound.postgres_level_range_repository">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_level_range_repository.PostgresLevelRangeRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.infraestructure.adapters.outbound.postgres_level_range_repository.</span></span><span class="sig-name descname"><span class="pre">PostgresLevelRangeRepository</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connection</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">connection</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_level_range_repository.html#PostgresLevelRangeRepository"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_level_range_repository.PostgresLevelRangeRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../core/ports.html#src.core.ports.level_range_repository.LevelRangeRepository" title="src.core.ports.level_range_repository.LevelRangeRepository"><code class="xref py py-class docutils literal notranslate"><span class="pre">LevelRangeRepository</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_level_range_repository.PostgresLevelRangeRepository.delete_by_id">
+<span class="sig-name descname"><span class="pre">delete_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_level_range_repository.html#PostgresLevelRangeRepository.delete_by_id"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_level_range_repository.PostgresLevelRangeRepository.delete_by_id" title="Link to this definition"></a></dt>
+<dd><p>Elimina un rango de nivel por su identificador.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id</strong> (<em>int</em>) – Identificador del rango de nivel a eliminar</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>True si se eliminó correctamente, False si no</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_level_range_repository.PostgresLevelRangeRepository.find_by_id">
+<span class="sig-name descname"><span class="pre">find_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../core/entities.html#src.core.entities.level_range.LevelRange" title="src.core.entities.level_range.LevelRange"><span class="pre">LevelRange</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_level_range_repository.html#PostgresLevelRangeRepository.find_by_id"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_level_range_repository.PostgresLevelRangeRepository.find_by_id" title="Link to this definition"></a></dt>
+<dd><p>Busca un rango de nivel por su identificador.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id</strong> (<em>int</em>) – Identificador del rango de nivel</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Rango de nivel encontrado o None si no existe</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[<a class="reference internal" href="../core/entities.html#src.core.entities.level_range.LevelRange" title="src.core.entities.level_range.LevelRange">LevelRange</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_level_range_repository.PostgresLevelRangeRepository.find_by_level_range">
+<span class="sig-name descname"><span class="pre">find_by_level_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nivel_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nivel_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../core/entities.html#src.core.entities.level_range.LevelRange" title="src.core.entities.level_range.LevelRange"><span class="pre">LevelRange</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_level_range_repository.html#PostgresLevelRangeRepository.find_by_level_range"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_level_range_repository.PostgresLevelRangeRepository.find_by_level_range" title="Link to this definition"></a></dt>
+<dd><p>Busca rangos de nivel dentro de un intervalo específico.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nivel_min</strong> (<em>int</em>) – Nivel mínimo del rango</p></li>
+<li><p><strong>nivel_max</strong> (<em>int</em>) – Nivel máximo del rango</p></li>
+</ul>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Lista de rangos de nivel que cumplen el criterio</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="../core/entities.html#src.core.entities.level_range.LevelRange" title="src.core.entities.level_range.LevelRange">LevelRange</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_level_range_repository.PostgresLevelRangeRepository.find_by_route">
+<span class="sig-name descname"><span class="pre">find_by_route</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">origen</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destino</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../core/entities.html#src.core.entities.level_range.LevelRange" title="src.core.entities.level_range.LevelRange"><span class="pre">LevelRange</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_level_range_repository.html#PostgresLevelRangeRepository.find_by_route"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_level_range_repository.PostgresLevelRangeRepository.find_by_route" title="Link to this definition"></a></dt>
+<dd><p>Busca un rango de nivel por ruta específica.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>origen</strong> (<em>str</em>) – Punto de origen de la ruta</p></li>
+<li><p><strong>destino</strong> (<em>str</em>) – Punto de destino de la ruta</p></li>
+</ul>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Rango de nivel encontrado o None si no existe</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[<a class="reference internal" href="../core/entities.html#src.core.entities.level_range.LevelRange" title="src.core.entities.level_range.LevelRange">LevelRange</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_level_range_repository.PostgresLevelRangeRepository.find_by_zone">
+<span class="sig-name descname"><span class="pre">find_by_zone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zona</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../core/entities.html#src.core.entities.level_range.LevelRange" title="src.core.entities.level_range.LevelRange"><span class="pre">LevelRange</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_level_range_repository.html#PostgresLevelRangeRepository.find_by_zone"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_level_range_repository.PostgresLevelRangeRepository.find_by_zone" title="Link to this definition"></a></dt>
+<dd><p>Obtiene todos los rangos de nivel de una zona.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>zona</strong> (<em>str</em>) – Identificador de la zona</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Lista de rangos de nivel en la zona</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="../core/entities.html#src.core.entities.level_range.LevelRange" title="src.core.entities.level_range.LevelRange">LevelRange</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_level_range_repository.PostgresLevelRangeRepository.get_all">
+<span class="sig-name descname"><span class="pre">get_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../core/entities.html#src.core.entities.level_range.LevelRange" title="src.core.entities.level_range.LevelRange"><span class="pre">LevelRange</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_level_range_repository.html#PostgresLevelRangeRepository.get_all"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_level_range_repository.PostgresLevelRangeRepository.get_all" title="Link to this definition"></a></dt>
+<dd><p>Obtiene todos los rangos de nivel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Devuelve<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Lista de todos los rangos de nivel</p>
+</dd>
+<dt class="field-even">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[<a class="reference internal" href="../core/entities.html#src.core.entities.level_range.LevelRange" title="src.core.entities.level_range.LevelRange">LevelRange</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_level_range_repository.PostgresLevelRangeRepository.save">
+<span class="sig-name descname"><span class="pre">save</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level_range</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../core/entities.html#src.core.entities.level_range.LevelRange" title="src.core.entities.level_range.LevelRange"><span class="pre">LevelRange</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../core/entities.html#src.core.entities.level_range.LevelRange" title="src.core.entities.level_range.LevelRange"><span class="pre">LevelRange</span></a></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_level_range_repository.html#PostgresLevelRangeRepository.save"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_level_range_repository.PostgresLevelRangeRepository.save" title="Link to this definition"></a></dt>
+<dd><p>Guarda un nuevo rango de nivel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>level_range</strong> (<a class="reference internal" href="../core/entities.html#src.core.entities.level_range.LevelRange" title="src.core.entities.level_range.LevelRange"><em>LevelRange</em></a>) – Rango de nivel a guardar</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Rango de nivel guardado con datos actualizados</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../core/entities.html#src.core.entities.level_range.LevelRange" title="src.core.entities.level_range.LevelRange">LevelRange</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_level_range_repository.PostgresLevelRangeRepository.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level_range</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../core/entities.html#src.core.entities.level_range.LevelRange" title="src.core.entities.level_range.LevelRange"><span class="pre">LevelRange</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../core/entities.html#src.core.entities.level_range.LevelRange" title="src.core.entities.level_range.LevelRange"><span class="pre">LevelRange</span></a></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_level_range_repository.html#PostgresLevelRangeRepository.update"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_level_range_repository.PostgresLevelRangeRepository.update" title="Link to this definition"></a></dt>
+<dd><p>Actualiza un rango de nivel existente.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>level_range</strong> (<a class="reference internal" href="../core/entities.html#src.core.entities.level_range.LevelRange" title="src.core.entities.level_range.LevelRange"><em>LevelRange</em></a>) – Rango de nivel con datos actualizados</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Rango de nivel actualizado</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../core/entities.html#src.core.entities.level_range.LevelRange" title="src.core.entities.level_range.LevelRange">LevelRange</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<p id="module-src.infraestructure.adapters.outbound.postgres_sector_analysis_repository">Módulo que implementa el repositorio de análisis de sectores usando PostgreSQL,
+siguiendo los principios de arquitectura hexagonal y clean architecture.</p>
+<p>Este módulo actúa como un adaptador secundario en la capa de infraestructura,
+implementando el puerto de salida SectorAnalysisRepository definido en el dominio.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_sector_analysis_repository.PostgresSectorAnalysisRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.infraestructure.adapters.outbound.postgres_sector_analysis_repository.</span></span><span class="sig-name descname"><span class="pre">PostgresSectorAnalysisRepository</span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_sector_analysis_repository.html#PostgresSectorAnalysisRepository"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_sector_analysis_repository.PostgresSectorAnalysisRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../core/ports.html#src.core.ports.sector_analysis_repository.SectorAnalysisRepository" title="src.core.ports.sector_analysis_repository.SectorAnalysisRepository"><code class="xref py py-class docutils literal notranslate"><span class="pre">SectorAnalysisRepository</span></code></a></p>
+<p>Implementación del repositorio de análisis de sectores usando PostgreSQL.</p>
+<p>Esta clase actúa como un adaptador secundario que implementa las operaciones
+definidas en el puerto SectorAnalysisRepository del dominio, permitiendo
+el análisis detallado de sectores aéreos.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>connection</strong> (<em>psycopg2.extensions.connection</em>) – Conexión a la base de datos PostgreSQL</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_sector_analysis_repository.PostgresSectorAnalysisRepository.get_all_sectors">
+<span class="sig-name descname"><span class="pre">get_all_sectors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_sector_analysis_repository.html#PostgresSectorAnalysisRepository.get_all_sectors"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_sector_analysis_repository.PostgresSectorAnalysisRepository.get_all_sectors" title="Link to this definition"></a></dt>
+<dd><p>Obtiene la lista de todos los sectores disponibles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Devuelve<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Lista de identificadores de sectores</p>
+</dd>
+<dt class="field-even">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_sector_analysis_repository.PostgresSectorAnalysisRepository.get_analysis_by_date_range">
+<span class="sig-name descname"><span class="pre">get_analysis_by_date_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">skip</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10000</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../core/entities.html#src.core.entities.sector_analysis.SectorDetailedAnalysis" title="src.core.entities.sector_analysis.SectorDetailedAnalysis"><span class="pre">SectorDetailedAnalysis</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_sector_analysis_repository.html#PostgresSectorAnalysisRepository.get_analysis_by_date_range"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_sector_analysis_repository.PostgresSectorAnalysisRepository.get_analysis_by_date_range" title="Link to this definition"></a></dt>
+<dd><p>Obtiene análisis detallados de un sector en un rango de fechas.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sector</strong> (<em>str</em>) – Identificador del sector</p></li>
+<li><p><strong>start_date</strong> (<em>datetime</em>) – Fecha inicial</p></li>
+<li><p><strong>end_date</strong> (<em>datetime</em>) – Fecha final</p></li>
+<li><p><strong>skip</strong> (<em>int</em>) – Número de registros a omitir</p></li>
+<li><p><strong>limit</strong> (<em>int</em>) – Límite de registros a retornar</p></li>
+</ul>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Lista de análisis detallados</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="../core/entities.html#src.core.entities.sector_analysis.SectorDetailedAnalysis" title="src.core.entities.sector_analysis.SectorDetailedAnalysis">SectorDetailedAnalysis</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_sector_analysis_repository.PostgresSectorAnalysisRepository.get_by_sector">
+<span class="sig-name descname"><span class="pre">get_by_sector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../core/entities.html#src.core.entities.sector_analysis.SectorDetailedAnalysis" title="src.core.entities.sector_analysis.SectorDetailedAnalysis"><span class="pre">SectorDetailedAnalysis</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_sector_analysis_repository.html#PostgresSectorAnalysisRepository.get_by_sector"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_sector_analysis_repository.PostgresSectorAnalysisRepository.get_by_sector" title="Link to this definition"></a></dt>
+<dd><p>Obtiene todos los análisis de un sector específico.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sector</strong> (<em>str</em>) – Identificador del sector</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Lista de análisis detallados del sector</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="../core/entities.html#src.core.entities.sector_analysis.SectorDetailedAnalysis" title="src.core.entities.sector_analysis.SectorDetailedAnalysis">SectorDetailedAnalysis</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_sector_analysis_repository.PostgresSectorAnalysisRepository.get_by_sector_and_date">
+<span class="sig-name descname"><span class="pre">get_by_sector_and_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../core/entities.html#src.core.entities.sector_analysis.SectorDetailedAnalysis" title="src.core.entities.sector_analysis.SectorDetailedAnalysis"><span class="pre">SectorDetailedAnalysis</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_sector_analysis_repository.html#PostgresSectorAnalysisRepository.get_by_sector_and_date"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_sector_analysis_repository.PostgresSectorAnalysisRepository.get_by_sector_and_date" title="Link to this definition"></a></dt>
+<dd><p>Obtiene el análisis detallado de un sector en una fecha específica.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sector</strong> (<em>str</em>) – Identificador del sector</p></li>
+<li><p><strong>date</strong> (<em>datetime</em>) – Fecha del análisis</p></li>
+</ul>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Análisis detallado o None si no existe</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[<a class="reference internal" href="../core/entities.html#src.core.entities.sector_analysis.SectorDetailedAnalysis" title="src.core.entities.sector_analysis.SectorDetailedAnalysis">SectorDetailedAnalysis</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_sector_analysis_repository.PostgresSectorAnalysisRepository.get_total_count">
+<span class="sig-name descname"><span class="pre">get_total_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_sector_analysis_repository.html#PostgresSectorAnalysisRepository.get_total_count"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_sector_analysis_repository.PostgresSectorAnalysisRepository.get_total_count" title="Link to this definition"></a></dt>
+<dd><p>Obtiene el número total de análisis para un sector en un rango de fechas.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sector</strong> (<em>str</em>) – Identificador del sector</p></li>
+<li><p><strong>start_date</strong> (<em>datetime</em>) – Fecha inicial</p></li>
+<li><p><strong>end_date</strong> (<em>datetime</em>) – Fecha final</p></li>
+</ul>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Número total de análisis</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<p id="module-src.infraestructure.adapters.outbound.postgres_sector_capacity_repository">Módulo que implementa el repositorio de capacidad de sectores usando PostgreSQL,
+siguiendo los principios de arquitectura hexagonal y clean architecture.</p>
+<p>Este módulo actúa como un adaptador secundario en la capa de infraestructura,
+implementando el puerto de salida SectorCapacityRepository definido en el dominio.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_sector_capacity_repository.PostgresSectorCapacityRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.infraestructure.adapters.outbound.postgres_sector_capacity_repository.</span></span><span class="sig-name descname"><span class="pre">PostgresSectorCapacityRepository</span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_sector_capacity_repository.html#PostgresSectorCapacityRepository"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_sector_capacity_repository.PostgresSectorCapacityRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../core/ports.html#src.core.ports.sector_capacity_repository.SectorCapacityRepository" title="src.core.ports.sector_capacity_repository.SectorCapacityRepository"><code class="xref py py-class docutils literal notranslate"><span class="pre">SectorCapacityRepository</span></code></a></p>
+<p>Implementación del repositorio de capacidad de sectores usando PostgreSQL.</p>
+<p>Esta clase actúa como un adaptador secundario que implementa las operaciones
+definidas en el puerto SectorCapacityRepository del dominio, permitiendo
+el cálculo y consulta de capacidades de sectores aéreos.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>connection</strong> – Conexión a la base de datos PostgreSQL</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_sector_capacity_repository.PostgresSectorCapacityRepository.get_sector_capacity">
+<span class="sig-name descname"><span class="pre">get_sector_capacity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../core/entities.html#src.core.entities.sector_capacity.SectorCapacityResponse" title="src.core.entities.sector_capacity.SectorCapacityResponse"><span class="pre">SectorCapacityResponse</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_sector_capacity_repository.html#PostgresSectorCapacityRepository.get_sector_capacity"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_sector_capacity_repository.PostgresSectorCapacityRepository.get_sector_capacity" title="Link to this definition"></a></dt>
+<dd><p>Calcula y obtiene la capacidad de un sector específico en una fecha dada.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sector</strong> (<em>str</em>) – Identificador del sector</p></li>
+<li><p><strong>date</strong> (<em>datetime</em>) – Fecha y hora para el cálculo</p></li>
+</ul>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Datos de capacidad del sector o None si no hay datos</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Optional[<a class="reference internal" href="../core/entities.html#src.core.entities.sector_capacity.SectorCapacityResponse" title="src.core.entities.sector_capacity.SectorCapacityResponse">SectorCapacityResponse</a>]</p>
+</dd>
+<dt class="field-even">Muestra<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – Error en el cálculo de capacidad</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.postgres_sector_capacity_repository.PostgresSectorCapacityRepository.get_sectors">
+<span class="sig-name descname"><span class="pre">get_sectors</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/postgres_sector_capacity_repository.html#PostgresSectorCapacityRepository.get_sectors"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.postgres_sector_capacity_repository.PostgresSectorCapacityRepository.get_sectors" title="Link to this definition"></a></dt>
+<dd><p>Obtiene la lista de sectores disponibles.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Devuelve<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Lista de identificadores de sectores</p>
+</dd>
+<dt class="field-even">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+<dt class="field-odd">Muestra<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Exception</strong> – Error en la consulta de sectores</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="file-system-adapters">
+<h3>File System Adapters<a class="headerlink" href="#file-system-adapters" title="Link to this heading"></a></h3>
+<p id="module-src.infraestructure.adapters.outbound.file_system_repository">Módulo que implementa el repositorio del sistema de archivos local,
+siguiendo los principios de arquitectura hexagonal y clean architecture.</p>
+<p>Este módulo actúa como un adaptador secundario en la capa de infraestructura,
+implementando el puerto de salida FileSystemRepository definido en el dominio.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.file_system_repository.LocalFileSystemRepository">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.infraestructure.adapters.outbound.file_system_repository.</span></span><span class="sig-name descname"><span class="pre">LocalFileSystemRepository</span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/file_system_repository.html#LocalFileSystemRepository"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.file_system_repository.LocalFileSystemRepository" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../core/ports.html#src.core.ports.file_system_repository.FileSystemRepository" title="src.core.ports.file_system_repository.FileSystemRepository"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileSystemRepository</span></code></a></p>
+<p>Implementación del repositorio de sistema de archivos usando el sistema local.</p>
+<p>Esta clase actúa como un adaptador secundario que implementa las operaciones
+definidas en el puerto FileSystemRepository del dominio, permitiendo la
+gestión de archivos en el sistema de archivos local.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>base_path</strong> (<em>str</em>) – Ruta base para las operaciones de archivo</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.file_system_repository.LocalFileSystemRepository.copy_files_to_processing_directory">
+<span class="sig-name descname"><span class="pre">copy_files_to_processing_directory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_types</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">tuple</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/file_system_repository.html#LocalFileSystemRepository.copy_files_to_processing_directory"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.file_system_repository.LocalFileSystemRepository.copy_files_to_processing_directory" title="Link to this definition"></a></dt>
+<dd><p>Copia archivos al directorio de procesamiento.</p>
+<p>Implementa la operación de copiado de archivos definida en el puerto,
+filtrando por tipos de archivo específicos.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source_dir</strong> (<em>str</em>) – Directorio fuente de los archivos</p></li>
+<li><p><strong>file_types</strong> (<em>tuple</em>) – Extensiones de archivo permitidas</p></li>
+</ul>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>Lista de rutas de los archivos copiados</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.adapters.outbound.file_system_repository.LocalFileSystemRepository.get_processing_directory">
+<span class="sig-name descname"><span class="pre">get_processing_directory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/src/infraestructure/adapters/outbound/file_system_repository.html#LocalFileSystemRepository.get_processing_directory"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.adapters.outbound.file_system_repository.LocalFileSystemRepository.get_processing_directory" title="Link to this definition"></a></dt>
+<dd><p>Obtiene la ruta del directorio de procesamiento.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Devuelve<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Ruta absoluta del directorio de procesamiento</p>
+</dd>
+<dt class="field-even">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pie de página">
+        <a href="../core/use_cases.html" class="btn btn-neutral float-left" title="Core Use Cases" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Anterior</a>
+        <a href="config.html" class="btn btn-neutral float-right" title="Infrastructure Configuration" accesskey="n" rel="next">Siguiente <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2025, Iván Forero.</p>
+  </div>
+
+  Compilado con <a href="https://www.sphinx-doc.org/">Sphinx</a> usando un
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">tema</a>
+    proporcionado por <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

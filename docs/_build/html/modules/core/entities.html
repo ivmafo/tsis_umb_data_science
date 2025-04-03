@@ -1,0 +1,1355 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Core Entities &mdash; documentación de TSIS UMB Data Science - </title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=e2bb6099"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/translations.js?v=f85f4cfb"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../search.html" />
+    <link rel="next" title="Core Ports" href="ports.html" />
+    <link rel="prev" title="Core DTOs" href="dtos.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            TSIS UMB Data Science
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" aria-label="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="dtos.html">Core DTOs</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Core Entities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.entities.config.Config"><code class="docutils literal notranslate"><span class="pre">Config</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.config.Config.key"><code class="docutils literal notranslate"><span class="pre">Config.key</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.config.Config.value"><code class="docutils literal notranslate"><span class="pre">Config.value</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.config.Config.created_at"><code class="docutils literal notranslate"><span class="pre">Config.created_at</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.config.Config.updated_at"><code class="docutils literal notranslate"><span class="pre">Config.updated_at</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">Config.created_at</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">Config.key</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.config.Config.model_config"><code class="docutils literal notranslate"><span class="pre">Config.model_config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">Config.updated_at</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">Config.value</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.entities.flight.Flight"><code class="docutils literal notranslate"><span class="pre">Flight</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.flight.Flight.fecha"><code class="docutils literal notranslate"><span class="pre">Flight.fecha</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.flight.Flight.sid"><code class="docutils literal notranslate"><span class="pre">Flight.sid</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.flight.Flight.ssr"><code class="docutils literal notranslate"><span class="pre">Flight.ssr</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.flight.Flight.callsign"><code class="docutils literal notranslate"><span class="pre">Flight.callsign</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.flight.Flight.matricula"><code class="docutils literal notranslate"><span class="pre">Flight.matricula</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.flight.Flight.tipo_aeronave"><code class="docutils literal notranslate"><span class="pre">Flight.tipo_aeronave</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.flight.Flight.empresa"><code class="docutils literal notranslate"><span class="pre">Flight.empresa</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.flight.Flight.numero_vuelo"><code class="docutils literal notranslate"><span class="pre">Flight.numero_vuelo</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.flight.Flight.tipo_vuelo"><code class="docutils literal notranslate"><span class="pre">Flight.tipo_vuelo</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.flight.Flight.tiempo_inicial"><code class="docutils literal notranslate"><span class="pre">Flight.tiempo_inicial</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.flight.Flight.origen"><code class="docutils literal notranslate"><span class="pre">Flight.origen</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.flight.Flight.fecha_salida"><code class="docutils literal notranslate"><span class="pre">Flight.fecha_salida</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.flight.Flight.hora_salida"><code class="docutils literal notranslate"><span class="pre">Flight.hora_salida</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.flight.Flight.hora_pv"><code class="docutils literal notranslate"><span class="pre">Flight.hora_pv</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.flight.Flight.destino"><code class="docutils literal notranslate"><span class="pre">Flight.destino</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.flight.Flight.fecha_llegada"><code class="docutils literal notranslate"><span class="pre">Flight.fecha_llegada</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.flight.Flight.hora_llegada"><code class="docutils literal notranslate"><span class="pre">Flight.hora_llegada</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.flight.Flight.nivel"><code class="docutils literal notranslate"><span class="pre">Flight.nivel</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.flight.Flight.duracion"><code class="docutils literal notranslate"><span class="pre">Flight.duracion</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.flight.Flight.distancia"><code class="docutils literal notranslate"><span class="pre">Flight.distancia</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.flight.Flight.velocidad"><code class="docutils literal notranslate"><span class="pre">Flight.velocidad</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.flight.Flight.eq_ssr"><code class="docutils literal notranslate"><span class="pre">Flight.eq_ssr</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.flight.Flight.nombre_origen"><code class="docutils literal notranslate"><span class="pre">Flight.nombre_origen</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.flight.Flight.nombre_destino"><code class="docutils literal notranslate"><span class="pre">Flight.nombre_destino</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.flight.Flight.fecha_registro"><code class="docutils literal notranslate"><span class="pre">Flight.fecha_registro</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">Flight.callsign</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5"><code class="docutils literal notranslate"><span class="pre">Flight.destino</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6"><code class="docutils literal notranslate"><span class="pre">Flight.distancia</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7"><code class="docutils literal notranslate"><span class="pre">Flight.duracion</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8"><code class="docutils literal notranslate"><span class="pre">Flight.empresa</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9"><code class="docutils literal notranslate"><span class="pre">Flight.eq_ssr</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10"><code class="docutils literal notranslate"><span class="pre">Flight.fecha</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11"><code class="docutils literal notranslate"><span class="pre">Flight.fecha_llegada</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12"><code class="docutils literal notranslate"><span class="pre">Flight.fecha_registro</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13"><code class="docutils literal notranslate"><span class="pre">Flight.fecha_salida</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14"><code class="docutils literal notranslate"><span class="pre">Flight.hora_llegada</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15"><code class="docutils literal notranslate"><span class="pre">Flight.hora_pv</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id16"><code class="docutils literal notranslate"><span class="pre">Flight.hora_salida</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id17"><code class="docutils literal notranslate"><span class="pre">Flight.matricula</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.flight.Flight.model_config"><code class="docutils literal notranslate"><span class="pre">Flight.model_config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id18"><code class="docutils literal notranslate"><span class="pre">Flight.nivel</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id19"><code class="docutils literal notranslate"><span class="pre">Flight.nombre_destino</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id20"><code class="docutils literal notranslate"><span class="pre">Flight.nombre_origen</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id21"><code class="docutils literal notranslate"><span class="pre">Flight.numero_vuelo</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id22"><code class="docutils literal notranslate"><span class="pre">Flight.origen</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id23"><code class="docutils literal notranslate"><span class="pre">Flight.sid</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id24"><code class="docutils literal notranslate"><span class="pre">Flight.ssr</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id25"><code class="docutils literal notranslate"><span class="pre">Flight.tiempo_inicial</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id26"><code class="docutils literal notranslate"><span class="pre">Flight.tipo_aeronave</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id27"><code class="docutils literal notranslate"><span class="pre">Flight.tipo_vuelo</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id28"><code class="docutils literal notranslate"><span class="pre">Flight.velocidad</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.entities.level_range.LevelRange"><code class="docutils literal notranslate"><span class="pre">LevelRange</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.level_range.LevelRange.id"><code class="docutils literal notranslate"><span class="pre">LevelRange.id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.level_range.LevelRange.origen"><code class="docutils literal notranslate"><span class="pre">LevelRange.origen</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.level_range.LevelRange.destino"><code class="docutils literal notranslate"><span class="pre">LevelRange.destino</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.level_range.LevelRange.nivel_min"><code class="docutils literal notranslate"><span class="pre">LevelRange.nivel_min</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.level_range.LevelRange.nivel_max"><code class="docutils literal notranslate"><span class="pre">LevelRange.nivel_max</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.level_range.LevelRange.ruta"><code class="docutils literal notranslate"><span class="pre">LevelRange.ruta</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.level_range.LevelRange.zona"><code class="docutils literal notranslate"><span class="pre">LevelRange.zona</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id29"><code class="docutils literal notranslate"><span class="pre">LevelRange.destino</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id30"><code class="docutils literal notranslate"><span class="pre">LevelRange.id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.level_range.LevelRange.model_config"><code class="docutils literal notranslate"><span class="pre">LevelRange.model_config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id31"><code class="docutils literal notranslate"><span class="pre">LevelRange.nivel_max</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id32"><code class="docutils literal notranslate"><span class="pre">LevelRange.nivel_min</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id33"><code class="docutils literal notranslate"><span class="pre">LevelRange.origen</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id34"><code class="docutils literal notranslate"><span class="pre">LevelRange.ruta</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id35"><code class="docutils literal notranslate"><span class="pre">LevelRange.zona</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.entities.sector_analysis.SectorDetailedAnalysis"><code class="docutils literal notranslate"><span class="pre">SectorDetailedAnalysis</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.sector_analysis.SectorDetailedAnalysis.sector"><code class="docutils literal notranslate"><span class="pre">SectorDetailedAnalysis.sector</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.sector_analysis.SectorDetailedAnalysis.hora"><code class="docutils literal notranslate"><span class="pre">SectorDetailedAnalysis.hora</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.sector_analysis.SectorDetailedAnalysis.num_vuelos"><code class="docutils literal notranslate"><span class="pre">SectorDetailedAnalysis.num_vuelos</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.sector_analysis.SectorDetailedAnalysis.tps"><code class="docutils literal notranslate"><span class="pre">SectorDetailedAnalysis.tps</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.sector_analysis.SectorDetailedAnalysis.tipos_aeronaves"><code class="docutils literal notranslate"><span class="pre">SectorDetailedAnalysis.tipos_aeronaves</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.sector_analysis.SectorDetailedAnalysis.aerolineas"><code class="docutils literal notranslate"><span class="pre">SectorDetailedAnalysis.aerolineas</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.sector_analysis.SectorDetailedAnalysis.tipos_vuelo"><code class="docutils literal notranslate"><span class="pre">SectorDetailedAnalysis.tipos_vuelo</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.sector_analysis.SectorDetailedAnalysis.tiempo_total_comunicaciones"><code class="docutils literal notranslate"><span class="pre">SectorDetailedAnalysis.tiempo_total_comunicaciones</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.sector_analysis.SectorDetailedAnalysis.tiempo_total_coordinacion"><code class="docutils literal notranslate"><span class="pre">SectorDetailedAnalysis.tiempo_total_coordinacion</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.sector_analysis.SectorDetailedAnalysis.tiempo_tareas_observables"><code class="docutils literal notranslate"><span class="pre">SectorDetailedAnalysis.tiempo_tareas_observables</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.sector_analysis.SectorDetailedAnalysis.factor_complejidad"><code class="docutils literal notranslate"><span class="pre">SectorDetailedAnalysis.factor_complejidad</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id36"><code class="docutils literal notranslate"><span class="pre">SectorDetailedAnalysis.aerolineas</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id37"><code class="docutils literal notranslate"><span class="pre">SectorDetailedAnalysis.factor_complejidad</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id38"><code class="docutils literal notranslate"><span class="pre">SectorDetailedAnalysis.hora</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.sector_analysis.SectorDetailedAnalysis.model_config"><code class="docutils literal notranslate"><span class="pre">SectorDetailedAnalysis.model_config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id39"><code class="docutils literal notranslate"><span class="pre">SectorDetailedAnalysis.num_vuelos</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id40"><code class="docutils literal notranslate"><span class="pre">SectorDetailedAnalysis.sector</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id41"><code class="docutils literal notranslate"><span class="pre">SectorDetailedAnalysis.tiempo_tareas_observables</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id42"><code class="docutils literal notranslate"><span class="pre">SectorDetailedAnalysis.tiempo_total_comunicaciones</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id43"><code class="docutils literal notranslate"><span class="pre">SectorDetailedAnalysis.tiempo_total_coordinacion</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id44"><code class="docutils literal notranslate"><span class="pre">SectorDetailedAnalysis.tipos_aeronaves</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id45"><code class="docutils literal notranslate"><span class="pre">SectorDetailedAnalysis.tipos_vuelo</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id46"><code class="docutils literal notranslate"><span class="pre">SectorDetailedAnalysis.tps</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.entities.sector_capacity.SectorCapacityResponse"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.sector_capacity.SectorCapacityResponse.sector"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse.sector</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.sector_capacity.SectorCapacityResponse.hora"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse.hora</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.sector_capacity.SectorCapacityResponse.tps"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse.tps</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.sector_capacity.SectorCapacityResponse.tfc"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse.tfc</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.sector_capacity.SectorCapacityResponse.tm"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse.tm</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.sector_capacity.SectorCapacityResponse.tc"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse.tc</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.sector_capacity.SectorCapacityResponse.tt"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse.tt</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.sector_capacity.SectorCapacityResponse.scv_value"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse.scv_value</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.sector_capacity.SectorCapacityResponse.capacidad_horaria_base"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse.capacidad_horaria_base</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.sector_capacity.SectorCapacityResponse.capacidad_horaria_alta"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse.capacidad_horaria_alta</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.sector_capacity.SectorCapacityResponse.capacidad_horaria_baja"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse.capacidad_horaria_baja</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.sector_capacity.SectorCapacityResponse.carga_trabajo_total_base"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse.carga_trabajo_total_base</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.sector_capacity.SectorCapacityResponse.carga_trabajo_total_alta"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse.carga_trabajo_total_alta</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.sector_capacity.SectorCapacityResponse.carga_trabajo_total_baja"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse.carga_trabajo_total_baja</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id47"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse.capacidad_horaria_alta</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id48"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse.capacidad_horaria_baja</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id49"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse.capacidad_horaria_base</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id50"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse.carga_trabajo_total_alta</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id51"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse.carga_trabajo_total_baja</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id52"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse.carga_trabajo_total_base</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id53"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse.hora</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.entities.sector_capacity.SectorCapacityResponse.model_config"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse.model_config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id54"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse.scv_value</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id55"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse.sector</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id56"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse.tc</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id57"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse.tfc</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id58"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse.tm</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id59"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse.tps</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id60"><code class="docutils literal notranslate"><span class="pre">SectorCapacityResponse.tt</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ports.html">Core Ports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_cases.html">Core Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../infrastructure/adapters.html">Infrastructure Adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../infrastructure/config.html">Infrastructure Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../entrypoints/api.html">Puntos de Entrada de la API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">TSIS UMB Data Science</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Core Entities</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/modules/core/entities.rst.txt" rel="nofollow"> Ver código fuente de la página</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="core-entities">
+<h1>Core Entities<a class="headerlink" href="#core-entities" title="Link to this heading"></a></h1>
+<p id="module-src.core.entities.config">Módulo que define la entidad de configuración del sistema.
+Esta entidad se utiliza para almacenar pares clave-valor de configuración
+con seguimiento temporal.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.entities.config.Config">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.entities.config.</span></span><span class="sig-name descname"><span class="pre">Config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">created_at</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updated_at</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/entities/config.html#Config"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.entities.config.Config" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>Clase que representa una configuración del sistema.</p>
+<p>Esta clase maneja las configuraciones del sistema utilizando un modelo
+de clave-valor con marcas de tiempo para seguimiento de cambios.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.config.Config.key">
+<span class="sig-name descname"><span class="pre">key</span></span><a class="headerlink" href="#src.core.entities.config.Config.key" title="Link to this definition"></a></dt>
+<dd><p>Clave única que identifica la configuración</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.config.Config.value">
+<span class="sig-name descname"><span class="pre">value</span></span><a class="headerlink" href="#src.core.entities.config.Config.value" title="Link to this definition"></a></dt>
+<dd><p>Valor asociado a la configuración</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.config.Config.created_at">
+<span class="sig-name descname"><span class="pre">created_at</span></span><a class="headerlink" href="#src.core.entities.config.Config.created_at" title="Link to this definition"></a></dt>
+<dd><p>Fecha y hora de creación de la configuración</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>datetime, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.config.Config.updated_at">
+<span class="sig-name descname"><span class="pre">updated_at</span></span><a class="headerlink" href="#src.core.entities.config.Config.updated_at" title="Link to this definition"></a></dt>
+<dd><p>Fecha y hora de la última actualización</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>datetime, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">created_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.config.Config.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#src.core.entities.config.Config.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">updated_at</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<p id="module-src.core.entities.flight">Módulo que define la entidad principal de Vuelo (Flight) siguiendo los principios de
+arquitectura hexagonal y clean architecture.</p>
+<p>Esta entidad representa el objeto de dominio central para el manejo de información
+de vuelos, encapsulando toda la lógica y reglas de negocio relacionadas con los vuelos.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.entities.flight.Flight">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.entities.flight.</span></span><span class="sig-name descname"><span class="pre">Flight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">fecha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ssr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callsign</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matricula</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tipo_aeronave</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">empresa</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numero_vuelo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tipo_vuelo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiempo_inicial</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">origen</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fecha_salida</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hora_salida</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">time</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hora_pv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">time</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destino</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fecha_llegada</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hora_llegada</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">time</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nivel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duracion</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distancia</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">velocidad</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eq_ssr</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nombre_origen</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nombre_destino</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fecha_registro</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/entities/flight.html#Flight"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.entities.flight.Flight" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>Entidad que representa un vuelo en el sistema.</p>
+<p>Esta clase es una entidad de dominio pura que encapsula los atributos y comportamientos
+esenciales de un vuelo, siguiendo los principios de Clean Architecture.
+No depende de frameworks externos ni de la capa de infraestructura.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.flight.Flight.fecha">
+<span class="sig-name descname"><span class="pre">fecha</span></span><a class="headerlink" href="#src.core.entities.flight.Flight.fecha" title="Link to this definition"></a></dt>
+<dd><p>Fecha general del vuelo</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>datetime, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.flight.Flight.sid">
+<span class="sig-name descname"><span class="pre">sid</span></span><a class="headerlink" href="#src.core.entities.flight.Flight.sid" title="Link to this definition"></a></dt>
+<dd><p>Identificador único del vuelo en el sistema</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.flight.Flight.ssr">
+<span class="sig-name descname"><span class="pre">ssr</span></span><a class="headerlink" href="#src.core.entities.flight.Flight.ssr" title="Link to this definition"></a></dt>
+<dd><p>Código de radar secundario de vigilancia</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.flight.Flight.callsign">
+<span class="sig-name descname"><span class="pre">callsign</span></span><a class="headerlink" href="#src.core.entities.flight.Flight.callsign" title="Link to this definition"></a></dt>
+<dd><p>Señal distintiva de la aeronave</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.flight.Flight.matricula">
+<span class="sig-name descname"><span class="pre">matricula</span></span><a class="headerlink" href="#src.core.entities.flight.Flight.matricula" title="Link to this definition"></a></dt>
+<dd><p>Matrícula de identificación de la aeronave</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.flight.Flight.tipo_aeronave">
+<span class="sig-name descname"><span class="pre">tipo_aeronave</span></span><a class="headerlink" href="#src.core.entities.flight.Flight.tipo_aeronave" title="Link to this definition"></a></dt>
+<dd><p>Tipo o modelo de la aeronave</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.flight.Flight.empresa">
+<span class="sig-name descname"><span class="pre">empresa</span></span><a class="headerlink" href="#src.core.entities.flight.Flight.empresa" title="Link to this definition"></a></dt>
+<dd><p>Compañía aérea operadora del vuelo</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.flight.Flight.numero_vuelo">
+<span class="sig-name descname"><span class="pre">numero_vuelo</span></span><a class="headerlink" href="#src.core.entities.flight.Flight.numero_vuelo" title="Link to this definition"></a></dt>
+<dd><p>Número identificador del vuelo</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.flight.Flight.tipo_vuelo">
+<span class="sig-name descname"><span class="pre">tipo_vuelo</span></span><a class="headerlink" href="#src.core.entities.flight.Flight.tipo_vuelo" title="Link to this definition"></a></dt>
+<dd><p>Clasificación del tipo de vuelo</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.flight.Flight.tiempo_inicial">
+<span class="sig-name descname"><span class="pre">tiempo_inicial</span></span><a class="headerlink" href="#src.core.entities.flight.Flight.tiempo_inicial" title="Link to this definition"></a></dt>
+<dd><p>Tiempo de inicio del vuelo</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>datetime, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.flight.Flight.origen">
+<span class="sig-name descname"><span class="pre">origen</span></span><a class="headerlink" href="#src.core.entities.flight.Flight.origen" title="Link to this definition"></a></dt>
+<dd><p>Aeropuerto o lugar de origen</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.flight.Flight.fecha_salida">
+<span class="sig-name descname"><span class="pre">fecha_salida</span></span><a class="headerlink" href="#src.core.entities.flight.Flight.fecha_salida" title="Link to this definition"></a></dt>
+<dd><p>Fecha programada de salida</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>datetime, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.flight.Flight.hora_salida">
+<span class="sig-name descname"><span class="pre">hora_salida</span></span><a class="headerlink" href="#src.core.entities.flight.Flight.hora_salida" title="Link to this definition"></a></dt>
+<dd><p>Hora específica de salida</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>time, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.flight.Flight.hora_pv">
+<span class="sig-name descname"><span class="pre">hora_pv</span></span><a class="headerlink" href="#src.core.entities.flight.Flight.hora_pv" title="Link to this definition"></a></dt>
+<dd><p>Hora de plan de vuelo</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>time, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.flight.Flight.destino">
+<span class="sig-name descname"><span class="pre">destino</span></span><a class="headerlink" href="#src.core.entities.flight.Flight.destino" title="Link to this definition"></a></dt>
+<dd><p>Aeropuerto o lugar de destino</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.flight.Flight.fecha_llegada">
+<span class="sig-name descname"><span class="pre">fecha_llegada</span></span><a class="headerlink" href="#src.core.entities.flight.Flight.fecha_llegada" title="Link to this definition"></a></dt>
+<dd><p>Fecha programada de llegada</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>datetime, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.flight.Flight.hora_llegada">
+<span class="sig-name descname"><span class="pre">hora_llegada</span></span><a class="headerlink" href="#src.core.entities.flight.Flight.hora_llegada" title="Link to this definition"></a></dt>
+<dd><p>Hora específica de llegada</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>time, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.flight.Flight.nivel">
+<span class="sig-name descname"><span class="pre">nivel</span></span><a class="headerlink" href="#src.core.entities.flight.Flight.nivel" title="Link to this definition"></a></dt>
+<dd><p>Nivel de vuelo</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.flight.Flight.duracion">
+<span class="sig-name descname"><span class="pre">duracion</span></span><a class="headerlink" href="#src.core.entities.flight.Flight.duracion" title="Link to this definition"></a></dt>
+<dd><p>Duración del vuelo en minutos</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.flight.Flight.distancia">
+<span class="sig-name descname"><span class="pre">distancia</span></span><a class="headerlink" href="#src.core.entities.flight.Flight.distancia" title="Link to this definition"></a></dt>
+<dd><p>Distancia del vuelo en millas náuticas</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.flight.Flight.velocidad">
+<span class="sig-name descname"><span class="pre">velocidad</span></span><a class="headerlink" href="#src.core.entities.flight.Flight.velocidad" title="Link to this definition"></a></dt>
+<dd><p>Velocidad de la aeronave</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.flight.Flight.eq_ssr">
+<span class="sig-name descname"><span class="pre">eq_ssr</span></span><a class="headerlink" href="#src.core.entities.flight.Flight.eq_ssr" title="Link to this definition"></a></dt>
+<dd><p>Equipamiento SSR de la aeronave</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.flight.Flight.nombre_origen">
+<span class="sig-name descname"><span class="pre">nombre_origen</span></span><a class="headerlink" href="#src.core.entities.flight.Flight.nombre_origen" title="Link to this definition"></a></dt>
+<dd><p>Nombre completo del lugar de origen</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.flight.Flight.nombre_destino">
+<span class="sig-name descname"><span class="pre">nombre_destino</span></span><a class="headerlink" href="#src.core.entities.flight.Flight.nombre_destino" title="Link to this definition"></a></dt>
+<dd><p>Nombre completo del lugar de destino</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.flight.Flight.fecha_registro">
+<span class="sig-name descname"><span class="pre">fecha_registro</span></span><a class="headerlink" href="#src.core.entities.flight.Flight.fecha_registro" title="Link to this definition"></a></dt>
+<dd><p>Fecha de registro en el sistema</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>datetime, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Esta entidad forma parte del núcleo de dominio y no debe contener
+lógica de infraestructura o frameworks externos.</p>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">callsign</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id4" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">destino</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id5" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">distancia</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id6" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id7">
+<span class="sig-name descname"><span class="pre">duracion</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id7" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">empresa</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id8" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id9">
+<span class="sig-name descname"><span class="pre">eq_ssr</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id9" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id10">
+<span class="sig-name descname"><span class="pre">fecha</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id10" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id11">
+<span class="sig-name descname"><span class="pre">fecha_llegada</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id11" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id12">
+<span class="sig-name descname"><span class="pre">fecha_registro</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id12" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id13">
+<span class="sig-name descname"><span class="pre">fecha_salida</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id13" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id14">
+<span class="sig-name descname"><span class="pre">hora_llegada</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">time</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id14" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id15">
+<span class="sig-name descname"><span class="pre">hora_pv</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">time</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id15" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id16">
+<span class="sig-name descname"><span class="pre">hora_salida</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">time</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id16" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id17">
+<span class="sig-name descname"><span class="pre">matricula</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id17" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.flight.Flight.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#src.core.entities.flight.Flight.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id18">
+<span class="sig-name descname"><span class="pre">nivel</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id18" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id19">
+<span class="sig-name descname"><span class="pre">nombre_destino</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id19" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id20">
+<span class="sig-name descname"><span class="pre">nombre_origen</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id20" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id21">
+<span class="sig-name descname"><span class="pre">numero_vuelo</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id21" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id22">
+<span class="sig-name descname"><span class="pre">origen</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id22" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id23">
+<span class="sig-name descname"><span class="pre">sid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id23" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id24">
+<span class="sig-name descname"><span class="pre">ssr</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id24" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id25">
+<span class="sig-name descname"><span class="pre">tiempo_inicial</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id25" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id26">
+<span class="sig-name descname"><span class="pre">tipo_aeronave</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id26" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id27">
+<span class="sig-name descname"><span class="pre">tipo_vuelo</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id27" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id28">
+<span class="sig-name descname"><span class="pre">velocidad</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id28" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<p id="module-src.core.entities.level_range">Módulo que define la entidad LevelRange para el manejo de rangos de niveles de vuelo,
+siguiendo los principios de arquitectura hexagonal y clean architecture.</p>
+<p>Esta entidad forma parte del núcleo del dominio y encapsula las reglas de negocio
+relacionadas con los rangos de niveles permitidos entre diferentes rutas.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.entities.level_range.LevelRange">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.entities.level_range.</span></span><span class="sig-name descname"><span class="pre">LevelRange</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">origen</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destino</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nivel_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nivel_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ruta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zona</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/entities/level_range.html#LevelRange"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.entities.level_range.LevelRange" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>Entidad que representa un rango de niveles de vuelo entre dos puntos.</p>
+<p>Esta clase es una entidad de dominio pura que define los niveles de vuelo
+permitidos para rutas específicas, siguiendo los principios de Clean Architecture.
+No contiene dependencias externas ni lógica de infraestructura.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.level_range.LevelRange.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#src.core.entities.level_range.LevelRange.id" title="Link to this definition"></a></dt>
+<dd><p>Identificador único del rango de nivel</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.level_range.LevelRange.origen">
+<span class="sig-name descname"><span class="pre">origen</span></span><a class="headerlink" href="#src.core.entities.level_range.LevelRange.origen" title="Link to this definition"></a></dt>
+<dd><p>Punto de origen de la ruta</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.level_range.LevelRange.destino">
+<span class="sig-name descname"><span class="pre">destino</span></span><a class="headerlink" href="#src.core.entities.level_range.LevelRange.destino" title="Link to this definition"></a></dt>
+<dd><p>Punto de destino de la ruta</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.level_range.LevelRange.nivel_min">
+<span class="sig-name descname"><span class="pre">nivel_min</span></span><a class="headerlink" href="#src.core.entities.level_range.LevelRange.nivel_min" title="Link to this definition"></a></dt>
+<dd><p>Nivel de vuelo mínimo permitido</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.level_range.LevelRange.nivel_max">
+<span class="sig-name descname"><span class="pre">nivel_max</span></span><a class="headerlink" href="#src.core.entities.level_range.LevelRange.nivel_max" title="Link to this definition"></a></dt>
+<dd><p>Nivel de vuelo máximo permitido</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.level_range.LevelRange.ruta">
+<span class="sig-name descname"><span class="pre">ruta</span></span><a class="headerlink" href="#src.core.entities.level_range.LevelRange.ruta" title="Link to this definition"></a></dt>
+<dd><p>Identificador de la ruta aérea</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.level_range.LevelRange.zona">
+<span class="sig-name descname"><span class="pre">zona</span></span><a class="headerlink" href="#src.core.entities.level_range.LevelRange.zona" title="Link to this definition"></a></dt>
+<dd><p>Zona o sector aéreo al que pertenece la ruta</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Esta entidad es fundamental para la gestión de niveles de vuelo
+y forma parte del núcleo del dominio de la aplicación.</p>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id29">
+<span class="sig-name descname"><span class="pre">destino</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#id29" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id30">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id30" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.level_range.LevelRange.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#src.core.entities.level_range.LevelRange.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id31">
+<span class="sig-name descname"><span class="pre">nivel_max</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id31" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id32">
+<span class="sig-name descname"><span class="pre">nivel_min</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id32" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id33">
+<span class="sig-name descname"><span class="pre">origen</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#id33" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id34">
+<span class="sig-name descname"><span class="pre">ruta</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#id34" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id35">
+<span class="sig-name descname"><span class="pre">zona</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#id35" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<p id="module-src.core.entities.sector_analysis">Módulo que define la entidad de análisis detallado de sectores aéreos,
+siguiendo los principios de arquitectura hexagonal y clean architecture.</p>
+<p>Esta entidad forma parte del núcleo del dominio y encapsula toda la información
+relacionada con el análisis de capacidad y complejidad de sectores aéreos.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.entities.sector_analysis.SectorDetailedAnalysis">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.entities.sector_analysis.</span></span><span class="sig-name descname"><span class="pre">SectorDetailedAnalysis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">sector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hora</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_vuelos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Decimal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tipos_aeronaves</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aerolineas</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tipos_vuelo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiempo_total_comunicaciones</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Decimal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiempo_total_coordinacion</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Decimal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tiempo_tareas_observables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Decimal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor_complejidad</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Decimal</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/entities/sector_analysis.html#SectorDetailedAnalysis"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.entities.sector_analysis.SectorDetailedAnalysis" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>Entidad que representa el análisis detallado de un sector aéreo.</p>
+<p>Esta clase es una entidad de dominio pura que encapsula los datos
+y métricas relacionadas con el análisis de un sector aéreo específico,
+siguiendo los principios de Clean Architecture.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.sector_analysis.SectorDetailedAnalysis.sector">
+<span class="sig-name descname"><span class="pre">sector</span></span><a class="headerlink" href="#src.core.entities.sector_analysis.SectorDetailedAnalysis.sector" title="Link to this definition"></a></dt>
+<dd><p>Identificador del sector aéreo analizado</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.sector_analysis.SectorDetailedAnalysis.hora">
+<span class="sig-name descname"><span class="pre">hora</span></span><a class="headerlink" href="#src.core.entities.sector_analysis.SectorDetailedAnalysis.hora" title="Link to this definition"></a></dt>
+<dd><p>Hora específica del análisis</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>datetime</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.sector_analysis.SectorDetailedAnalysis.num_vuelos">
+<span class="sig-name descname"><span class="pre">num_vuelos</span></span><a class="headerlink" href="#src.core.entities.sector_analysis.SectorDetailedAnalysis.num_vuelos" title="Link to this definition"></a></dt>
+<dd><p>Número total de vuelos en el sector</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.sector_analysis.SectorDetailedAnalysis.tps">
+<span class="sig-name descname"><span class="pre">tps</span></span><a class="headerlink" href="#src.core.entities.sector_analysis.SectorDetailedAnalysis.tps" title="Link to this definition"></a></dt>
+<dd><p>Tasa de procesamiento del sector (Tasks Per Second)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Decimal</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.sector_analysis.SectorDetailedAnalysis.tipos_aeronaves">
+<span class="sig-name descname"><span class="pre">tipos_aeronaves</span></span><a class="headerlink" href="#src.core.entities.sector_analysis.SectorDetailedAnalysis.tipos_aeronaves" title="Link to this definition"></a></dt>
+<dd><p>Cantidad de diferentes tipos de aeronaves</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.sector_analysis.SectorDetailedAnalysis.aerolineas">
+<span class="sig-name descname"><span class="pre">aerolineas</span></span><a class="headerlink" href="#src.core.entities.sector_analysis.SectorDetailedAnalysis.aerolineas" title="Link to this definition"></a></dt>
+<dd><p>Cantidad de aerolíneas operando en el sector</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.sector_analysis.SectorDetailedAnalysis.tipos_vuelo">
+<span class="sig-name descname"><span class="pre">tipos_vuelo</span></span><a class="headerlink" href="#src.core.entities.sector_analysis.SectorDetailedAnalysis.tipos_vuelo" title="Link to this definition"></a></dt>
+<dd><p>Cantidad de diferentes tipos de vuelo</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.sector_analysis.SectorDetailedAnalysis.tiempo_total_comunicaciones">
+<span class="sig-name descname"><span class="pre">tiempo_total_comunicaciones</span></span><a class="headerlink" href="#src.core.entities.sector_analysis.SectorDetailedAnalysis.tiempo_total_comunicaciones" title="Link to this definition"></a></dt>
+<dd><p>Tiempo total dedicado a comunicaciones</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Decimal</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.sector_analysis.SectorDetailedAnalysis.tiempo_total_coordinacion">
+<span class="sig-name descname"><span class="pre">tiempo_total_coordinacion</span></span><a class="headerlink" href="#src.core.entities.sector_analysis.SectorDetailedAnalysis.tiempo_total_coordinacion" title="Link to this definition"></a></dt>
+<dd><p>Tiempo total dedicado a coordinación</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Decimal</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.sector_analysis.SectorDetailedAnalysis.tiempo_tareas_observables">
+<span class="sig-name descname"><span class="pre">tiempo_tareas_observables</span></span><a class="headerlink" href="#src.core.entities.sector_analysis.SectorDetailedAnalysis.tiempo_tareas_observables" title="Link to this definition"></a></dt>
+<dd><p>Tiempo total de tareas observables</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Decimal</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.sector_analysis.SectorDetailedAnalysis.factor_complejidad">
+<span class="sig-name descname"><span class="pre">factor_complejidad</span></span><a class="headerlink" href="#src.core.entities.sector_analysis.SectorDetailedAnalysis.factor_complejidad" title="Link to this definition"></a></dt>
+<dd><p>Factor calculado de complejidad del sector</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Decimal</p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Esta entidad es fundamental para el análisis de capacidad y
+eficiencia de los sectores aéreos, y forma parte del núcleo
+del dominio de la aplicación.</p>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id36">
+<span class="sig-name descname"><span class="pre">aerolineas</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id36" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id37">
+<span class="sig-name descname"><span class="pre">factor_complejidad</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Decimal</span></em><a class="headerlink" href="#id37" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id38">
+<span class="sig-name descname"><span class="pre">hora</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime</span></em><a class="headerlink" href="#id38" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.sector_analysis.SectorDetailedAnalysis.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#src.core.entities.sector_analysis.SectorDetailedAnalysis.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id39">
+<span class="sig-name descname"><span class="pre">num_vuelos</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id39" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id40">
+<span class="sig-name descname"><span class="pre">sector</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#id40" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id41">
+<span class="sig-name descname"><span class="pre">tiempo_tareas_observables</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Decimal</span></em><a class="headerlink" href="#id41" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id42">
+<span class="sig-name descname"><span class="pre">tiempo_total_comunicaciones</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Decimal</span></em><a class="headerlink" href="#id42" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id43">
+<span class="sig-name descname"><span class="pre">tiempo_total_coordinacion</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Decimal</span></em><a class="headerlink" href="#id43" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id44">
+<span class="sig-name descname"><span class="pre">tipos_aeronaves</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id44" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id45">
+<span class="sig-name descname"><span class="pre">tipos_vuelo</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id45" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id46">
+<span class="sig-name descname"><span class="pre">tps</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Decimal</span></em><a class="headerlink" href="#id46" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<p id="module-src.core.entities.sector_capacity">Módulo que define la entidad de capacidad de sectores aéreos,
+siguiendo los principios de arquitectura hexagonal y clean architecture.</p>
+<p>Esta entidad forma parte del núcleo del dominio y representa los cálculos
+y métricas relacionados con la capacidad operativa de un sector aéreo.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.entities.sector_capacity.SectorCapacityResponse">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.entities.sector_capacity.</span></span><span class="sig-name descname"><span class="pre">SectorCapacityResponse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">sector</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hora</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Decimal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tfc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Decimal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Decimal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tc</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Decimal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tt</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Decimal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scv_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Decimal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">capacidad_horaria_base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">capacidad_horaria_alta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">capacidad_horaria_baja</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">carga_trabajo_total_base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Decimal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">carga_trabajo_total_alta</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Decimal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">carga_trabajo_total_baja</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Decimal</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/entities/sector_capacity.html#SectorCapacityResponse"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.entities.sector_capacity.SectorCapacityResponse" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>Entidad que representa la respuesta del análisis de capacidad de un sector aéreo.</p>
+<p>Esta clase es una entidad de dominio pura que encapsula los resultados
+del análisis de capacidad de un sector, siguiendo los principios de Clean Architecture.
+No contiene dependencias externas ni lógica de infraestructura.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.sector_capacity.SectorCapacityResponse.sector">
+<span class="sig-name descname"><span class="pre">sector</span></span><a class="headerlink" href="#src.core.entities.sector_capacity.SectorCapacityResponse.sector" title="Link to this definition"></a></dt>
+<dd><p>Identificador del sector aéreo analizado</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.sector_capacity.SectorCapacityResponse.hora">
+<span class="sig-name descname"><span class="pre">hora</span></span><a class="headerlink" href="#src.core.entities.sector_capacity.SectorCapacityResponse.hora" title="Link to this definition"></a></dt>
+<dd><p>Hora específica del análisis</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>datetime</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.sector_capacity.SectorCapacityResponse.tps">
+<span class="sig-name descname"><span class="pre">tps</span></span><a class="headerlink" href="#src.core.entities.sector_capacity.SectorCapacityResponse.tps" title="Link to this definition"></a></dt>
+<dd><p>Tasa de procesamiento del sector</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Decimal</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.sector_capacity.SectorCapacityResponse.tfc">
+<span class="sig-name descname"><span class="pre">tfc</span></span><a class="headerlink" href="#src.core.entities.sector_capacity.SectorCapacityResponse.tfc" title="Link to this definition"></a></dt>
+<dd><p>Tiempo de comunicaciones</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Decimal</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.sector_capacity.SectorCapacityResponse.tm">
+<span class="sig-name descname"><span class="pre">tm</span></span><a class="headerlink" href="#src.core.entities.sector_capacity.SectorCapacityResponse.tm" title="Link to this definition"></a></dt>
+<dd><p>Tiempo de monitoreo</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Decimal</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.sector_capacity.SectorCapacityResponse.tc">
+<span class="sig-name descname"><span class="pre">tc</span></span><a class="headerlink" href="#src.core.entities.sector_capacity.SectorCapacityResponse.tc" title="Link to this definition"></a></dt>
+<dd><p>Tiempo de coordinación</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Decimal</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.sector_capacity.SectorCapacityResponse.tt">
+<span class="sig-name descname"><span class="pre">tt</span></span><a class="headerlink" href="#src.core.entities.sector_capacity.SectorCapacityResponse.tt" title="Link to this definition"></a></dt>
+<dd><p>Tiempo total</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Decimal</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.sector_capacity.SectorCapacityResponse.scv_value">
+<span class="sig-name descname"><span class="pre">scv_value</span></span><a class="headerlink" href="#src.core.entities.sector_capacity.SectorCapacityResponse.scv_value" title="Link to this definition"></a></dt>
+<dd><p>Valor del Sistema de Control Vectorial</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Decimal</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.sector_capacity.SectorCapacityResponse.capacidad_horaria_base">
+<span class="sig-name descname"><span class="pre">capacidad_horaria_base</span></span><a class="headerlink" href="#src.core.entities.sector_capacity.SectorCapacityResponse.capacidad_horaria_base" title="Link to this definition"></a></dt>
+<dd><p>Capacidad horaria en condiciones normales</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.sector_capacity.SectorCapacityResponse.capacidad_horaria_alta">
+<span class="sig-name descname"><span class="pre">capacidad_horaria_alta</span></span><a class="headerlink" href="#src.core.entities.sector_capacity.SectorCapacityResponse.capacidad_horaria_alta" title="Link to this definition"></a></dt>
+<dd><p>Capacidad horaria en alta demanda</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.sector_capacity.SectorCapacityResponse.capacidad_horaria_baja">
+<span class="sig-name descname"><span class="pre">capacidad_horaria_baja</span></span><a class="headerlink" href="#src.core.entities.sector_capacity.SectorCapacityResponse.capacidad_horaria_baja" title="Link to this definition"></a></dt>
+<dd><p>Capacidad horaria en baja demanda</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.sector_capacity.SectorCapacityResponse.carga_trabajo_total_base">
+<span class="sig-name descname"><span class="pre">carga_trabajo_total_base</span></span><a class="headerlink" href="#src.core.entities.sector_capacity.SectorCapacityResponse.carga_trabajo_total_base" title="Link to this definition"></a></dt>
+<dd><p>Carga de trabajo en condiciones normales</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Decimal</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.sector_capacity.SectorCapacityResponse.carga_trabajo_total_alta">
+<span class="sig-name descname"><span class="pre">carga_trabajo_total_alta</span></span><a class="headerlink" href="#src.core.entities.sector_capacity.SectorCapacityResponse.carga_trabajo_total_alta" title="Link to this definition"></a></dt>
+<dd><p>Carga de trabajo en alta demanda</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Decimal</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.sector_capacity.SectorCapacityResponse.carga_trabajo_total_baja">
+<span class="sig-name descname"><span class="pre">carga_trabajo_total_baja</span></span><a class="headerlink" href="#src.core.entities.sector_capacity.SectorCapacityResponse.carga_trabajo_total_baja" title="Link to this definition"></a></dt>
+<dd><p>Carga de trabajo en baja demanda</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Decimal</p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Esta entidad es crucial para la evaluación y gestión de la
+capacidad operativa de los sectores aéreos.</p>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id47">
+<span class="sig-name descname"><span class="pre">capacidad_horaria_alta</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id47" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id48">
+<span class="sig-name descname"><span class="pre">capacidad_horaria_baja</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id48" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id49">
+<span class="sig-name descname"><span class="pre">capacidad_horaria_base</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id49" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id50">
+<span class="sig-name descname"><span class="pre">carga_trabajo_total_alta</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Decimal</span></em><a class="headerlink" href="#id50" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id51">
+<span class="sig-name descname"><span class="pre">carga_trabajo_total_baja</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Decimal</span></em><a class="headerlink" href="#id51" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id52">
+<span class="sig-name descname"><span class="pre">carga_trabajo_total_base</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Decimal</span></em><a class="headerlink" href="#id52" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id53">
+<span class="sig-name descname"><span class="pre">hora</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime</span></em><a class="headerlink" href="#id53" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.entities.sector_capacity.SectorCapacityResponse.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#src.core.entities.sector_capacity.SectorCapacityResponse.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id54">
+<span class="sig-name descname"><span class="pre">scv_value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Decimal</span></em><a class="headerlink" href="#id54" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id55">
+<span class="sig-name descname"><span class="pre">sector</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#id55" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id56">
+<span class="sig-name descname"><span class="pre">tc</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Decimal</span></em><a class="headerlink" href="#id56" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id57">
+<span class="sig-name descname"><span class="pre">tfc</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Decimal</span></em><a class="headerlink" href="#id57" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id58">
+<span class="sig-name descname"><span class="pre">tm</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Decimal</span></em><a class="headerlink" href="#id58" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id59">
+<span class="sig-name descname"><span class="pre">tps</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Decimal</span></em><a class="headerlink" href="#id59" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id60">
+<span class="sig-name descname"><span class="pre">tt</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Decimal</span></em><a class="headerlink" href="#id60" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pie de página">
+        <a href="dtos.html" class="btn btn-neutral float-left" title="Core DTOs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Anterior</a>
+        <a href="ports.html" class="btn btn-neutral float-right" title="Core Ports" accesskey="n" rel="next">Siguiente <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2025, Iván Forero.</p>
+  </div>
+
+  Compilado con <a href="https://www.sphinx-doc.org/">Sphinx</a> usando un
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">tema</a>
+    proporcionado por <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

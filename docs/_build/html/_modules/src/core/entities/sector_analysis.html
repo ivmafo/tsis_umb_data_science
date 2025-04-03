@@ -1,0 +1,160 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src.core.entities.sector_analysis &mdash; documentación de TSIS UMB Data Science - </title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=e2bb6099"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/translations.js?v=f85f4cfb"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="../../../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            TSIS UMB Data Science
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" aria-label="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/core/dtos.html">Core DTOs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/core/entities.html">Core Entities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/core/ports.html">Core Ports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/core/use_cases.html">Core Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/infrastructure/adapters.html">Infrastructure Adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/infrastructure/config.html">Infrastructure Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/entrypoints/api.html">Puntos de Entrada de la API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">TSIS UMB Data Science</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Código de módulo</a></li>
+      <li class="breadcrumb-item active">src.core.entities.sector_analysis</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Código fuente para src.core.entities.sector_analysis</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Módulo que define la entidad de análisis detallado de sectores aéreos,</span>
+<span class="sd">siguiendo los principios de arquitectura hexagonal y clean architecture.</span>
+
+<span class="sd">Esta entidad forma parte del núcleo del dominio y encapsula toda la información</span>
+<span class="sd">relacionada con el análisis de capacidad y complejidad de sectores aéreos.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">decimal</span> <span class="kn">import</span> <span class="n">Decimal</span>
+
+<div class="viewcode-block" id="SectorDetailedAnalysis">
+<a class="viewcode-back" href="../../../../modules/core/entities.html#src.core.entities.sector_analysis.SectorDetailedAnalysis">[documentos]</a>
+<span class="k">class</span> <span class="nc">SectorDetailedAnalysis</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Entidad que representa el análisis detallado de un sector aéreo.</span>
+
+<span class="sd">    Esta clase es una entidad de dominio pura que encapsula los datos</span>
+<span class="sd">    y métricas relacionadas con el análisis de un sector aéreo específico,</span>
+<span class="sd">    siguiendo los principios de Clean Architecture.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        sector (str): Identificador del sector aéreo analizado</span>
+<span class="sd">        hora (datetime): Hora específica del análisis</span>
+<span class="sd">        num_vuelos (int): Número total de vuelos en el sector</span>
+<span class="sd">        tps (Decimal): Tasa de procesamiento del sector (Tasks Per Second)</span>
+<span class="sd">        tipos_aeronaves (int): Cantidad de diferentes tipos de aeronaves</span>
+<span class="sd">        aerolineas (int): Cantidad de aerolíneas operando en el sector</span>
+<span class="sd">        tipos_vuelo (int): Cantidad de diferentes tipos de vuelo</span>
+<span class="sd">        tiempo_total_comunicaciones (Decimal): Tiempo total dedicado a comunicaciones</span>
+<span class="sd">        tiempo_total_coordinacion (Decimal): Tiempo total dedicado a coordinación</span>
+<span class="sd">        tiempo_tareas_observables (Decimal): Tiempo total de tareas observables</span>
+<span class="sd">        factor_complejidad (Decimal): Factor calculado de complejidad del sector</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        Esta entidad es fundamental para el análisis de capacidad y</span>
+<span class="sd">        eficiencia de los sectores aéreos, y forma parte del núcleo</span>
+<span class="sd">        del dominio de la aplicación.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sector</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">hora</span><span class="p">:</span> <span class="n">datetime</span>
+    <span class="n">num_vuelos</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">tps</span><span class="p">:</span> <span class="n">Decimal</span>
+    <span class="n">tipos_aeronaves</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">aerolineas</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">tipos_vuelo</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">tiempo_total_comunicaciones</span><span class="p">:</span> <span class="n">Decimal</span>
+    <span class="n">tiempo_total_coordinacion</span><span class="p">:</span> <span class="n">Decimal</span>
+    <span class="n">tiempo_tareas_observables</span><span class="p">:</span> <span class="n">Decimal</span>
+    <span class="n">factor_complejidad</span><span class="p">:</span> <span class="n">Decimal</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2025, Iván Forero.</p>
+  </div>
+
+  Compilado con <a href="https://www.sphinx-doc.org/">Sphinx</a> usando un
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">tema</a>
+    proporcionado por <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

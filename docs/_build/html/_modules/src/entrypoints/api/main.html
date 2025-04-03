@@ -1,0 +1,904 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src.entrypoints.api.main &mdash; TSIS UMB Data Science  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            TSIS UMB Data Science
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/infrastructure/adapters.html">Infrastructure Adapters</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/entrypoints/api.html">API Entrypoints</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">TSIS UMB Data Science</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">src.entrypoints.api.main</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for src.entrypoints.api.main</h1><div class="highlight"><pre>
+<span></span><span class="c1"># src\entrypoints\api\main.py</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">fastapi</span> <span class="kn">import</span> <span class="n">FastAPI</span><span class="p">,</span> <span class="n">HTTPException</span><span class="p">,</span> <span class="n">UploadFile</span><span class="p">,</span> <span class="n">File</span><span class="p">,</span> <span class="n">Request</span>
+<span class="kn">from</span> <span class="nn">fastapi.middleware.cors</span> <span class="kn">import</span> <span class="n">CORSMiddleware</span>
+<span class="kn">from</span> <span class="nn">src.infraestructure.config.container</span> <span class="kn">import</span> <span class="n">DependencyContainer</span>
+<span class="kn">from</span> <span class="nn">src.core.dtos.flight_dtos</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">FlightFilterDTO</span><span class="p">,</span> 
+    <span class="n">FlightOriginCountDTO</span><span class="p">,</span>
+    <span class="n">DateRangesAnalysisRequestDTO</span><span class="p">,</span>
+    <span class="n">FlightHourlyCountDTO</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">fastapi.responses</span> <span class="kn">import</span> <span class="n">HTMLResponse</span>
+<span class="kn">from</span> <span class="nn">fastapi.templating</span> <span class="kn">import</span> <span class="n">Jinja2Templates</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span> <span class="nn">fastapi.responses</span> <span class="kn">import</span> <span class="n">JSONResponse</span>  <span class="c1"># Agregar esta importación al inicio</span>
+<span class="kn">from</span> <span class="nn">src.core.entities.sector_capacity</span> <span class="kn">import</span> <span class="n">SectorCapacityResponse</span>
+<span class="kn">from</span> <span class="nn">src.core.use_cases.get_sector_capacity</span> <span class="kn">import</span> <span class="n">GetSectorCapacityUseCase</span>
+<span class="kn">from</span> <span class="nn">src.core.entities.sector_analysis</span> <span class="kn">import</span> <span class="n">SectorDetailedAnalysis</span>
+
+<div class="viewcode-block" id="DirectoryRequest">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.DirectoryRequest">[docs]</a>
+<span class="k">class</span> <span class="nc">DirectoryRequest</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">directory_path</span><span class="p">:</span> <span class="nb">str</span></div>
+
+
+<div class="viewcode-block" id="ConfigRequest">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.ConfigRequest">[docs]</a>
+<span class="k">class</span> <span class="nc">ConfigRequest</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">key</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">value</span><span class="p">:</span> <span class="nb">str</span></div>
+
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">FastAPI</span><span class="p">()</span>
+<span class="n">container</span> <span class="o">=</span> <span class="n">DependencyContainer</span><span class="p">()</span>
+
+<span class="n">templates</span> <span class="o">=</span> <span class="n">Jinja2Templates</span><span class="p">(</span><span class="n">directory</span><span class="o">=</span><span class="s2">&quot;src/infrastructure/adapters/inbound/web/templates&quot;</span><span class="p">)</span>
+
+<span class="c1"># Configure CORS</span>
+<span class="n">origins</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;http://localhost:3000&quot;</span><span class="p">]</span>
+<span class="n">app</span><span class="o">.</span><span class="n">add_middleware</span><span class="p">(</span>
+    <span class="n">CORSMiddleware</span><span class="p">,</span>
+    <span class="n">allow_origins</span><span class="o">=</span><span class="n">origins</span><span class="p">,</span>
+    <span class="n">allow_credentials</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">allow_methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">],</span>
+    <span class="n">allow_headers</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;*&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+
+<div class="viewcode-block" id="read_root">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.read_root">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">response_class</span><span class="o">=</span><span class="n">HTMLResponse</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">read_root</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">templates</span><span class="o">.</span><span class="n">TemplateResponse</span><span class="p">(</span><span class="s2">&quot;index.html&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;request&quot;</span><span class="p">:</span> <span class="n">request</span><span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="ProcessStatus">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.ProcessStatus">[docs]</a>
+<span class="k">class</span> <span class="nc">ProcessStatus</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_rows</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">processed_rows</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;idle&quot;</span>  <span class="c1"># idle, processing, completed, error</span></div>
+
+
+<span class="n">process_status</span> <span class="o">=</span> <span class="n">ProcessStatus</span><span class="p">()</span>
+
+<div class="viewcode-block" id="upload_file">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.upload_file">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/upload&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">upload_file</span><span class="p">(</span><span class="n">file</span><span class="p">:</span> <span class="n">UploadFile</span> <span class="o">=</span> <span class="n">File</span><span class="p">(</span><span class="o">...</span><span class="p">)):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">process_status</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;processing&quot;</span>
+        <span class="n">process_status</span><span class="o">.</span><span class="n">processed_rows</span> <span class="o">=</span> <span class="mi">0</span>
+        
+        <span class="n">file_location</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;data/raw/</span><span class="si">{</span><span class="n">file</span><span class="o">.</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_location</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_object</span><span class="p">:</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copyfileobj</span><span class="p">(</span><span class="n">file</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="n">file_object</span><span class="p">)</span>
+        
+        <span class="k">def</span> <span class="nf">update_progress</span><span class="p">(</span><span class="n">processed_rows</span><span class="p">):</span>
+            <span class="n">process_status</span><span class="o">.</span><span class="n">processed_rows</span> <span class="o">=</span> <span class="n">processed_rows</span>
+            <span class="c1"># Mantener el estado en &quot;processing&quot; mientras se actualiza</span>
+            <span class="n">process_status</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;processing&quot;</span>
+        
+        <span class="n">container</span><span class="o">.</span><span class="n">process_flights_use_case</span><span class="o">.</span><span class="n">update_progress</span> <span class="o">=</span> <span class="n">update_progress</span>
+        <span class="n">process_status</span><span class="o">.</span><span class="n">total_rows</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">process_flights_use_case</span><span class="o">.</span><span class="n">get_total_rows</span><span class="p">(</span><span class="n">file_location</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">process_flights_use_case</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">file_location</span><span class="p">)</span>
+        
+        <span class="n">process_status</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;completed&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Archivo &#39;</span><span class="si">{</span><span class="n">file</span><span class="o">.</span><span class="n">filename</span><span class="si">}</span><span class="s2">&#39; procesado exitosamente.&quot;</span><span class="p">,</span> <span class="s2">&quot;details&quot;</span><span class="p">:</span> <span class="n">result</span><span class="p">}</span>
+            
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">process_status</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;error&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error processing file: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">container</span><span class="o">.</span><span class="n">process_flights_use_case</span><span class="o">.</span><span class="n">update_progress</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="get_process_status">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.get_process_status">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/process-status&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_process_status</span><span class="p">():</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">process_status</span><span class="o">.</span><span class="n">status</span><span class="p">,</span>
+        <span class="s2">&quot;total_rows&quot;</span><span class="p">:</span> <span class="n">process_status</span><span class="o">.</span><span class="n">total_rows</span><span class="p">,</span>
+        <span class="s2">&quot;processed_rows&quot;</span><span class="p">:</span> <span class="n">process_status</span><span class="o">.</span><span class="n">processed_rows</span><span class="p">,</span>
+        <span class="s2">&quot;percentage&quot;</span><span class="p">:</span> <span class="nb">round</span><span class="p">((</span><span class="n">process_status</span><span class="o">.</span><span class="n">processed_rows</span> <span class="o">/</span> <span class="n">process_status</span><span class="o">.</span><span class="n">total_rows</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span> 
+                          <span class="k">if</span> <span class="n">process_status</span><span class="o">.</span><span class="n">total_rows</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="get_files">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.get_files">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/files&quot;</span><span class="p">)</span> 
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_files</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">file_repository</span><span class="o">.</span><span class="n">get_all_files</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;files&quot;</span><span class="p">:</span> <span class="n">files</span><span class="p">}</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error al obtener archivos: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="upload_directory">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.upload_directory">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/upload-directory&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">upload_directory</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">DirectoryRequest</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">process_directory_use_case</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">directory_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Procesados </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;processed_files&#39;</span><span class="p">])</span><span class="si">}</span><span class="s2"> archivos exitosamente&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;processed_files&quot;</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;processed_files&#39;</span><span class="p">],</span>
+            <span class="s2">&quot;errors&quot;</span><span class="p">:</span> <span class="n">result</span><span class="p">[</span><span class="s1">&#39;errors&#39;</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">ve</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">ve</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error al procesar el directorio: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_configs">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.get_configs">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/config&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_configs</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">configs</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">get_all_configs_use_case</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">configs</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error al obtener configuraciones: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_config">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.get_config">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/config/</span><span class="si">{key}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_config</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">get_config_use_case</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">config</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">ve</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">ve</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error al obtener configuración: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_config">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.create_config">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/api/config&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">create_config</span><span class="p">(</span><span class="n">config</span><span class="p">:</span> <span class="n">ConfigRequest</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">create_config_use_case</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">result</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error al crear configuración: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="update_config">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.update_config">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;/api/config/</span><span class="si">{key}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">update_config</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">ConfigRequest</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">update_config_use_case</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">ve</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">ve</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error al actualizar configuración: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="delete_config">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.delete_config">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">&quot;/api/config/</span><span class="si">{key}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">delete_config</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">config_repository</span><span class="o">.</span><span class="n">delete_by_key</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Configuración &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; eliminada exitosamente&quot;</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">JSONResponse</span><span class="p">(</span>
+            <span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span>
+            <span class="n">content</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Configuración &#39;</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&#39; no encontrada&quot;</span><span class="p">}</span>
+        <span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error al eliminar configuración: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="shutdown_event">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.shutdown_event">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">on_event</span><span class="p">(</span><span class="s2">&quot;shutdown&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">shutdown_event</span><span class="p">():</span>
+    <span class="n">container</span><span class="o">.</span><span class="n">cleanup</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="get_flight_years">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.get_flight_years">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/flights/years&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_flight_years</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">years</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">flight_repository</span><span class="o">.</span><span class="n">get_distinct_years</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;years&quot;</span><span class="p">:</span> <span class="n">years</span><span class="p">}</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="get_flight_months">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.get_flight_months">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/flights/months&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_flight_months</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">months</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">flight_repository</span><span class="o">.</span><span class="n">get_distinct_months</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;months&quot;</span><span class="p">:</span> <span class="n">months</span><span class="p">}</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="get_flight_origins">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.get_flight_origins">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/flights/origins&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_flight_origins</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">origins</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">flight_repository</span><span class="o">.</span><span class="n">get_distinct_origins</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;origins&quot;</span><span class="p">:</span> <span class="n">origins</span><span class="p">}</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="get_flight_destinations">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.get_flight_destinations">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/flights/destinations&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_flight_destinations</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">destinations</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">flight_repository</span><span class="o">.</span><span class="n">get_distinct_destinations</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;destinations&quot;</span><span class="p">:</span> <span class="n">destinations</span><span class="p">}</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="get_flight_types">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.get_flight_types">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/flights/flight-types&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_flight_types</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">flight_types</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">flight_repository</span><span class="o">.</span><span class="n">get_distinct_flight_types</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;flightTypes&quot;</span><span class="p">:</span> <span class="n">flight_types</span><span class="p">}</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="get_airlines">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.get_airlines">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/flights/airlines&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_airlines</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">airlines</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">flight_repository</span><span class="o">.</span><span class="n">get_distinct_airlines</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;airlines&quot;</span><span class="p">:</span> <span class="n">airlines</span><span class="p">}</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error in get_airlines endpoint: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="get_aircraft_types">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.get_aircraft_types">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/flights/aircraft-types&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_aircraft_types</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">aircraft_types</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">flight_repository</span><span class="o">.</span><span class="n">get_distinct_aircraft_types</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;aircraftTypes&quot;</span><span class="p">:</span> <span class="n">aircraft_types</span><span class="p">}</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></div>
+
+
+
+
+<div class="viewcode-block" id="get_origins_count">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.get_origins_count">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/flights/origins-count&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_origins_count</span><span class="p">(</span>
+    <span class="n">years</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">months</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">origins</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">destinations</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">flightTypes</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">airlines</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">aircraftTypes</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>    
+<span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">filters</span> <span class="o">=</span> <span class="n">FlightFilterDTO</span><span class="p">(</span>
+            <span class="n">years</span><span class="o">=</span><span class="n">years</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">years</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">months</span><span class="o">=</span><span class="n">months</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">months</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">origins</span><span class="o">=</span><span class="n">origins</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">origins</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">destinations</span><span class="o">=</span><span class="n">destinations</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">destinations</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">flight_types</span><span class="o">=</span><span class="n">flightTypes</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">flightTypes</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">airlines</span><span class="o">=</span><span class="n">airlines</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">airlines</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">aircraft_types</span><span class="o">=</span><span class="n">aircraftTypes</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">aircraftTypes</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        
+        <span class="n">result</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">get_flight_origins_count_use_case</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">filters</span><span class="p">)</span>
+        <span class="c1"># Convert to list if not already a list</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">result</span>
+        <span class="k">return</span> <span class="p">[]</span>
+        
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error in get_origins_count: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>  <span class="c1"># Add this to get more detailed error information</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="get_destinations_count">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.get_destinations_count">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/flights/destinations-count&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_destinations_count</span><span class="p">(</span>
+    <span class="n">years</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">months</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">origins</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">destinations</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">flightTypes</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">airlines</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">aircraftTypes</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">filters</span> <span class="o">=</span> <span class="n">FlightFilterDTO</span><span class="p">(</span>
+            <span class="n">years</span><span class="o">=</span><span class="n">years</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">years</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">months</span><span class="o">=</span><span class="n">months</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">months</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">origins</span><span class="o">=</span><span class="n">origins</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">origins</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">destinations</span><span class="o">=</span><span class="n">destinations</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">destinations</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">flight_types</span><span class="o">=</span><span class="n">flightTypes</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">flightTypes</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">airlines</span><span class="o">=</span><span class="n">airlines</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">airlines</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">aircraft_types</span><span class="o">=</span><span class="n">aircraftTypes</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">aircraftTypes</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        
+        <span class="n">result</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">flight_repository</span><span class="o">.</span><span class="n">get_destinations_count</span><span class="p">(</span><span class="n">filters</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span> <span class="k">if</span> <span class="n">result</span> <span class="k">else</span> <span class="p">[]</span>
+        
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error in get_destinations_count: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="get_airlines_count">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.get_airlines_count">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/flights/airlines-count&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_airlines_count</span><span class="p">(</span>
+    <span class="n">years</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">months</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">origins</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">destinations</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">flightTypes</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">airlines</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">aircraftTypes</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">filters</span> <span class="o">=</span> <span class="n">FlightFilterDTO</span><span class="p">(</span>
+            <span class="n">years</span><span class="o">=</span><span class="n">years</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">years</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">months</span><span class="o">=</span><span class="n">months</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">months</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">origins</span><span class="o">=</span><span class="n">origins</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">origins</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">destinations</span><span class="o">=</span><span class="n">destinations</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">destinations</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">flight_types</span><span class="o">=</span><span class="n">flightTypes</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">flightTypes</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">airlines</span><span class="o">=</span><span class="n">airlines</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">airlines</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">aircraft_types</span><span class="o">=</span><span class="n">aircraftTypes</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">aircraftTypes</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        
+        <span class="n">result</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">flight_repository</span><span class="o">.</span><span class="n">get_airlines_count</span><span class="p">(</span><span class="n">filters</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span> <span class="k">if</span> <span class="n">result</span> <span class="k">else</span> <span class="p">[]</span>
+        
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error in get_airlines_count: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="get_flight_types_count">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.get_flight_types_count">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/flights/flight-types-count&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_flight_types_count</span><span class="p">(</span>
+    <span class="n">years</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">months</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">origins</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">destinations</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">flightTypes</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">airlines</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">aircraftTypes</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">filters</span> <span class="o">=</span> <span class="n">FlightFilterDTO</span><span class="p">(</span>
+            <span class="n">years</span><span class="o">=</span><span class="n">years</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">years</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">months</span><span class="o">=</span><span class="n">months</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">months</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">origins</span><span class="o">=</span><span class="n">origins</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">origins</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">destinations</span><span class="o">=</span><span class="n">destinations</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">destinations</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">flight_types</span><span class="o">=</span><span class="n">flightTypes</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">flightTypes</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">airlines</span><span class="o">=</span><span class="n">airlines</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">airlines</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">aircraft_types</span><span class="o">=</span><span class="n">aircraftTypes</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">aircraftTypes</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="p">)</span>
+        
+        <span class="n">result</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">flight_repository</span><span class="o">.</span><span class="n">get_flight_types_count</span><span class="p">(</span><span class="n">filters</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span> <span class="k">if</span> <span class="n">result</span> <span class="k">else</span> <span class="p">[]</span>
+        
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error in get_flight_types_count: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></div>
+
+
+<span class="c1"># Update the LevelRangeRequest class</span>
+<div class="viewcode-block" id="LevelRangeRequest">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.LevelRangeRequest">[docs]</a>
+<span class="k">class</span> <span class="nc">LevelRangeRequest</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">origen</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">destino</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">nivel_min</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">nivel_max</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">ruta</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">zona</span><span class="p">:</span> <span class="nb">str</span></div>
+
+
+<div class="viewcode-block" id="get_level_ranges">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.get_level_ranges">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/level-ranges&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_level_ranges</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">ranges</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">get_all_level_ranges_use_case</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">ranges</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error getting level ranges: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_level_range">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.get_level_range">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/level-ranges/</span><span class="si">{id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_level_range</span><span class="p">(</span><span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">range</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">get_level_range_use_case</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">range</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Level range with ID </span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">range</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">ve</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">ve</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error getting level range: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_level_range_by_route">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.get_level_range_by_route">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/level-ranges/route/</span><span class="si">{origen}</span><span class="s2">/</span><span class="si">{destino}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_level_range_by_route</span><span class="p">(</span><span class="n">origen</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">destino</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">range</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">get_level_range_by_route_use_case</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">origen</span><span class="p">,</span> <span class="n">destino</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">range</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
+                <span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> 
+                <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Level range for route </span><span class="si">{</span><span class="n">origen</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">destino</span><span class="si">}</span><span class="s2"> not found&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="nb">range</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error getting level range by route: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_level_ranges_by_zone">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.get_level_ranges_by_zone">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/level-ranges/zone/</span><span class="si">{zona}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_level_ranges_by_zone</span><span class="p">(</span><span class="n">zona</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">ranges</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">get_level_ranges_by_zone_use_case</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">zona</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ranges</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error getting level ranges by zone: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_level_range">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.create_level_range">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/api/level-ranges&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">create_level_range</span><span class="p">(</span><span class="n">level_range</span><span class="p">:</span> <span class="n">LevelRangeRequest</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">create_level_range_use_case</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">level_range</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">result</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error creating level range: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="update_level_range">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.update_level_range">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="s2">&quot;/api/level-ranges/</span><span class="si">{id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">update_level_range</span><span class="p">(</span><span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">level_range</span><span class="p">:</span> <span class="n">LevelRangeRequest</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">update_level_range_use_case</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">level_range</span><span class="o">.</span><span class="n">dict</span><span class="p">())</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Level range with ID </span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">ve</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">ve</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error updating level range: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="delete_level_range">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.delete_level_range">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">&quot;/api/level-ranges/</span><span class="si">{id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">delete_level_range</span><span class="p">(</span><span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">delete_level_range_use_case</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Level range with ID </span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2"> successfully deleted&quot;</span><span class="p">}</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Level range with ID </span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2"> not found&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error deleting level range: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<span class="c1"># Sector Capacity endpoints</span>
+<div class="viewcode-block" id="get_sectors">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.get_sectors">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/sector-capacity/sectors&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_sectors</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">use_case</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">get_sector_capacity_use_case</span><span class="p">()</span>
+        <span class="n">sectors</span> <span class="o">=</span> <span class="n">use_case</span><span class="o">.</span><span class="n">get_sectors</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;sectors&quot;</span><span class="p">:</span> <span class="n">sectors</span><span class="p">}</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="get_sector_capacity">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.get_sector_capacity">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/sector-capacity/</span><span class="si">{sector}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">get_sector_capacity</span><span class="p">(</span><span class="n">sector</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">date</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">use_case</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">get_sector_capacity_use_case</span><span class="p">()</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">date_obj</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1"> %H:%M:%S&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
+                <span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> 
+                <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Formato de fecha inválido. Use YYYY-MM-DD HH:MM:SS&quot;</span>
+            <span class="p">)</span>
+            
+        <span class="k">if</span> <span class="n">date_obj</span><span class="o">.</span><span class="n">year</span> <span class="o">&lt;</span> <span class="mi">1900</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
+                <span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
+                <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;La fecha debe ser posterior a 1900&quot;</span>
+            <span class="p">)</span>
+            
+        <span class="n">result</span> <span class="o">=</span> <span class="n">use_case</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">sector</span><span class="p">,</span> <span class="n">date_obj</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
+                <span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span>
+                <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;No se encontraron datos para el sector </span><span class="si">{</span><span class="n">sector</span><span class="si">}</span><span class="s2"> en la fecha </span><span class="si">{</span><span class="n">date</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            
+        <span class="k">return</span> <span class="n">result</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></div>
+
+
+<span class="c1"># Add these imports at the top with other imports</span>
+<span class="kn">from</span> <span class="nn">src.core.entities.sector_analysis</span> <span class="kn">import</span> <span class="n">SectorDetailedAnalysis</span>
+
+<span class="c1"># Add these endpoints after the existing ones</span>
+<div class="viewcode-block" id="get_analysis_sectors">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.get_analysis_sectors">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/sector-analysis/sectors&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_analysis_sectors</span><span class="p">():</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">sectors</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">sector_analysis_repository</span><span class="o">.</span><span class="n">get_all_sectors</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">sectors</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error getting sectors: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_sector_analysis">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.get_sector_analysis">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/sector-analysis/</span><span class="si">{sector}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_sector_analysis</span><span class="p">(</span>
+    <span class="n">sector</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">start_date</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">end_date</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">page</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">page_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10000</span>
+<span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Received request with params: sector=</span><span class="si">{</span><span class="n">sector</span><span class="si">}</span><span class="s2">, start_date=</span><span class="si">{</span><span class="n">start_date</span><span class="si">}</span><span class="s2">, end_date=</span><span class="si">{</span><span class="n">end_date</span><span class="si">}</span><span class="s2">, page=</span><span class="si">{</span><span class="n">page</span><span class="si">}</span><span class="s2">, page_size=</span><span class="si">{</span><span class="n">page_size</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        
+        <span class="n">start_date_obj</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">start_date</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">end_date_obj</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">end_date</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">start_date_obj</span> <span class="o">&gt;</span> <span class="n">end_date_obj</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
+                <span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span>
+                <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Start date cannot be later than end date&quot;</span>
+            <span class="p">)</span>
+        
+        <span class="n">skip</span> <span class="o">=</span> <span class="p">(</span><span class="n">page</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">page_size</span>
+        
+        <span class="n">analysis_data</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">sector_analysis_repository</span><span class="o">.</span><span class="n">get_analysis_by_date_range</span><span class="p">(</span>
+            <span class="n">sector</span><span class="p">,</span>
+            <span class="n">start_date_obj</span><span class="p">,</span>
+            <span class="n">end_date_obj</span><span class="p">,</span>
+            <span class="n">skip</span><span class="p">,</span>
+            <span class="n">page_size</span>
+        <span class="p">)</span>
+        
+        <span class="n">total_count</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">sector_analysis_repository</span><span class="o">.</span><span class="n">get_total_count</span><span class="p">(</span>
+            <span class="n">sector</span><span class="p">,</span>
+            <span class="n">start_date_obj</span><span class="p">,</span>
+            <span class="n">end_date_obj</span>
+        <span class="p">)</span>
+        
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="n">total_count</span><span class="si">}</span><span class="s2"> total records, returning </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">analysis_data</span><span class="p">)</span><span class="si">}</span><span class="s2"> items&quot;</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;items&quot;</span><span class="p">:</span> <span class="n">analysis_data</span><span class="p">,</span>
+            <span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="n">total_count</span><span class="p">,</span>
+            <span class="s2">&quot;page&quot;</span><span class="p">:</span> <span class="n">page</span><span class="p">,</span>
+            <span class="s2">&quot;page_size&quot;</span><span class="p">:</span> <span class="n">page_size</span>
+        <span class="p">}</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Invalid date format: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error getting sector analysis: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_sector_analysis_by_date">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.get_sector_analysis_by_date">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;/api/sector-analysis/</span><span class="si">{sector}</span><span class="s2">/date&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">get_sector_analysis_by_date</span><span class="p">(</span>
+    <span class="n">sector</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">date</span><span class="p">:</span> <span class="nb">str</span>
+<span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">date_obj</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">analysis</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">sector_analysis_repository</span><span class="o">.</span><span class="n">get_by_sector_and_date</span><span class="p">(</span><span class="n">sector</span><span class="p">,</span> <span class="n">date_obj</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">analysis</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span>
+                <span class="n">status_code</span><span class="o">=</span><span class="mi">404</span><span class="p">,</span>
+                <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;No data found for sector </span><span class="si">{</span><span class="n">sector</span><span class="si">}</span><span class="s2"> on </span><span class="si">{</span><span class="n">date</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            
+        <span class="k">return</span> <span class="n">analysis</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Invalid date format: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Error getting sector analysis: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/api/flights/analyze-date-ranges&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">analyze_date_ranges</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">DateRangesAnalysisRequestDTO</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s1">&#39;origin&#39;</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">flight_repository</span><span class="o">.</span><span class="n">get_hourly_counts_by_date_ranges</span><span class="p">(</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">date_ranges</span><span class="p">,</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">airport</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">flight_repository</span><span class="o">.</span><span class="n">get_hourly_counts_by_date_ranges_destination</span><span class="p">(</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">date_ranges</span><span class="p">,</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">airport</span>
+            <span class="p">)</span>
+        
+        <span class="c1"># Asegurar que siempre devolvemos una lista, incluso si está vacía</span>
+        <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+            
+        <span class="c1"># Convertir los resultados a formato esperado por el frontend</span>
+        <span class="n">formatted_result</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s1">&#39;hour&#39;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">hour</span><span class="p">,</span>
+                <span class="s1">&#39;counts&#39;</span><span class="p">:</span> <span class="n">item</span><span class="o">.</span><span class="n">counts</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">result</span>
+        <span class="p">]</span>
+        
+        <span class="k">return</span> <span class="n">formatted_result</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error in analyze_date_ranges: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">traceback</span><span class="o">.</span><span class="n">print_exc</span><span class="p">()</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<div class="viewcode-block" id="DateRange">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.DateRange">[docs]</a>
+<span class="k">class</span> <span class="nc">DateRange</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">startDate</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">endDate</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">label</span><span class="p">:</span> <span class="nb">str</span></div>
+
+
+<div class="viewcode-block" id="DateRangesRequest">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.DateRangesRequest">[docs]</a>
+<span class="k">class</span> <span class="nc">DateRangesRequest</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">dateRanges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DateRange</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="analyze_date_ranges">
+<a class="viewcode-back" href="../../../../modules/entrypoints/api.html#src.entrypoints.api.main.analyze_date_ranges">[docs]</a>
+<span class="nd">@app</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;/api/flights/analyze-date-ranges&quot;</span><span class="p">)</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">analyze_date_ranges</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">DateRangesRequest</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Build dynamic SQL query based on number of ranges</span>
+        <span class="n">base_query</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        WITH horas_del_dia AS (</span>
+<span class="s2">            SELECT generate_series(0, 23) AS hora</span>
+<span class="s2">        ),</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Generate CTE for each date range</span>
+        <span class="n">cte_parts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">join_parts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">select_parts</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="nb">range</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">dateRanges</span><span class="p">:</span>
+            <span class="n">range_num</span> <span class="o">=</span> <span class="nb">range</span><span class="o">.</span><span class="n">id</span>
+            <span class="n">cte_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            vuelos_rango</span><span class="si">{</span><span class="n">range_num</span><span class="si">}</span><span class="s2"> AS (</span>
+<span class="s2">                SELECT </span>
+<span class="s2">                    date_part(&#39;hour&#39;, tiempo_inicial)::int AS hora, </span>
+<span class="s2">                    COUNT(*) AS num_vuelos</span>
+<span class="s2">                FROM fligths</span>
+<span class="s2">                WHERE </span>
+<span class="s2">                    tiempo_inicial::date BETWEEN &#39;</span><span class="si">{</span><span class="nb">range</span><span class="o">.</span><span class="n">startDate</span><span class="si">}</span><span class="s2">&#39; AND &#39;</span><span class="si">{</span><span class="nb">range</span><span class="o">.</span><span class="n">endDate</span><span class="si">}</span><span class="s2">&#39;</span>
+<span class="s2">                    OR (fecha_llegada || &#39; &#39; || hora_llegada)::timestamp::date </span>
+<span class="s2">                       BETWEEN &#39;</span><span class="si">{</span><span class="nb">range</span><span class="o">.</span><span class="n">startDate</span><span class="si">}</span><span class="s2">&#39; AND &#39;</span><span class="si">{</span><span class="nb">range</span><span class="o">.</span><span class="n">endDate</span><span class="si">}</span><span class="s2">&#39;</span>
+<span class="s2">                GROUP BY date_part(&#39;hour&#39;, tiempo_inicial)</span>
+<span class="s2">            )&quot;&quot;&quot;</span><span class="p">)</span>
+            
+            <span class="n">join_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            LEFT JOIN vuelos_rango</span><span class="si">{</span><span class="n">range_num</span><span class="si">}</span><span class="s2"> vr</span><span class="si">{</span><span class="n">range_num</span><span class="si">}</span><span class="s2"> ON h.hora = vr</span><span class="si">{</span><span class="n">range_num</span><span class="si">}</span><span class="s2">.hora&quot;&quot;&quot;</span><span class="p">)</span>
+            
+            <span class="n">select_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;COALESCE(vr</span><span class="si">{</span><span class="n">range_num</span><span class="si">}</span><span class="s2">.num_vuelos, 0) AS rango</span><span class="si">{</span><span class="n">range_num</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Combine all parts</span>
+        <span class="n">query</span> <span class="o">=</span> <span class="n">base_query</span> <span class="o">+</span> <span class="s2">&quot;,</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cte_parts</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        SELECT </span>
+<span class="s2">            h.hora,</span>
+<span class="s2">            &quot;&quot;&quot;</span> <span class="o">+</span> <span class="s2">&quot;,</span><span class="se">\n</span><span class="s2">            &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">select_parts</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        FROM horas_del_dia h</span>
+<span class="s2">        &quot;&quot;&quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">join_parts</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        ORDER BY h.hora;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Execute query</span>
+        <span class="k">with</span> <span class="n">container</span><span class="o">.</span><span class="n">connection</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span> <span class="k">as</span> <span class="n">cursor</span><span class="p">:</span>
+            <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+        <span class="c1"># Format results</span>
+        <span class="n">formatted_results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="n">result_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;hora&quot;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="nb">range</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">dateRanges</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">result_dict</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;rango</span><span class="si">{</span><span class="nb">range</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">formatted_results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result_dict</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">formatted_results</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span></div>
+
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Iván Forero.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

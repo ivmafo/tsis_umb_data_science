@@ -1,0 +1,187 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src.core.entities.flight &mdash; documentación de TSIS UMB Data Science - </title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=e2bb6099"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/translations.js?v=f85f4cfb"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="../../../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            TSIS UMB Data Science
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" aria-label="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/core/dtos.html">Core DTOs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/core/entities.html">Core Entities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/core/ports.html">Core Ports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/core/use_cases.html">Core Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/infrastructure/adapters.html">Infrastructure Adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/infrastructure/config.html">Infrastructure Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/entrypoints/api.html">Puntos de Entrada de la API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">TSIS UMB Data Science</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Código de módulo</a></li>
+      <li class="breadcrumb-item active">src.core.entities.flight</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Código fuente para src.core.entities.flight</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Módulo que define la entidad principal de Vuelo (Flight) siguiendo los principios de</span>
+<span class="sd">arquitectura hexagonal y clean architecture.</span>
+
+<span class="sd">Esta entidad representa el objeto de dominio central para el manejo de información</span>
+<span class="sd">de vuelos, encapsulando toda la lógica y reglas de negocio relacionadas con los vuelos.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">validator</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">date</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+
+<div class="viewcode-block" id="Flight">
+<a class="viewcode-back" href="../../../../modules/core/entities.html#src.core.entities.flight.Flight">[documentos]</a>
+<span class="k">class</span> <span class="nc">Flight</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Entidad que representa un vuelo en el sistema.</span>
+
+<span class="sd">    Esta clase es una entidad de dominio pura que encapsula los atributos y comportamientos</span>
+<span class="sd">    esenciales de un vuelo, siguiendo los principios de Clean Architecture.</span>
+<span class="sd">    No depende de frameworks externos ni de la capa de infraestructura.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        fecha (datetime, optional): Fecha general del vuelo</span>
+<span class="sd">        sid (int, optional): Identificador único del vuelo en el sistema</span>
+<span class="sd">        ssr (str, optional): Código de radar secundario de vigilancia</span>
+<span class="sd">        callsign (str, optional): Señal distintiva de la aeronave</span>
+<span class="sd">        matricula (str, optional): Matrícula de identificación de la aeronave</span>
+<span class="sd">        tipo_aeronave (str, optional): Tipo o modelo de la aeronave</span>
+<span class="sd">        empresa (str, optional): Compañía aérea operadora del vuelo</span>
+<span class="sd">        numero_vuelo (int, optional): Número identificador del vuelo</span>
+<span class="sd">        tipo_vuelo (str, optional): Clasificación del tipo de vuelo</span>
+<span class="sd">        tiempo_inicial (datetime, optional): Tiempo de inicio del vuelo</span>
+<span class="sd">        origen (str, optional): Aeropuerto o lugar de origen</span>
+<span class="sd">        fecha_salida (datetime, optional): Fecha programada de salida</span>
+<span class="sd">        hora_salida (time, optional): Hora específica de salida</span>
+<span class="sd">        hora_pv (time, optional): Hora de plan de vuelo</span>
+<span class="sd">        destino (str, optional): Aeropuerto o lugar de destino</span>
+<span class="sd">        fecha_llegada (datetime, optional): Fecha programada de llegada</span>
+<span class="sd">        hora_llegada (time, optional): Hora específica de llegada</span>
+<span class="sd">        nivel (int, optional): Nivel de vuelo</span>
+<span class="sd">        duracion (int, optional): Duración del vuelo en minutos</span>
+<span class="sd">        distancia (int, optional): Distancia del vuelo en millas náuticas</span>
+<span class="sd">        velocidad (int, optional): Velocidad de la aeronave</span>
+<span class="sd">        eq_ssr (str, optional): Equipamiento SSR de la aeronave</span>
+<span class="sd">        nombre_origen (str, optional): Nombre completo del lugar de origen</span>
+<span class="sd">        nombre_destino (str, optional): Nombre completo del lugar de destino</span>
+<span class="sd">        fecha_registro (datetime, optional): Fecha de registro en el sistema</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        Esta entidad forma parte del núcleo de dominio y no debe contener</span>
+<span class="sd">        lógica de infraestructura o frameworks externos.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fecha</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span>                 <span class="c1"># Fecha</span>
+    <span class="n">sid</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>                        <span class="c1"># SID (db) /  ID Excel</span>
+    <span class="n">ssr</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>                        <span class="c1"># SSR</span>
+    <span class="n">callsign</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>                   <span class="c1"># Callsign</span>
+    <span class="n">matricula</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>                  <span class="c1"># Matrícula</span>
+    <span class="n">tipo_aeronave</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>              <span class="c1"># Tip Aer</span>
+    <span class="n">empresa</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>                    <span class="c1"># Empresa</span>
+    <span class="n">numero_vuelo</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>               <span class="c1"># Vuelo</span>
+    <span class="n">tipo_vuelo</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>                 <span class="c1"># Tip Vuel</span>
+    <span class="n">tiempo_inicial</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span>        <span class="c1"># Tiempo Inicial</span>
+    <span class="n">origen</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>                     <span class="c1"># Origen</span>
+    <span class="n">fecha_salida</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span>          <span class="c1"># Fec Sal</span>
+    <span class="n">hora_salida</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">time</span><span class="p">]</span>               <span class="c1"># Hr Sal (se combina con fecha_salida)</span>
+    <span class="n">hora_pv</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">time</span><span class="p">]</span>                   <span class="c1"># hora pv  </span>
+    <span class="n">destino</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>                    <span class="c1"># Pista (Destino)</span>
+    <span class="n">fecha_llegada</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span>         <span class="c1"># Fec Lle</span>
+    <span class="n">hora_llegada</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">time</span><span class="p">]</span>              <span class="c1"># Hr Lle (se combina con fecha_llegada)</span>
+    <span class="n">nivel</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>                      <span class="c1"># Nivel</span>
+    <span class="n">duracion</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="n">distancia</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="n">velocidad</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="n">eq_ssr</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">nombre_origen</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>              <span class="c1"># Nombre origen ZZZZ</span>
+    <span class="n">nombre_destino</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>             <span class="c1"># Nombre destino ZZZZ</span>
+    <span class="n">fecha_registro</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span>        <span class="c1"># Fecha Registro</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2025, Iván Forero.</p>
+  </div>
+
+  Compilado con <a href="https://www.sphinx-doc.org/">Sphinx</a> usando un
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">tema</a>
+    proporcionado por <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

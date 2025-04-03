@@ -1,0 +1,167 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Infrastructure Configuration &mdash; documentación de TSIS UMB Data Science - </title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=e2bb6099"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/translations.js?v=f85f4cfb"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../search.html" />
+    <link rel="next" title="Frontend Components" href="../frontend/components.html" />
+    <link rel="prev" title="Infrastructure Adapters" href="adapters.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            TSIS UMB Data Science
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" aria-label="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../core/dtos.html">Core DTOs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/entities.html">Core Entities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/ports.html">Core Ports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/use_cases.html">Core Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="adapters.html">Infrastructure Adapters</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Infrastructure Configuration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#src.infraestructure.config.container.DependencyContainer"><code class="docutils literal notranslate"><span class="pre">DependencyContainer</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.infraestructure.config.container.DependencyContainer.cleanup"><code class="docutils literal notranslate"><span class="pre">DependencyContainer.cleanup()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.infraestructure.config.container.DependencyContainer.get_sector_capacity_use_case"><code class="docutils literal notranslate"><span class="pre">DependencyContainer.get_sector_capacity_use_case()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.infraestructure.config.database.PostgresConnectionPool"><code class="docutils literal notranslate"><span class="pre">PostgresConnectionPool</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.infraestructure.config.database.PostgresConnectionPool.close_all_connections"><code class="docutils literal notranslate"><span class="pre">PostgresConnectionPool.close_all_connections()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.infraestructure.config.database.PostgresConnectionPool.get_connection"><code class="docutils literal notranslate"><span class="pre">PostgresConnectionPool.get_connection()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.infraestructure.config.database.PostgresConnectionPool.release_connection"><code class="docutils literal notranslate"><span class="pre">PostgresConnectionPool.release_connection()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../frontend/components.html">Frontend Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../entrypoints/api.html">Puntos de Entrada de la API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">TSIS UMB Data Science</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Infrastructure Configuration</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/modules/infrastructure/config.rst.txt" rel="nofollow"> Ver código fuente de la página</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="infrastructure-configuration">
+<h1>Infrastructure Configuration<a class="headerlink" href="#infrastructure-configuration" title="Link to this heading"></a></h1>
+<dl class="py class" id="module-src.infraestructure.config.container">
+<dt class="sig sig-object py" id="src.infraestructure.config.container.DependencyContainer">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.infraestructure.config.container.</span></span><span class="sig-name descname"><span class="pre">DependencyContainer</span></span><a class="reference internal" href="../../_modules/src/infraestructure/config/container.html#DependencyContainer"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.config.container.DependencyContainer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.config.container.DependencyContainer.cleanup">
+<span class="sig-name descname"><span class="pre">cleanup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/infraestructure/config/container.html#DependencyContainer.cleanup"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.config.container.DependencyContainer.cleanup" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.config.container.DependencyContainer.get_sector_capacity_use_case">
+<span class="sig-name descname"><span class="pre">get_sector_capacity_use_case</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/infraestructure/config/container.html#DependencyContainer.get_sector_capacity_use_case"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.config.container.DependencyContainer.get_sector_capacity_use_case" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class" id="module-src.infraestructure.config.database">
+<dt class="sig sig-object py" id="src.infraestructure.config.database.PostgresConnectionPool">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.infraestructure.config.database.</span></span><span class="sig-name descname"><span class="pre">PostgresConnectionPool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">min_conn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_conn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/infraestructure/config/database.html#PostgresConnectionPool"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.config.database.PostgresConnectionPool" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.config.database.PostgresConnectionPool.close_all_connections">
+<span class="sig-name descname"><span class="pre">close_all_connections</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/infraestructure/config/database.html#PostgresConnectionPool.close_all_connections"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.config.database.PostgresConnectionPool.close_all_connections" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.config.database.PostgresConnectionPool.get_connection">
+<span class="sig-name descname"><span class="pre">get_connection</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/infraestructure/config/database.html#PostgresConnectionPool.get_connection"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.config.database.PostgresConnectionPool.get_connection" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="src.infraestructure.config.database.PostgresConnectionPool.release_connection">
+<span class="sig-name descname"><span class="pre">release_connection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conn</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/infraestructure/config/database.html#PostgresConnectionPool.release_connection"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.infraestructure.config.database.PostgresConnectionPool.release_connection" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pie de página">
+        <a href="adapters.html" class="btn btn-neutral float-left" title="Infrastructure Adapters" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Anterior</a>
+        <a href="../frontend/components.html" class="btn btn-neutral float-right" title="Frontend Components" accesskey="n" rel="next">Siguiente <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2025, Iván Forero.</p>
+  </div>
+
+  Compilado con <a href="https://www.sphinx-doc.org/">Sphinx</a> usando un
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">tema</a>
+    proporcionado por <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

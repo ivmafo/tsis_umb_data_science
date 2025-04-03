@@ -1,0 +1,246 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src.core.dtos.flight_dtos &mdash; documentación de TSIS UMB Data Science - </title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=e2bb6099"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/translations.js?v=f85f4cfb"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="../../../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            TSIS UMB Data Science
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" aria-label="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/core/dtos.html">Core DTOs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/core/entities.html">Core Entities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/core/ports.html">Core Ports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/core/use_cases.html">Core Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/infrastructure/adapters.html">Infrastructure Adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/infrastructure/config.html">Infrastructure Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/entrypoints/api.html">Puntos de Entrada de la API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">TSIS UMB Data Science</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Código de módulo</a></li>
+      <li class="breadcrumb-item active">src.core.dtos.flight_dtos</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Código fuente para src.core.dtos.flight_dtos</h1><div class="highlight"><pre>
+<span></span><span class="c1"># src\core\dtos</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Módulo que contiene los Data Transfer Objects (DTOs) relacionados con los vuelos.</span>
+<span class="sd">Estos DTOs se utilizan para transferir datos entre las diferentes capas de la aplicación.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">validator</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<div class="viewcode-block" id="FlightFilterDTO">
+<a class="viewcode-back" href="../../../../modules/core/dtos.html#src.core.dtos.flight_dtos.FlightFilterDTO">[documentos]</a>
+<span class="k">class</span> <span class="nc">FlightFilterDTO</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    DTO para filtrar vuelos según diferentes criterios.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        years (List[str]): Lista de años para filtrar</span>
+<span class="sd">        months (List[str]): Lista de meses para filtrar</span>
+<span class="sd">        origins (List[str]): Lista de aeropuertos de origen</span>
+<span class="sd">        destinations (List[str]): Lista de aeropuertos de destino</span>
+<span class="sd">        flight_types (List[str]): Lista de tipos de vuelo</span>
+<span class="sd">        airlines (List[str]): Lista de aerolíneas</span>
+<span class="sd">        aircraft_types (List[str]): Lista de tipos de aeronaves</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">years</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">months</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">origins</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">destinations</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">flight_types</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">airlines</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">aircraft_types</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="FlightOriginCountDTO">
+<a class="viewcode-back" href="../../../../modules/core/dtos.html#src.core.dtos.flight_dtos.FlightOriginCountDTO">[documentos]</a>
+<span class="k">class</span> <span class="nc">FlightOriginCountDTO</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    DTO para el conteo de vuelos por aeropuerto de origen.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        origin (str): Código del aeropuerto de origen</span>
+<span class="sd">        count (int): Cantidad de vuelos desde ese origen</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">origin</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">count</span><span class="p">:</span> <span class="nb">int</span></div>
+
+
+<div class="viewcode-block" id="FlightDestinationCountDTO">
+<a class="viewcode-back" href="../../../../modules/core/dtos.html#src.core.dtos.flight_dtos.FlightDestinationCountDTO">[documentos]</a>
+<span class="k">class</span> <span class="nc">FlightDestinationCountDTO</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    DTO para el conteo de vuelos por aeropuerto de destino.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        destination (str): Código del aeropuerto de destino</span>
+<span class="sd">        count (int): Cantidad de vuelos hacia ese destino</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">destination</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">count</span><span class="p">:</span> <span class="nb">int</span></div>
+
+
+<div class="viewcode-block" id="FlightAirlineCountDTO">
+<a class="viewcode-back" href="../../../../modules/core/dtos.html#src.core.dtos.flight_dtos.FlightAirlineCountDTO">[documentos]</a>
+<span class="k">class</span> <span class="nc">FlightAirlineCountDTO</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    DTO para el conteo de vuelos por aerolínea.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        airline (str): Nombre de la aerolínea</span>
+<span class="sd">        count (int): Cantidad de vuelos de esa aerolínea</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">airline</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">count</span><span class="p">:</span> <span class="nb">int</span></div>
+
+
+<div class="viewcode-block" id="FlightTypeCountDTO">
+<a class="viewcode-back" href="../../../../modules/core/dtos.html#src.core.dtos.flight_dtos.FlightTypeCountDTO">[documentos]</a>
+<span class="k">class</span> <span class="nc">FlightTypeCountDTO</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    DTO para el conteo de vuelos por tipo.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        flight_type (str): Tipo de vuelo</span>
+<span class="sd">        count (int): Cantidad de vuelos de ese tipo</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">flight_type</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">count</span><span class="p">:</span> <span class="nb">int</span></div>
+
+
+<div class="viewcode-block" id="DateRangeDTO">
+<a class="viewcode-back" href="../../../../modules/core/dtos.html#src.core.dtos.flight_dtos.DateRangeDTO">[documentos]</a>
+<span class="k">class</span> <span class="nc">DateRangeDTO</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    DTO para representar un rango de fechas.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        id (int): Identificador único del rango</span>
+<span class="sd">        start_date (str): Fecha de inicio en formato string</span>
+<span class="sd">        end_date (str): Fecha de fin en formato string</span>
+<span class="sd">        label (str): Etiqueta descriptiva del rango</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">start_date</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">end_date</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">label</span><span class="p">:</span> <span class="nb">str</span></div>
+
+
+<div class="viewcode-block" id="DateRangesAnalysisRequestDTO">
+<a class="viewcode-back" href="../../../../modules/core/dtos.html#src.core.dtos.flight_dtos.DateRangesAnalysisRequestDTO">[documentos]</a>
+<span class="k">class</span> <span class="nc">DateRangesAnalysisRequestDTO</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    DTO para solicitar análisis de rangos de fechas.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        date_ranges (List[DateRangeDTO]): Lista de rangos de fechas a analizar</span>
+<span class="sd">        airport (str, optional): Código del aeropuerto para filtrar</span>
+<span class="sd">        type (str): Tipo de análisis (&#39;origin&#39; o &#39;destination&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">date_ranges</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">DateRangeDTO</span><span class="p">]</span>
+    <span class="n">airport</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="nb">type</span><span class="p">:</span> <span class="nb">str</span></div>
+
+
+<div class="viewcode-block" id="FlightHourlyCountDTO">
+<a class="viewcode-back" href="../../../../modules/core/dtos.html#src.core.dtos.flight_dtos.FlightHourlyCountDTO">[documentos]</a>
+<span class="k">class</span> <span class="nc">FlightHourlyCountDTO</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    DTO para el conteo de vuelos por hora.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        hour (int): Hora del día (0-23)</span>
+<span class="sd">        counts (Dict[str, int]): Diccionario con conteos por rango de fechas</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">hour</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">counts</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span></div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2025, Iván Forero.</p>
+  </div>
+
+  Compilado con <a href="https://www.sphinx-doc.org/">Sphinx</a> usando un
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">tema</a>
+    proporcionado por <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

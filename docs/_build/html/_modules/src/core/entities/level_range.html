@@ -1,0 +1,152 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src.core.entities.level_range &mdash; documentación de TSIS UMB Data Science - </title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=e2bb6099"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/translations.js?v=f85f4cfb"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="../../../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            TSIS UMB Data Science
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" aria-label="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/core/dtos.html">Core DTOs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/core/entities.html">Core Entities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/core/ports.html">Core Ports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/core/use_cases.html">Core Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/infrastructure/adapters.html">Infrastructure Adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/infrastructure/config.html">Infrastructure Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/entrypoints/api.html">Puntos de Entrada de la API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">TSIS UMB Data Science</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Código de módulo</a></li>
+      <li class="breadcrumb-item active">src.core.entities.level_range</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Código fuente para src.core.entities.level_range</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Módulo que define la entidad LevelRange para el manejo de rangos de niveles de vuelo,</span>
+<span class="sd">siguiendo los principios de arquitectura hexagonal y clean architecture.</span>
+
+<span class="sd">Esta entidad forma parte del núcleo del dominio y encapsula las reglas de negocio</span>
+<span class="sd">relacionadas con los rangos de niveles permitidos entre diferentes rutas.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+
+<div class="viewcode-block" id="LevelRange">
+<a class="viewcode-back" href="../../../../modules/core/entities.html#src.core.entities.level_range.LevelRange">[documentos]</a>
+<span class="k">class</span> <span class="nc">LevelRange</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Entidad que representa un rango de niveles de vuelo entre dos puntos.</span>
+
+<span class="sd">    Esta clase es una entidad de dominio pura que define los niveles de vuelo</span>
+<span class="sd">    permitidos para rutas específicas, siguiendo los principios de Clean Architecture.</span>
+<span class="sd">    No contiene dependencias externas ni lógica de infraestructura.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        id (int, optional): Identificador único del rango de nivel</span>
+<span class="sd">        origen (str): Punto de origen de la ruta</span>
+<span class="sd">        destino (str): Punto de destino de la ruta</span>
+<span class="sd">        nivel_min (int): Nivel de vuelo mínimo permitido</span>
+<span class="sd">        nivel_max (int): Nivel de vuelo máximo permitido</span>
+<span class="sd">        ruta (str): Identificador de la ruta aérea</span>
+<span class="sd">        zona (str): Zona o sector aéreo al que pertenece la ruta</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        Esta entidad es fundamental para la gestión de niveles de vuelo</span>
+<span class="sd">        y forma parte del núcleo del dominio de la aplicación.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">origen</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">destino</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">nivel_min</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">nivel_max</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">ruta</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">zona</span><span class="p">:</span> <span class="nb">str</span></div>
+
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2025, Iván Forero.</p>
+  </div>
+
+  Compilado con <a href="https://www.sphinx-doc.org/">Sphinx</a> usando un
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">tema</a>
+    proporcionado por <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

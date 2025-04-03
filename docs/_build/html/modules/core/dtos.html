@@ -1,0 +1,688 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Core DTOs &mdash; documentación de TSIS UMB Data Science - </title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=e2bb6099"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../_static/translations.js?v=f85f4cfb"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../search.html" />
+    <link rel="next" title="Core Entities" href="entities.html" />
+    <link rel="prev" title="TSIS UMB Data Science Documentation" href="../../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            TSIS UMB Data Science
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" aria-label="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Core DTOs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.dtos.flight_dtos.DateRangeDTO"><code class="docutils literal notranslate"><span class="pre">DateRangeDTO</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.DateRangeDTO.id"><code class="docutils literal notranslate"><span class="pre">DateRangeDTO.id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.DateRangeDTO.start_date"><code class="docutils literal notranslate"><span class="pre">DateRangeDTO.start_date</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.DateRangeDTO.end_date"><code class="docutils literal notranslate"><span class="pre">DateRangeDTO.end_date</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.DateRangeDTO.label"><code class="docutils literal notranslate"><span class="pre">DateRangeDTO.label</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">DateRangeDTO.end_date</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">DateRangeDTO.id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">DateRangeDTO.label</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.DateRangeDTO.model_config"><code class="docutils literal notranslate"><span class="pre">DateRangeDTO.model_config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">DateRangeDTO.start_date</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.dtos.flight_dtos.DateRangesAnalysisRequestDTO"><code class="docutils literal notranslate"><span class="pre">DateRangesAnalysisRequestDTO</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.DateRangesAnalysisRequestDTO.date_ranges"><code class="docutils literal notranslate"><span class="pre">DateRangesAnalysisRequestDTO.date_ranges</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.DateRangesAnalysisRequestDTO.airport"><code class="docutils literal notranslate"><span class="pre">DateRangesAnalysisRequestDTO.airport</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.DateRangesAnalysisRequestDTO.type"><code class="docutils literal notranslate"><span class="pre">DateRangesAnalysisRequestDTO.type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">DateRangesAnalysisRequestDTO.airport</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5"><code class="docutils literal notranslate"><span class="pre">DateRangesAnalysisRequestDTO.date_ranges</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.DateRangesAnalysisRequestDTO.model_config"><code class="docutils literal notranslate"><span class="pre">DateRangesAnalysisRequestDTO.model_config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6"><code class="docutils literal notranslate"><span class="pre">DateRangesAnalysisRequestDTO.type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.dtos.flight_dtos.FlightAirlineCountDTO"><code class="docutils literal notranslate"><span class="pre">FlightAirlineCountDTO</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.FlightAirlineCountDTO.airline"><code class="docutils literal notranslate"><span class="pre">FlightAirlineCountDTO.airline</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.FlightAirlineCountDTO.count"><code class="docutils literal notranslate"><span class="pre">FlightAirlineCountDTO.count</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7"><code class="docutils literal notranslate"><span class="pre">FlightAirlineCountDTO.airline</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8"><code class="docutils literal notranslate"><span class="pre">FlightAirlineCountDTO.count</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.FlightAirlineCountDTO.model_config"><code class="docutils literal notranslate"><span class="pre">FlightAirlineCountDTO.model_config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.dtos.flight_dtos.FlightDestinationCountDTO"><code class="docutils literal notranslate"><span class="pre">FlightDestinationCountDTO</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.FlightDestinationCountDTO.destination"><code class="docutils literal notranslate"><span class="pre">FlightDestinationCountDTO.destination</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.FlightDestinationCountDTO.count"><code class="docutils literal notranslate"><span class="pre">FlightDestinationCountDTO.count</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9"><code class="docutils literal notranslate"><span class="pre">FlightDestinationCountDTO.count</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10"><code class="docutils literal notranslate"><span class="pre">FlightDestinationCountDTO.destination</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.FlightDestinationCountDTO.model_config"><code class="docutils literal notranslate"><span class="pre">FlightDestinationCountDTO.model_config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.dtos.flight_dtos.FlightFilterDTO"><code class="docutils literal notranslate"><span class="pre">FlightFilterDTO</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.FlightFilterDTO.years"><code class="docutils literal notranslate"><span class="pre">FlightFilterDTO.years</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.FlightFilterDTO.months"><code class="docutils literal notranslate"><span class="pre">FlightFilterDTO.months</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.FlightFilterDTO.origins"><code class="docutils literal notranslate"><span class="pre">FlightFilterDTO.origins</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.FlightFilterDTO.destinations"><code class="docutils literal notranslate"><span class="pre">FlightFilterDTO.destinations</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.FlightFilterDTO.flight_types"><code class="docutils literal notranslate"><span class="pre">FlightFilterDTO.flight_types</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.FlightFilterDTO.airlines"><code class="docutils literal notranslate"><span class="pre">FlightFilterDTO.airlines</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.FlightFilterDTO.aircraft_types"><code class="docutils literal notranslate"><span class="pre">FlightFilterDTO.aircraft_types</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11"><code class="docutils literal notranslate"><span class="pre">FlightFilterDTO.aircraft_types</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12"><code class="docutils literal notranslate"><span class="pre">FlightFilterDTO.airlines</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13"><code class="docutils literal notranslate"><span class="pre">FlightFilterDTO.destinations</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14"><code class="docutils literal notranslate"><span class="pre">FlightFilterDTO.flight_types</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.FlightFilterDTO.model_config"><code class="docutils literal notranslate"><span class="pre">FlightFilterDTO.model_config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15"><code class="docutils literal notranslate"><span class="pre">FlightFilterDTO.months</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id16"><code class="docutils literal notranslate"><span class="pre">FlightFilterDTO.origins</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id17"><code class="docutils literal notranslate"><span class="pre">FlightFilterDTO.years</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.dtos.flight_dtos.FlightHourlyCountDTO"><code class="docutils literal notranslate"><span class="pre">FlightHourlyCountDTO</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.FlightHourlyCountDTO.hour"><code class="docutils literal notranslate"><span class="pre">FlightHourlyCountDTO.hour</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.FlightHourlyCountDTO.counts"><code class="docutils literal notranslate"><span class="pre">FlightHourlyCountDTO.counts</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id18"><code class="docutils literal notranslate"><span class="pre">FlightHourlyCountDTO.counts</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id19"><code class="docutils literal notranslate"><span class="pre">FlightHourlyCountDTO.hour</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.FlightHourlyCountDTO.model_config"><code class="docutils literal notranslate"><span class="pre">FlightHourlyCountDTO.model_config</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.dtos.flight_dtos.FlightOriginCountDTO"><code class="docutils literal notranslate"><span class="pre">FlightOriginCountDTO</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.FlightOriginCountDTO.origin"><code class="docutils literal notranslate"><span class="pre">FlightOriginCountDTO.origin</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.FlightOriginCountDTO.count"><code class="docutils literal notranslate"><span class="pre">FlightOriginCountDTO.count</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id20"><code class="docutils literal notranslate"><span class="pre">FlightOriginCountDTO.count</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.FlightOriginCountDTO.model_config"><code class="docutils literal notranslate"><span class="pre">FlightOriginCountDTO.model_config</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id21"><code class="docutils literal notranslate"><span class="pre">FlightOriginCountDTO.origin</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#src.core.dtos.flight_dtos.FlightTypeCountDTO"><code class="docutils literal notranslate"><span class="pre">FlightTypeCountDTO</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.FlightTypeCountDTO.flight_type"><code class="docutils literal notranslate"><span class="pre">FlightTypeCountDTO.flight_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.FlightTypeCountDTO.count"><code class="docutils literal notranslate"><span class="pre">FlightTypeCountDTO.count</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id22"><code class="docutils literal notranslate"><span class="pre">FlightTypeCountDTO.count</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id23"><code class="docutils literal notranslate"><span class="pre">FlightTypeCountDTO.flight_type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#src.core.dtos.flight_dtos.FlightTypeCountDTO.model_config"><code class="docutils literal notranslate"><span class="pre">FlightTypeCountDTO.model_config</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="entities.html">Core Entities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ports.html">Core Ports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="use_cases.html">Core Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../infrastructure/adapters.html">Infrastructure Adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../infrastructure/config.html">Infrastructure Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../entrypoints/api.html">Puntos de Entrada de la API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">TSIS UMB Data Science</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Core DTOs</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/modules/core/dtos.rst.txt" rel="nofollow"> Ver código fuente de la página</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-src.core.dtos.flight_dtos">
+<span id="core-dtos"></span><h1>Core DTOs<a class="headerlink" href="#module-src.core.dtos.flight_dtos" title="Link to this heading"></a></h1>
+<p>Módulo que contiene los Data Transfer Objects (DTOs) relacionados con los vuelos.
+Estos DTOs se utilizan para transferir datos entre las diferentes capas de la aplicación.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.DateRangeDTO">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.dtos.flight_dtos.</span></span><span class="sig-name descname"><span class="pre">DateRangeDTO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/dtos/flight_dtos.html#DateRangeDTO"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.dtos.flight_dtos.DateRangeDTO" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>DTO para representar un rango de fechas.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.DateRangeDTO.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#src.core.dtos.flight_dtos.DateRangeDTO.id" title="Link to this definition"></a></dt>
+<dd><p>Identificador único del rango</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.DateRangeDTO.start_date">
+<span class="sig-name descname"><span class="pre">start_date</span></span><a class="headerlink" href="#src.core.dtos.flight_dtos.DateRangeDTO.start_date" title="Link to this definition"></a></dt>
+<dd><p>Fecha de inicio en formato string</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.DateRangeDTO.end_date">
+<span class="sig-name descname"><span class="pre">end_date</span></span><a class="headerlink" href="#src.core.dtos.flight_dtos.DateRangeDTO.end_date" title="Link to this definition"></a></dt>
+<dd><p>Fecha de fin en formato string</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.DateRangeDTO.label">
+<span class="sig-name descname"><span class="pre">label</span></span><a class="headerlink" href="#src.core.dtos.flight_dtos.DateRangeDTO.label" title="Link to this definition"></a></dt>
+<dd><p>Etiqueta descriptiva del rango</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">end_date</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">label</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.DateRangeDTO.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#src.core.dtos.flight_dtos.DateRangeDTO.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">start_date</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.DateRangesAnalysisRequestDTO">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.dtos.flight_dtos.</span></span><span class="sig-name descname"><span class="pre">DateRangesAnalysisRequestDTO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_ranges</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#src.core.dtos.flight_dtos.DateRangeDTO" title="src.core.dtos.flight_dtos.DateRangeDTO"><span class="pre">DateRangeDTO</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">airport</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/dtos/flight_dtos.html#DateRangesAnalysisRequestDTO"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.dtos.flight_dtos.DateRangesAnalysisRequestDTO" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>DTO para solicitar análisis de rangos de fechas.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.DateRangesAnalysisRequestDTO.date_ranges">
+<span class="sig-name descname"><span class="pre">date_ranges</span></span><a class="headerlink" href="#src.core.dtos.flight_dtos.DateRangesAnalysisRequestDTO.date_ranges" title="Link to this definition"></a></dt>
+<dd><p>Lista de rangos de fechas a analizar</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[<a class="reference internal" href="#src.core.dtos.flight_dtos.DateRangeDTO" title="src.core.dtos.flight_dtos.DateRangeDTO">DateRangeDTO</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.DateRangesAnalysisRequestDTO.airport">
+<span class="sig-name descname"><span class="pre">airport</span></span><a class="headerlink" href="#src.core.dtos.flight_dtos.DateRangesAnalysisRequestDTO.airport" title="Link to this definition"></a></dt>
+<dd><p>Código del aeropuerto para filtrar</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.DateRangesAnalysisRequestDTO.type">
+<span class="sig-name descname"><span class="pre">type</span></span><a class="headerlink" href="#src.core.dtos.flight_dtos.DateRangesAnalysisRequestDTO.type" title="Link to this definition"></a></dt>
+<dd><p>Tipo de análisis (“origin” o “destination”)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">airport</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id4" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">date_ranges</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#src.core.dtos.flight_dtos.DateRangeDTO" title="src.core.dtos.flight_dtos.DateRangeDTO"><span class="pre">DateRangeDTO</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id5" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.DateRangesAnalysisRequestDTO.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#src.core.dtos.flight_dtos.DateRangesAnalysisRequestDTO.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#id6" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.FlightAirlineCountDTO">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.dtos.flight_dtos.</span></span><span class="sig-name descname"><span class="pre">FlightAirlineCountDTO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">airline</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/dtos/flight_dtos.html#FlightAirlineCountDTO"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.dtos.flight_dtos.FlightAirlineCountDTO" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>DTO para el conteo de vuelos por aerolínea.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.FlightAirlineCountDTO.airline">
+<span class="sig-name descname"><span class="pre">airline</span></span><a class="headerlink" href="#src.core.dtos.flight_dtos.FlightAirlineCountDTO.airline" title="Link to this definition"></a></dt>
+<dd><p>Nombre de la aerolínea</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.FlightAirlineCountDTO.count">
+<span class="sig-name descname"><span class="pre">count</span></span><a class="headerlink" href="#src.core.dtos.flight_dtos.FlightAirlineCountDTO.count" title="Link to this definition"></a></dt>
+<dd><p>Cantidad de vuelos de esa aerolínea</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id7">
+<span class="sig-name descname"><span class="pre">airline</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#id7" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id8" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.FlightAirlineCountDTO.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#src.core.dtos.flight_dtos.FlightAirlineCountDTO.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.FlightDestinationCountDTO">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.dtos.flight_dtos.</span></span><span class="sig-name descname"><span class="pre">FlightDestinationCountDTO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/dtos/flight_dtos.html#FlightDestinationCountDTO"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.dtos.flight_dtos.FlightDestinationCountDTO" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>DTO para el conteo de vuelos por aeropuerto de destino.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.FlightDestinationCountDTO.destination">
+<span class="sig-name descname"><span class="pre">destination</span></span><a class="headerlink" href="#src.core.dtos.flight_dtos.FlightDestinationCountDTO.destination" title="Link to this definition"></a></dt>
+<dd><p>Código del aeropuerto de destino</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.FlightDestinationCountDTO.count">
+<span class="sig-name descname"><span class="pre">count</span></span><a class="headerlink" href="#src.core.dtos.flight_dtos.FlightDestinationCountDTO.count" title="Link to this definition"></a></dt>
+<dd><p>Cantidad de vuelos hacia ese destino</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id9">
+<span class="sig-name descname"><span class="pre">count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id9" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id10">
+<span class="sig-name descname"><span class="pre">destination</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#id10" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.FlightDestinationCountDTO.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#src.core.dtos.flight_dtos.FlightDestinationCountDTO.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.FlightFilterDTO">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.dtos.flight_dtos.</span></span><span class="sig-name descname"><span class="pre">FlightFilterDTO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">years</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">months</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">origins</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destinations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flight_types</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">airlines</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aircraft_types</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/dtos/flight_dtos.html#FlightFilterDTO"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.dtos.flight_dtos.FlightFilterDTO" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>DTO para filtrar vuelos según diferentes criterios.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.FlightFilterDTO.years">
+<span class="sig-name descname"><span class="pre">years</span></span><a class="headerlink" href="#src.core.dtos.flight_dtos.FlightFilterDTO.years" title="Link to this definition"></a></dt>
+<dd><p>Lista de años para filtrar</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.FlightFilterDTO.months">
+<span class="sig-name descname"><span class="pre">months</span></span><a class="headerlink" href="#src.core.dtos.flight_dtos.FlightFilterDTO.months" title="Link to this definition"></a></dt>
+<dd><p>Lista de meses para filtrar</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.FlightFilterDTO.origins">
+<span class="sig-name descname"><span class="pre">origins</span></span><a class="headerlink" href="#src.core.dtos.flight_dtos.FlightFilterDTO.origins" title="Link to this definition"></a></dt>
+<dd><p>Lista de aeropuertos de origen</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.FlightFilterDTO.destinations">
+<span class="sig-name descname"><span class="pre">destinations</span></span><a class="headerlink" href="#src.core.dtos.flight_dtos.FlightFilterDTO.destinations" title="Link to this definition"></a></dt>
+<dd><p>Lista de aeropuertos de destino</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.FlightFilterDTO.flight_types">
+<span class="sig-name descname"><span class="pre">flight_types</span></span><a class="headerlink" href="#src.core.dtos.flight_dtos.FlightFilterDTO.flight_types" title="Link to this definition"></a></dt>
+<dd><p>Lista de tipos de vuelo</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.FlightFilterDTO.airlines">
+<span class="sig-name descname"><span class="pre">airlines</span></span><a class="headerlink" href="#src.core.dtos.flight_dtos.FlightFilterDTO.airlines" title="Link to this definition"></a></dt>
+<dd><p>Lista de aerolíneas</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.FlightFilterDTO.aircraft_types">
+<span class="sig-name descname"><span class="pre">aircraft_types</span></span><a class="headerlink" href="#src.core.dtos.flight_dtos.FlightFilterDTO.aircraft_types" title="Link to this definition"></a></dt>
+<dd><p>Lista de tipos de aeronaves</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id11">
+<span class="sig-name descname"><span class="pre">aircraft_types</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id11" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id12">
+<span class="sig-name descname"><span class="pre">airlines</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id12" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id13">
+<span class="sig-name descname"><span class="pre">destinations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id13" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id14">
+<span class="sig-name descname"><span class="pre">flight_types</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id14" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.FlightFilterDTO.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#src.core.dtos.flight_dtos.FlightFilterDTO.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id15">
+<span class="sig-name descname"><span class="pre">months</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id15" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id16">
+<span class="sig-name descname"><span class="pre">origins</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id16" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id17">
+<span class="sig-name descname"><span class="pre">years</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id17" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.FlightHourlyCountDTO">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.dtos.flight_dtos.</span></span><span class="sig-name descname"><span class="pre">FlightHourlyCountDTO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">hour</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">counts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/dtos/flight_dtos.html#FlightHourlyCountDTO"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.dtos.flight_dtos.FlightHourlyCountDTO" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>DTO para el conteo de vuelos por hora.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.FlightHourlyCountDTO.hour">
+<span class="sig-name descname"><span class="pre">hour</span></span><a class="headerlink" href="#src.core.dtos.flight_dtos.FlightHourlyCountDTO.hour" title="Link to this definition"></a></dt>
+<dd><p>Hora del día (0-23)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.FlightHourlyCountDTO.counts">
+<span class="sig-name descname"><span class="pre">counts</span></span><a class="headerlink" href="#src.core.dtos.flight_dtos.FlightHourlyCountDTO.counts" title="Link to this definition"></a></dt>
+<dd><p>Diccionario con conteos por rango de fechas</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict[str, int]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id18">
+<span class="sig-name descname"><span class="pre">counts</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#id18" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id19">
+<span class="sig-name descname"><span class="pre">hour</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id19" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.FlightHourlyCountDTO.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#src.core.dtos.flight_dtos.FlightHourlyCountDTO.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.FlightOriginCountDTO">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.dtos.flight_dtos.</span></span><span class="sig-name descname"><span class="pre">FlightOriginCountDTO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">origin</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/dtos/flight_dtos.html#FlightOriginCountDTO"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.dtos.flight_dtos.FlightOriginCountDTO" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>DTO para el conteo de vuelos por aeropuerto de origen.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.FlightOriginCountDTO.origin">
+<span class="sig-name descname"><span class="pre">origin</span></span><a class="headerlink" href="#src.core.dtos.flight_dtos.FlightOriginCountDTO.origin" title="Link to this definition"></a></dt>
+<dd><p>Código del aeropuerto de origen</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.FlightOriginCountDTO.count">
+<span class="sig-name descname"><span class="pre">count</span></span><a class="headerlink" href="#src.core.dtos.flight_dtos.FlightOriginCountDTO.count" title="Link to this definition"></a></dt>
+<dd><p>Cantidad de vuelos desde ese origen</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id20">
+<span class="sig-name descname"><span class="pre">count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id20" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.FlightOriginCountDTO.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#src.core.dtos.flight_dtos.FlightOriginCountDTO.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id21">
+<span class="sig-name descname"><span class="pre">origin</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#id21" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.FlightTypeCountDTO">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">src.core.dtos.flight_dtos.</span></span><span class="sig-name descname"><span class="pre">FlightTypeCountDTO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">flight_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/src/core/dtos/flight_dtos.html#FlightTypeCountDTO"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#src.core.dtos.flight_dtos.FlightTypeCountDTO" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>DTO para el conteo de vuelos por tipo.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.FlightTypeCountDTO.flight_type">
+<span class="sig-name descname"><span class="pre">flight_type</span></span><a class="headerlink" href="#src.core.dtos.flight_dtos.FlightTypeCountDTO.flight_type" title="Link to this definition"></a></dt>
+<dd><p>Tipo de vuelo</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.FlightTypeCountDTO.count">
+<span class="sig-name descname"><span class="pre">count</span></span><a class="headerlink" href="#src.core.dtos.flight_dtos.FlightTypeCountDTO.count" title="Link to this definition"></a></dt>
+<dd><p>Cantidad de vuelos de ese tipo</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id22">
+<span class="sig-name descname"><span class="pre">count</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#id22" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id23">
+<span class="sig-name descname"><span class="pre">flight_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#id23" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="src.core.dtos.flight_dtos.FlightTypeCountDTO.model_config">
+<span class="sig-name descname"><span class="pre">model_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">ConfigDict</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{}</span></em><a class="headerlink" href="#src.core.dtos.flight_dtos.FlightTypeCountDTO.model_config" title="Link to this definition"></a></dt>
+<dd><p>Configuration for the model, should be a dictionary conforming to [<cite>ConfigDict</cite>][pydantic.config.ConfigDict].</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pie de página">
+        <a href="../../index.html" class="btn btn-neutral float-left" title="TSIS UMB Data Science Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Anterior</a>
+        <a href="entities.html" class="btn btn-neutral float-right" title="Core Entities" accesskey="n" rel="next">Siguiente <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2025, Iván Forero.</p>
+  </div>
+
+  Compilado con <a href="https://www.sphinx-doc.org/">Sphinx</a> usando un
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">tema</a>
+    proporcionado por <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

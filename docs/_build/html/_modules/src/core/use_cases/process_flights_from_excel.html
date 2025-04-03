@@ -1,0 +1,221 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>src.core.use_cases.process_flights_from_excel &mdash; documentación de TSIS UMB Data Science - </title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=e2bb6099"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/translations.js?v=f85f4cfb"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="../../../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            TSIS UMB Data Science
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" aria-label="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/core/dtos.html">Core DTOs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/core/entities.html">Core Entities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/core/ports.html">Core Ports</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/core/use_cases.html">Core Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/infrastructure/adapters.html">Infrastructure Adapters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/infrastructure/config.html">Infrastructure Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../modules/entrypoints/api.html">Puntos de Entrada de la API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">TSIS UMB Data Science</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Código de módulo</a></li>
+      <li class="breadcrumb-item active">src.core.use_cases.process_flights_from_excel</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Código fuente para src.core.use_cases.process_flights_from_excel</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Módulo que implementa el caso de uso para procesar vuelos desde archivos Excel,</span>
+<span class="sd">siguiendo los principios de arquitectura hexagonal y clean architecture.</span>
+
+<span class="sd">Este módulo contiene la lógica de negocio para transformar y procesar datos</span>
+<span class="sd">de vuelos desde archivos Excel, manteniendo la independencia de los detalles</span>
+<span class="sd">de implementación y la separación de responsabilidades.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">src.infraestructure.adapters.excel_flight_transformer</span> <span class="kn">import</span> <span class="n">ExcelFlightTransformer</span>
+<span class="kn">from</span> <span class="nn">src.core.ports.flight_repository</span> <span class="kn">import</span> <span class="n">FlightRepository</span>
+<span class="kn">from</span> <span class="nn">src.core.ports.file_processing_control_repository</span> <span class="kn">import</span> <span class="n">FileProcessingControlRepository</span>
+<span class="kn">from</span> <span class="nn">src.core.use_cases.create_flight</span> <span class="kn">import</span> <span class="n">CreateFlightUseCase</span>
+<span class="kn">from</span> <span class="nn">src.core.entities.flight</span> <span class="kn">import</span> <span class="n">Flight</span>
+
+<div class="viewcode-block" id="ProcessFlightsFromExcelUseCase">
+<a class="viewcode-back" href="../../../../modules/core/use_cases.html#src.core.use_cases.process_flights_from_excel.ProcessFlightsFromExcelUseCase">[documentos]</a>
+<span class="k">class</span> <span class="nc">ProcessFlightsFromExcelUseCase</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Caso de uso para procesar vuelos desde archivos Excel.</span>
+
+<span class="sd">    Esta clase implementa la lógica de negocio para la extracción y procesamiento</span>
+<span class="sd">    de datos de vuelos desde archivos Excel, siguiendo el principio de</span>
+<span class="sd">    responsabilidad única y manteniéndose independiente de la infraestructura.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        flight_repository (FlightRepository): Repositorio de vuelos</span>
+<span class="sd">        file_repository (FileProcessingControlRepository): Repositorio de control de archivos</span>
+<span class="sd">        update_progress (callable, optional): Función para actualizar el progreso del procesamiento</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flight_repository</span><span class="p">:</span> <span class="n">FlightRepository</span><span class="p">,</span> <span class="n">file_repository</span><span class="p">:</span> <span class="n">FileProcessingControlRepository</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flight_repository</span> <span class="o">=</span> <span class="n">flight_repository</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_repository</span> <span class="o">=</span> <span class="n">file_repository</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_progress</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="ProcessFlightsFromExcelUseCase.get_total_rows">
+<a class="viewcode-back" href="../../../../modules/core/use_cases.html#src.core.use_cases.process_flights_from_excel.ProcessFlightsFromExcelUseCase.get_total_rows">[documentos]</a>
+    <span class="k">def</span> <span class="nf">get_total_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Obtiene el número total de filas a procesar en el archivo Excel.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file_path (str): Ruta del archivo Excel</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: Número total de filas</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: Si hay error al leer el archivo</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">transformer</span> <span class="o">=</span> <span class="n">ExcelFlightTransformer</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+            <span class="n">total</span> <span class="o">=</span> <span class="n">transformer</span><span class="o">.</span><span class="n">get_total_rows</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total rows to process: </span><span class="si">{</span><span class="n">total</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">total</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error getting total rows: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+
+
+<div class="viewcode-block" id="ProcessFlightsFromExcelUseCase.execute">
+<a class="viewcode-back" href="../../../../modules/core/use_cases.html#src.core.use_cases.process_flights_from_excel.ProcessFlightsFromExcelUseCase.execute">[documentos]</a>
+    <span class="k">def</span> <span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Ejecuta el procesamiento de vuelos desde un archivo Excel.</span>
+
+<span class="sd">        Este método implementa la lógica principal del caso de uso, transformando</span>
+<span class="sd">        los datos del Excel en entidades de vuelo y almacenándolas en el repositorio.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            file_path (str): Ruta del archivo Excel a procesar</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: Diccionario con estadísticas del procesamiento</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: Si hay error durante el procesamiento</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_repository</span><span class="o">.</span><span class="n">is_file_processed</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2"> already processed&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;processed&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;already_processed&quot;</span><span class="p">}</span>
+
+            <span class="n">transformer</span> <span class="o">=</span> <span class="n">ExcelFlightTransformer</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+            <span class="n">flights</span> <span class="o">=</span> <span class="n">transformer</span><span class="o">.</span><span class="n">transform_flights</span><span class="p">()</span>
+            <span class="n">create_flight_uc</span> <span class="o">=</span> <span class="n">CreateFlightUseCase</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flight_repository</span><span class="p">)</span>
+            
+            <span class="n">total_flights</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">flights</span><span class="p">)</span>
+            <span class="n">processed</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="k">for</span> <span class="n">flight_data</span> <span class="ow">in</span> <span class="n">flights</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">create_flight_uc</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">flight_data</span><span class="p">)</span>
+                    <span class="n">processed</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_progress</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">update_progress</span><span class="p">(</span><span class="n">processed</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error processing flight: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">file_repository</span><span class="o">.</span><span class="n">add_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;processed&quot;</span><span class="p">:</span> <span class="n">processed</span><span class="p">,</span> <span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="n">total_flights</span><span class="p">,</span> <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;completed&quot;</span><span class="p">}</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error in execute method: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span></div>
+</div>
+
+
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2025, Iván Forero.</p>
+  </div>
+
+  Compilado con <a href="https://www.sphinx-doc.org/">Sphinx</a> usando un
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">tema</a>
+    proporcionado por <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
