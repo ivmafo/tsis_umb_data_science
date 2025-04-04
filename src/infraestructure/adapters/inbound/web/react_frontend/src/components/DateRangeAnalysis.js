@@ -207,41 +207,7 @@ const DateRangeAnalysis = () => {
 
             {error && <div className="error-message">{error}</div>}
 
-            <div className="chart-card">
-                <h3>Análisis de Vuelos por Hora</h3>
-                {chartData.length > 0 ? (
-                    <ResponsiveContainer width="100%" height={400}>
-                        <LineChart data={chartData}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis 
-                                dataKey="hour"
-                                label={{ value: 'Hora del día', position: 'bottom' }}
-                            />
-                            <YAxis 
-                                label={{ 
-                                    value: 'Cantidad de vuelos', 
-                                    angle: -90, 
-                                    position: 'insideLeft' 
-                                }}
-                            />
-                            <Tooltip />
-                            <Legend />
-                            {Object.keys(chartData[0] || {}).filter(key => key !== 'hour').map((key, index) => (
-                                <Line
-                                    key={key}
-                                    type="monotone"
-                                    dataKey={key}
-                                    stroke={getCustomColors(index)}
-                                    strokeWidth={2}
-                                    dot={false}
-                                />
-                            ))}
-                        </LineChart>
-                    </ResponsiveContainer>
-                ) : (
-                    <div className="no-data">No hay datos para mostrar</div>
-                )}
-            </div>
+            
             <div className="charts-container">
                 <div className="chart">
                     <h3>Vuelos por Origen</h3>
