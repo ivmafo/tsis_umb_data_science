@@ -154,125 +154,207 @@ const DateRangeAnalysis = () => {
     return (
         <div className="date-range-analysis">
             <div className="controls-card">
+                <div className="top-controls">
+                    <h2>Análisis por Rangos de Fecha</h2>
+                    <div className="top-buttons">
+                        <button onClick={addDateRange} className="add-range-btn">
+                            <i className="fas fa-plus"></i> Agregar Rango
+                        </button>
+                        <button onClick={analyzeDateRanges} className="analyze-btn" disabled={loading}>
+                            <i className="fas fa-chart-line"></i> {loading ? 'Analizando...' : 'Analizar'}
+                        </button>
+                    </div>
+                </div>
+
                 <div className="date-ranges-container">
                     {dateRanges.map((range) => (
                         <div key={range.id} className="date-range-input">
                             <div className="range-header">
                                 <h4>{range.label}</h4>
                                 {dateRanges.length > 1 && (
-                                    <button onClick={() => removeDateRange(range.id)}>Eliminar</button>
+                                    <button 
+                                        onClick={() => removeDateRange(range.id)}
+                                        className="remove-range-btn"
+                                    >
+                                        <i className="fas fa-times"></i>
+                                    </button>
                                 )}
                             </div>
-                            <div className="date-inputs">
-                                <input
-                                    type="date"
-                                    value={range.startDate}
-                                    onChange={(e) => handleDateChange(range.id, 'startDate', e.target.value)}
-                                />
-                                <input
-                                    type="date"
-                                    value={range.endDate}
-                                    onChange={(e) => handleDateChange(range.id, 'endDate', e.target.value)}
-                                />
-                            </div>
-                            <div className="airport-inputs">
-                                <input
-                                    type="text"
-                                    value={range.originAirport}
-                                    onChange={(e) => handleAirportChange(range.id, 'originAirport', e.target.value)}
-                                    placeholder="Ingrese aeropuerto origen"
-                                    className="airport-input"
-                                />
-                                <input
-                                    type="text"
-                                    value={range.destinationAirport}
-                                    onChange={(e) => handleAirportChange(range.id, 'destinationAirport', e.target.value)}
-                                    placeholder="Ingrese aeropuerto destino"
-                                    className="airport-input"
-                                />
+                            <div className="range-content">
+                                <div className="date-inputs">
+                                    <div className="input-wrapper">
+                                        <label>Inicio</label>
+                                        <input
+                                            type="date"
+                                            value={range.startDate}
+                                            onChange={(e) => handleDateChange(range.id, 'startDate', e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="input-wrapper">
+                                        <label>Fin</label>
+                                        <input
+                                            type="date"
+                                            value={range.endDate}
+                                            onChange={(e) => handleDateChange(range.id, 'endDate', e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="airport-inputs">
+                                    <div className="input-wrapper">
+                                        <label>Origen</label>
+                                        <input
+                                            type="text"
+                                            value={range.originAirport}
+                                            onChange={(e) => handleAirportChange(range.id, 'originAirport', e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="input-wrapper">
+                                        <label>Destino</label>
+                                        <input
+                                            type="text"
+                                            value={range.destinationAirport}
+                                            onChange={(e) => handleAirportChange(range.id, 'destinationAirport', e.target.value)}
+                                        />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     ))}
                 </div>
+                
+                {error && <div className="error-message">{error}</div>}
 
-                <div className="button-container">
-                    <button onClick={addDateRange} className="add-range-btn">
-                        Agregar Rango
-                    </button>
-                    <button onClick={analyzeDateRanges} className="analyze-btn" disabled={loading}>
-                        {loading ? 'Analizando...' : 'Analizar'}
-                    </button>
-                </div>
-            </div>
+                <div className="charts-grid">
+                    <div className="chart">
+                        <h3>
+                            <i className="fas fa-plane-departure"></i>
+                            {' '}Vuelos por Origen
+                        </h3>
+                        <ResponsiveContainer width="100%" height={400}>
+                            <LineChart 
+                                data={originChartData}
+                                margin={{ top: 30, right: 30, left: 20, bottom: 20 }}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                                <XAxis 
+                                    dataKey="hour"
+                                    label={{ value: 'Hora del día', position: 'insideBottom', offset: -10 }}
+                                    tick={{ fill: '#666' }}
+                                />
+                                <YAxis 
+                                    label={{ 
+                                        value: 'Cantidad de vuelos (Origen)', 
+                                        angle: -90, 
+                                        position: 'insideLeft',
+                                        offset: -5,
+                                        style: { fill: '#666' }
+                                    }}
+                                    tick={{ fill: '#666' }}
+                                />
+                                <Legend 
+                                    verticalAlign="top"
+                                    align="center"
+                                    height={36}
+                                    wrapperStyle={{
+                                        paddingTop: "20px",
+                                        paddingBottom: "20px",
+                                        marginBottom: "10px"
+                                    }}
+                                />
+                                {Object.keys(originChartData[0] || {})
+                                    .filter(key => key !== 'hour')
+                                    .map((key, index) => (
+                                        <Line
+                                            key={key}
+                                            type="monotone"
+                                            dataKey={key}
+                                            stroke={getCustomColors(index)}
+                                            name={key}
+                                            strokeWidth={2}
+                                            dot={{ r: 4 }}
+                                            activeDot={{ r: 6 }}
+                                        />
+                                    ))}
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
 
-            {error && <div className="error-message">{error}</div>}
-
-            
-            <div className="charts-container">
-                <div className="chart">
-                    <h3>Vuelos por Origen</h3>
-                    <ResponsiveContainer width="100%" height={400}>
-                        <LineChart data={originChartData}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis 
-                                dataKey="hour"
-                                label={{ value: 'Hora del día', position: 'bottom' }}
-                            />
-                            <YAxis 
-                                label={{ 
-                                    value: 'Cantidad de vuelos (Origen)', 
-                                    angle: -90, 
-                                    position: 'insideLeft' 
-                                }}
-                            />
-                            <Tooltip />
-                            <Legend />
-                            {Object.keys(originChartData[0] || {})
-                                .filter(key => key !== 'hour')
-                                .map((key, index) => (
-                                    <Line
-                                        key={key}
-                                        type="monotone"
-                                        dataKey={key}
-                                        stroke={getCustomColors(index)}
-                                        name={key}
-                                    />
-                                ))}
-                        </LineChart>
-                    </ResponsiveContainer>
-                </div>
-
-                <div className="chart">
-                    <h3>Vuelos por Destino</h3>
-                    <ResponsiveContainer width="100%" height={400}>
-                        <LineChart data={destinationChartData}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis 
-                                dataKey="hour"
-                                label={{ value: 'Hora del día', position: 'bottom' }}
-                            />
-                            <YAxis 
-                                label={{ 
-                                    value: 'Cantidad de vuelos (Destino)', 
-                                    angle: -90, 
-                                    position: 'insideLeft' 
-                                }}
-                            />
-                            <Tooltip />
-                            <Legend />
-                            {Object.keys(destinationChartData[0] || {})
-                                .filter(key => key !== 'hour')
-                                .map((key, index) => (
-                                    <Line
-                                        key={key}
-                                        type="monotone"
-                                        dataKey={key}
-                                        stroke={getCustomColors(index)}
-                                        name={key}
-                                    />
-                                ))}
-                        </LineChart>
-                    </ResponsiveContainer>
+                    <div className="chart">
+                        <h3>
+                            <i className="fas fa-plane-arrival"></i>
+                            {' '}Vuelos por Destino
+                        </h3>
+                        <ResponsiveContainer width="100%" height={500}>
+                            <LineChart 
+                                data={originChartData}
+                                margin={{ top: 40, right: 30, left: 20, bottom: 60 }}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                                <XAxis 
+                                    dataKey="hour"
+                                    label={{ value: 'Hora del día', position: 'bottom', offset: 40 }}
+                                    tick={{ fill: '#666' }}
+                                    angle={-45}
+                                    textAnchor="end"
+                                    height={60}
+                                />
+                                <YAxis 
+                                    label={{ 
+                                        value: 'Cantidad de vuelos (Origen)', 
+                                        angle: -90, 
+                                        position: 'insideLeft',
+                                        offset: -10,
+                                        style: { fill: '#666' }
+                                    }}
+                                    tick={{ fill: '#666' }}
+                                />
+                                <Legend 
+                                    verticalAlign="top"
+                                    align="center"
+                                    wrapperStyle={{
+                                        paddingTop: "10px",
+                                        paddingBottom: "20px"
+                                    }}
+                                    layout="horizontal"
+                                    formatter={(value) => <span style={{ 
+                                        color: '#666', 
+                                        padding: '0 10px',
+                                        maxWidth: '150px',
+                                        whiteSpace: 'normal',
+                                        wordWrap: 'break-word'
+                                    }}>{value}</span>}
+                                />
+                                <Tooltip 
+                                    contentStyle={{ 
+                                        background: 'rgba(255, 255, 255, 0.95)',
+                                        border: '1px solid #e0e0e0',
+                                        borderRadius: '8px',
+                                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                                    }}
+                                />
+                                <Tooltip 
+                                    contentStyle={{ 
+                                        background: 'rgba(255, 255, 255, 0.95)',
+                                        border: '1px solid #e0e0e0',
+                                        borderRadius: '8px',
+                                        boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
+                                    }}
+                                />
+                                {Object.keys(destinationChartData[0] || {})
+                                    .filter(key => key !== 'hour')
+                                    .map((key, index) => (
+                                        <Line
+                                            key={key}
+                                            type="monotone"
+                                            dataKey={key}
+                                            stroke={getCustomColors(index)}
+                                            name={key}
+                                            strokeWidth={2}
+                                            dot={{ r: 4 }}
+                                            activeDot={{ r: 6 }}
+                                        />
+                                    ))}
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
                 </div>
             </div>
         </div>
