@@ -70,7 +70,7 @@ class PostgresFlightRepository(FlightRepository):
                     cursor, 
                     query, 
                     values,
-                    template="(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                    template="(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
                     page_size=1000
                 )
                 result = cursor.fetchone()
@@ -440,25 +440,11 @@ class PostgresFlightRepository(FlightRepository):
                 print(f"Error in get_flight_types_count: {str(e)}")
                 raise e
 
-    def get_hourly_counts_by_date_ranges(self, date_ranges: List[DateRangeDTO], airport: Optional[str] = None) -> List[FlightHourlyCountDTO]:
-        """
-        Get hourly flight counts for specified date ranges and origin airport.
-        
-        Args:
-            date_ranges (List[DateRangeDTO]): List of date ranges to analyze
-            airport (Optional[str]): Origin airport code to filter by
-            
-        Returns:
-            List[FlightHourlyCountDTO]: Hourly flight counts for each date range
-            
-        Raises:
-            Exception: If there's an error executing the query
-        """
+    def get_hourly_counts_by_date_ranges(self, date_ranges: List[DateRangeDTO], analysis_type: str = 'origin_analysis') -> List[FlightHourlyCountDTO]:
         try:
             if not date_ranges:
                 return []
 
-            airport_condition = "AND origen = %s" if airport else ""
             query = """
             WITH RECURSIVE hours AS (
                 SELECT generate_series(0, 23) AS hour
@@ -468,25 +454,25 @@ class PostgresFlightRepository(FlightRepository):
                     id as range_id,
                     label,
                     start_date::date, 
-                    end_date::date
-                FROM unnest(%s::int[], %s::text[], %s::date[], %s::date[]) 
-                AS dr(id, label, start_date, end_date)
+                    end_date::date,
+                    origin_airport
+                FROM unnest(%s::int[], %s::text[], %s::date[], %s::date[], %s::text[]) 
+                AS dr(id, label, start_date, end_date, origin_airport)
             ),
             flight_counts AS (
                 SELECT 
                     date_part('hour', hora_salida)::int AS hour,
-                    dr.label,
+                    dr.label || ' (' || f.origen || ')' as combined_label,
                     COUNT(*) AS flight_count
                 FROM fligths f
-                CROSS JOIN date_ranges dr
+                INNER JOIN date_ranges dr ON f.origen = dr.origin_airport
                 WHERE f.fecha_salida::date BETWEEN dr.start_date AND dr.end_date
-                """ + airport_condition + """
-                GROUP BY date_part('hour', hora_salida), dr.label
+                GROUP BY 1, 2
             )
             SELECT 
                 h.hour,
                 json_object_agg(
-                    COALESCE(fc.label, 'sin_datos'),
+                    COALESCE(fc.combined_label, 'sin_datos'),
                     COALESCE(fc.flight_count, 0)
                 ) as counts
             FROM hours h
@@ -494,18 +480,16 @@ class PostgresFlightRepository(FlightRepository):
             GROUP BY h.hour
             ORDER BY h.hour;
             """
-            
-            range_ids = [r.id for r in date_ranges]
-            labels = [r.label for r in date_ranges]
-            start_dates = [r.start_date for r in date_ranges]
-            end_dates = [r.end_date for r in date_ranges]
-            
-            params = [range_ids, labels, start_dates, end_dates]
-            if airport:
-                params.append(airport)
+
+            params = [
+                [r.id for r in date_ranges],
+                [r.label for r in date_ranges],
+                [r.start_date for r in date_ranges],
+                [r.end_date for r in date_ranges],
+                [r.origin_airport for r in date_ranges]
+            ]
 
             results = self._execute_query(query, tuple(params))
-            
             return [
                 FlightHourlyCountDTO(
                     hour=row['hour'],
@@ -517,25 +501,11 @@ class PostgresFlightRepository(FlightRepository):
             print(f"Error in get_hourly_counts_by_date_ranges: {str(e)}")
             return [FlightHourlyCountDTO(hour=h, counts={}) for h in range(24)]
 
-    def get_hourly_counts_by_date_ranges_destination(self, date_ranges: List[DateRangeDTO], airport: Optional[str] = None) -> List[FlightHourlyCountDTO]:
-        """
-        Get hourly flight counts for specified date ranges and destination airport.
-        
-        Args:
-            date_ranges (List[DateRangeDTO]): List of date ranges to analyze
-            airport (Optional[str]): Destination airport code to filter by
-            
-        Returns:
-            List[FlightHourlyCountDTO]: Hourly flight counts for each date range
-            
-        Raises:
-            Exception: If there's an error executing the query
-        """
+    def get_hourly_counts_by_date_ranges_destination(self, date_ranges: List[DateRangeDTO]) -> List[FlightHourlyCountDTO]:
         try:
             if not date_ranges:
                 return []
 
-            airport_condition = "AND destino = %s" if airport else ""
             query = """
             WITH RECURSIVE hours AS (
                 SELECT generate_series(0, 23) AS hour
@@ -545,25 +515,25 @@ class PostgresFlightRepository(FlightRepository):
                     id as range_id,
                     label,
                     start_date::date, 
-                    end_date::date
-                FROM unnest(%s::int[], %s::text[], %s::date[], %s::date[]) 
-                AS dr(id, label, start_date, end_date)
+                    end_date::date,
+                    destination_airport
+                FROM unnest(%s::int[], %s::text[], %s::date[], %s::date[], %s::text[]) 
+                AS dr(id, label, start_date, end_date, destination_airport)
             ),
             flight_counts AS (
                 SELECT 
                     date_part('hour', hora_llegada)::int AS hour,
-                    dr.label,
+                    dr.label || ' (' || f.destino || ')' as combined_label,
                     COUNT(*) AS flight_count
                 FROM fligths f
-                CROSS JOIN date_ranges dr
+                INNER JOIN date_ranges dr ON f.destino = dr.destination_airport
                 WHERE f.fecha_llegada::date BETWEEN dr.start_date AND dr.end_date
-                """ + airport_condition + """
-                GROUP BY date_part('hour', hora_llegada), dr.label
+                GROUP BY 1, 2
             )
             SELECT 
                 h.hour,
                 json_object_agg(
-                    COALESCE(fc.label, 'sin_datos'),
+                    COALESCE(fc.combined_label, 'sin_datos'),
                     COALESCE(fc.flight_count, 0)
                 ) as counts
             FROM hours h
@@ -571,18 +541,16 @@ class PostgresFlightRepository(FlightRepository):
             GROUP BY h.hour
             ORDER BY h.hour;
             """
-            
-            range_ids = [r.id for r in date_ranges]
-            labels = [r.label for r in date_ranges]
-            start_dates = [r.start_date for r in date_ranges]
-            end_dates = [r.end_date for r in date_ranges]
-            
-            params = [range_ids, labels, start_dates, end_dates]
-            if airport:
-                params.append(airport)
+
+            params = [
+                [r.id for r in date_ranges],
+                [r.label for r in date_ranges],
+                [r.start_date for r in date_ranges],
+                [r.end_date for r in date_ranges],
+                [r.destination_airport for r in date_ranges]
+            ]
 
             results = self._execute_query(query, tuple(params))
-            
             return [
                 FlightHourlyCountDTO(
                     hour=row['hour'],
@@ -591,6 +559,5 @@ class PostgresFlightRepository(FlightRepository):
                 for row in results
             ]
         except Exception as e:
-            print(f"Error in get_hourly_counts_by_date_ranges_destination: {str(e)}")
-
-    
+            print(f"Error in get_hourly_counts_by_date_ranges_destination: {e}")
+            raise

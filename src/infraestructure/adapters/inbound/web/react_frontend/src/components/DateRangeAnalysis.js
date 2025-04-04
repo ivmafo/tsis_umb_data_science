@@ -1,44 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import { Line } from 'recharts';
 import { ResponsiveContainer, LineChart, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
+import { FlightAnalysisService } from '../services/FlightAnalysisService';
+import { FlightAnalysisAdapter } from '../adapters/FlightAnalysisAdapter';
 import './DateRangeAnalysis.css';
 
 const DateRangeAnalysis = () => {
-    // Initial states - remove duplicates
     const [dateRanges, setDateRanges] = useState([{ 
         id: 1, 
         startDate: '', 
         endDate: '',
-        label: 'Rango 1'
+        label: 'Rango 1',
+        originAirport: '',
+        destinationAirport: ''
     }]);
-    const [selectedAirport, setSelectedAirport] = useState('');
-    const [selectedDestination, setSelectedDestination] = useState('');
     const [chartData, setChartData] = useState([]);
-    const [destinationChartData, setDestinationChartData] = useState([]);
     const [airports, setAirports] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [originChartData, setOriginChartData] = useState([]);
+    const [destinationChartData, setDestinationChartData] = useState([]);
 
     useEffect(() => {
         fetchAirports();
     }, []);
 
     const validateDateRanges = () => {
-        return dateRanges.every(range => 
-            range.startDate && 
-            range.endDate && 
-            new Date(range.startDate) <= new Date(range.endDate)
-        );
-    };
-
-    const handleDateChange = (id, field, value) => {
-        setDateRanges(ranges => 
-            ranges.map(range => 
-                range.id === id 
-                    ? { ...range, [field]: value }
-                    : range
-            )
-        );
+        for (const range of dateRanges) {
+            if (!range.startDate || !range.endDate) {
+                setError('Por favor, complete las fechas de inicio y fin');
+                return false;
+            }
+            if (!range.originAirport || !range.destinationAirport) {
+                setError('Por favor, complete los aeropuertos de origen y destino');
+                return false;
+            }
+            if (new Date(range.startDate) > new Date(range.endDate)) {
+                setError('La fecha de inicio no puede ser posterior a la fecha de fin');
+                return false;
+            }
+        }
+        return true;
     };
 
     const addDateRange = () => {
@@ -47,7 +49,9 @@ const DateRangeAnalysis = () => {
             id: newId,
             startDate: '',
             endDate: '',
-            label: `Rango ${newId}`
+            label: `Rango ${newId}`,
+            originAirport: '',  // Añadido campo faltante
+            destinationAirport: ''  // Añadido campo faltante
         }]);
     };
 
@@ -55,14 +59,6 @@ const DateRangeAnalysis = () => {
         if (dateRanges.length > 1) {
             setDateRanges(ranges => ranges.filter(range => range.id !== id));
         }
-    };
-
-    const formatChartData = (data) => {
-        if (!Array.isArray(data)) return [];
-        return data.map(item => ({
-            hour: `${String(item.hour).padStart(2, '0')}:00`,
-            ...item.counts
-        }));
     };
 
     const getCustomColors = (index) => {
@@ -77,6 +73,18 @@ const DateRangeAnalysis = () => {
         return colors[index % colors.length];
     };
 
+    const formatChartData = (data) => {
+        if (!Array.isArray(data)) {
+            console.error('Invalid data format received:', data);
+            return [];
+        }
+        
+        return data.map(item => ({
+            hour: `${String(item.hour).padStart(2, '0')}:00`,
+            ...item.counts
+        }));
+    };
+
     const fetchAirports = async () => {
         try {
             const response = await fetch('http://localhost:8000/api/flights/origins');
@@ -84,18 +92,37 @@ const DateRangeAnalysis = () => {
                 throw new Error('Failed to fetch airports');
             }
             const data = await response.json();
-            // Ensure data is an array before setting it
             setAirports(Array.isArray(data) ? data : []);
         } catch (err) {
             console.error('Error fetching airports:', err);
-            setAirports([]); // Set empty array on error
+            setAirports([]);
             setError('Error loading airports');
         }
     };
 
+    const handleDateChange = (id, field, value) => {
+        setDateRanges(ranges => 
+            ranges.map(range => 
+                range.id === id 
+                    ? { ...range, [field]: value }
+                    : range
+            )
+        );
+    };
+
+    const handleAirportChange = (id, field, value) => {
+        setDateRanges(ranges => 
+            ranges.map(range => 
+                range.id === id 
+                    ? { ...range, [field]: value }
+                    : range
+            )
+        );
+    };
+
     const analyzeDateRanges = async () => {
         if (!validateDateRanges()) {
-            setError('Por favor, ingrese rangos de fechas válidos');
+            setError('Por favor, complete todos los campos requeridos');
             return;
         }
 
@@ -103,118 +130,67 @@ const DateRangeAnalysis = () => {
         setError('');
 
         try {
-            const dateRangesPayload = dateRanges.map(range => ({
-                id: range.id,
-                start_date: range.startDate,
-                end_date: range.endDate,
-                label: range.label
-            }));
+            const dateRangesPayload = FlightAnalysisAdapter.toDateRangeDTO(dateRanges);
 
-            // Log the requests for debugging
-            console.log('Origin Request:', {
-                date_ranges: dateRangesPayload,
-                airport: selectedAirport,
-                type: 'origin'
-            });
-            console.log('Destination Request:', {
-                date_ranges: dateRangesPayload,
-                airport: selectedDestination,
-                type: 'destination'
-            });
-
-            const [originResponse, destinationResponse] = await Promise.all([
-                fetch('http://localhost:8000/api/flights/analyze-date-ranges', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        date_ranges: dateRangesPayload,
-                        airport: selectedAirport || null,
-                        type: 'origin'
-                    })
-                }),
-                fetch('http://localhost:8000/api/flights/analyze-date-ranges', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        date_ranges: dateRangesPayload,
-                        airport: selectedDestination || null,
-                        type: 'destination'
-                    })
-                })
-            ]);
-
-            // Log responses for debugging
             const [originData, destinationData] = await Promise.all([
-                originResponse.json(),
-                destinationResponse.json()
+                FlightAnalysisService.analyzeFlights(dateRangesPayload, 'origin_analysis'),
+                FlightAnalysisService.analyzeFlights(dateRangesPayload, 'destination_analysis')
             ]);
 
-            console.log('Origin Data:', originData);
-            console.log('Destination Data:', destinationData);
+            if (!Array.isArray(originData) || !Array.isArray(destinationData)) {
+                throw new Error('Invalid data format received from server');
+            }
 
-            const formattedOriginData = formatChartData(originData);
-            const formattedDestinationData = formatChartData(destinationData);
-
-            console.log('Formatted Origin Data:', formattedOriginData);
-            console.log('Formatted Destination Data:', formattedDestinationData);
-
-            setChartData(formattedOriginData);
-            setDestinationChartData(formattedDestinationData);
+            setOriginChartData(FlightAnalysisAdapter.formatChartData(originData));
+            setDestinationChartData(FlightAnalysisAdapter.formatChartData(destinationData));
         } catch (err) {
-            console.error('Error in analyzeDateRanges:', err);
+            console.error('Error:', err);
             setError('Error al analizar los datos: ' + err.message);
-            setChartData([]);
-            setDestinationChartData([]);
         } finally {
             setLoading(false);
         }
     };
 
-    // Remove the second formatChartData function that was here
-    // Add missing date range controls in return statement
     return (
         <div className="date-range-analysis">
-            <h2>Análisis por Rangos de Fechas</h2>
-            
             <div className="controls-card">
-                <div className="airport-filters">
-                    <div className="airport-filter">
-                        <input
-                            type="text"
-                            value={selectedAirport}
-                            onChange={(e) => setSelectedAirport(e.target.value)}
-                            className="airport-input"
-                            placeholder="Ingrese aeropuerto origen"
-                        />
-                    </div>
-                    <div className="airport-filter">
-                        <input
-                            type="text"
-                            value={selectedDestination}
-                            onChange={(e) => setSelectedDestination(e.target.value)}
-                            className="airport-input"
-                            placeholder="Ingrese aeropuerto destino"
-                        />
-                    </div>
-                </div>
-                
                 <div className="date-ranges-container">
                     {dateRanges.map((range) => (
-                        <div key={range.id} className="date-range">
-                            <span>{range.label}</span>
-                            <input
-                                type="date"
-                                value={range.startDate}
-                                onChange={(e) => handleDateChange(range.id, 'startDate', e.target.value)}
-                            />
-                            <input
-                                type="date"
-                                value={range.endDate}
-                                onChange={(e) => handleDateChange(range.id, 'endDate', e.target.value)}
-                            />
-                            {dateRanges.length > 1 && (
-                                <button onClick={() => removeDateRange(range.id)}>Eliminar</button>
-                            )}
+                        <div key={range.id} className="date-range-input">
+                            <div className="range-header">
+                                <h4>{range.label}</h4>
+                                {dateRanges.length > 1 && (
+                                    <button onClick={() => removeDateRange(range.id)}>Eliminar</button>
+                                )}
+                            </div>
+                            <div className="date-inputs">
+                                <input
+                                    type="date"
+                                    value={range.startDate}
+                                    onChange={(e) => handleDateChange(range.id, 'startDate', e.target.value)}
+                                />
+                                <input
+                                    type="date"
+                                    value={range.endDate}
+                                    onChange={(e) => handleDateChange(range.id, 'endDate', e.target.value)}
+                                />
+                            </div>
+                            <div className="airport-inputs">
+                                <input
+                                    type="text"
+                                    value={range.originAirport}
+                                    onChange={(e) => handleAirportChange(range.id, 'originAirport', e.target.value)}
+                                    placeholder="Ingrese aeropuerto origen"
+                                    className="airport-input"
+                                />
+                                <input
+                                    type="text"
+                                    value={range.destinationAirport}
+                                    onChange={(e) => handleAirportChange(range.id, 'destinationAirport', e.target.value)}
+                                    placeholder="Ingrese aeropuerto destino"
+                                    className="airport-input"
+                                />
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -231,79 +207,106 @@ const DateRangeAnalysis = () => {
 
             {error && <div className="error-message">{error}</div>}
 
-            <div className="charts-grid">
-                <div className="chart-card">
-                    <h3>Análisis por Aeropuerto de Origen</h3>
-                    {chartData.length > 0 ? (
-                        <ResponsiveContainer width="100%" height={400}>
-                            <LineChart data={chartData}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis 
-                                    dataKey="hour"
-                                    label={{ value: 'Hora del día', position: 'bottom' }}
+            <div className="chart-card">
+                <h3>Análisis de Vuelos por Hora</h3>
+                {chartData.length > 0 ? (
+                    <ResponsiveContainer width="100%" height={400}>
+                        <LineChart data={chartData}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis 
+                                dataKey="hour"
+                                label={{ value: 'Hora del día', position: 'bottom' }}
+                            />
+                            <YAxis 
+                                label={{ 
+                                    value: 'Cantidad de vuelos', 
+                                    angle: -90, 
+                                    position: 'insideLeft' 
+                                }}
+                            />
+                            <Tooltip />
+                            <Legend />
+                            {Object.keys(chartData[0] || {}).filter(key => key !== 'hour').map((key, index) => (
+                                <Line
+                                    key={key}
+                                    type="monotone"
+                                    dataKey={key}
+                                    stroke={getCustomColors(index)}
+                                    strokeWidth={2}
+                                    dot={false}
                                 />
-                                <YAxis 
-                                    label={{ 
-                                        value: 'Cantidad de vuelos (Origen)', 
-                                        angle: -90, 
-                                        position: 'insideLeft' 
-                                    }}
-                                />
-                                <Tooltip />
-                                <Legend />
-                                {dateRanges.map((range, index) => (
+                            ))}
+                        </LineChart>
+                    </ResponsiveContainer>
+                ) : (
+                    <div className="no-data">No hay datos para mostrar</div>
+                )}
+            </div>
+            <div className="charts-container">
+                <div className="chart">
+                    <h3>Vuelos por Origen</h3>
+                    <ResponsiveContainer width="100%" height={400}>
+                        <LineChart data={originChartData}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis 
+                                dataKey="hour"
+                                label={{ value: 'Hora del día', position: 'bottom' }}
+                            />
+                            <YAxis 
+                                label={{ 
+                                    value: 'Cantidad de vuelos (Origen)', 
+                                    angle: -90, 
+                                    position: 'insideLeft' 
+                                }}
+                            />
+                            <Tooltip />
+                            <Legend />
+                            {Object.keys(originChartData[0] || {})
+                                .filter(key => key !== 'hour')
+                                .map((key, index) => (
                                     <Line
-                                        key={range.id}
+                                        key={key}
                                         type="monotone"
-                                        dataKey={range.label}
-                                        name={`${range.label} (${range.startDate} - ${range.endDate})`}
+                                        dataKey={key}
                                         stroke={getCustomColors(index)}
-                                        strokeWidth={2}
-                                        dot={false}
+                                        name={key}
                                     />
                                 ))}
-                            </LineChart>
-                        </ResponsiveContainer>
-                    ) : (
-                        <div className="no-data">No hay datos para mostrar</div>
-                    )}
+                        </LineChart>
+                    </ResponsiveContainer>
                 </div>
-            
-                <div className="chart-card">
-                    <h3>Análisis por Aeropuerto de Destino</h3>
-                    {destinationChartData.length > 0 ? (
-                        <ResponsiveContainer width="100%" height={400}>
-                            <LineChart data={destinationChartData}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis 
-                                    dataKey="hour"
-                                    label={{ value: 'Hora del día', position: 'bottom' }}
-                                />
-                                <YAxis 
-                                    label={{ 
-                                        value: 'Cantidad de vuelos (Destino)', 
-                                        angle: -90, 
-                                        position: 'insideLeft' 
-                                    }}
-                                />
-                                <Tooltip />
-                                <Legend />
-                                {dateRanges.map((range, index) => (
+
+                <div className="chart">
+                    <h3>Vuelos por Destino</h3>
+                    <ResponsiveContainer width="100%" height={400}>
+                        <LineChart data={destinationChartData}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis 
+                                dataKey="hour"
+                                label={{ value: 'Hora del día', position: 'bottom' }}
+                            />
+                            <YAxis 
+                                label={{ 
+                                    value: 'Cantidad de vuelos (Destino)', 
+                                    angle: -90, 
+                                    position: 'insideLeft' 
+                                }}
+                            />
+                            <Tooltip />
+                            <Legend />
+                            {Object.keys(destinationChartData[0] || {})
+                                .filter(key => key !== 'hour')
+                                .map((key, index) => (
                                     <Line
-                                        key={range.id}
+                                        key={key}
                                         type="monotone"
-                                        dataKey={range.label}
-                                        name={`${range.label} (${range.startDate} - ${range.endDate})`}
+                                        dataKey={key}
                                         stroke={getCustomColors(index)}
-                                        strokeWidth={2}
-                                        dot={false}
+                                        name={key}
                                     />
                                 ))}
-                            </LineChart>
-                        </ResponsiveContainer>
-                    ) : (
-                        <div className="no-data">No hay datos para mostrar</div>
-                    )}
+                        </LineChart>
+                    </ResponsiveContainer>
                 </div>
             </div>
         </div>

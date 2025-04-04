@@ -51,17 +51,43 @@
 }
 
 .date-range-input {
-    background: #f8f9fa;
-    padding: 1rem;
+    background: white;
+    padding: 1.5rem;
     border-radius: 8px;
-    border: 1px solid #dee2e6;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 1rem;
+}
+
+.date-inputs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.airport-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.airport-inputs select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
 }
 
 .range-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.range-header h4 {
+    margin: 0;
+    color: #333;
 }
 
 .date-range-input input {

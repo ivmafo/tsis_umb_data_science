@@ -76,17 +76,13 @@ class FlightTypeCountDTO(BaseModel):
 class DateRangeDTO(BaseModel):
     """
     DTO para representar un rango de fechas.
-
-    Attributes:
-        id (int): Identificador único del rango
-        start_date (str): Fecha de inicio en formato string
-        end_date (str): Fecha de fin en formato string
-        label (str): Etiqueta descriptiva del rango
     """
     id: int
     start_date: str
     end_date: str
     label: str
+    origin_airport: str
+    destination_airport: str
 
 class DateRangesAnalysisRequestDTO(BaseModel):
     """

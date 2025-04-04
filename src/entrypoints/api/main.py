@@ -568,34 +568,24 @@ async def get_sector_analysis_by_date(
 @app.post("/api/flights/analyze-date-ranges")
 async def analyze_date_ranges(request: DateRangesAnalysisRequestDTO):
     try:
-        if request.type == 'origin':
-            result = container.flight_repository.get_hourly_counts_by_date_ranges(
-                request.date_ranges,
-                request.airport
-            )
-        else:
-            result = container.flight_repository.get_hourly_counts_by_date_ranges_destination(
-                request.date_ranges,
-                request.airport
-            )
-        
-        # Asegurar que siempre devolvemos una lista, incluso si está vacía
-        if result is None:
-            result = []
-            
-        # Convertir los resultados a formato esperado por el frontend
-        formatted_result = [
-            {
-                'hour': item.hour,
-                'counts': item.counts
-            }
-            for item in result
-        ]
-        
-        return formatted_result
+        result = container.flight_repository.get_hourly_counts_by_date_ranges(
+            request.date_ranges,
+            request.type
+        )
+        return result
     except Exception as e:
-        print(f"Error in analyze_date_ranges: {str(e)}")
-        traceback.print_exc()
+        print(f"Error in analyze_date_ranges: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/flights/analyze-date-ranges-destination")
+async def analyze_date_ranges_destination(request: DateRangesAnalysisRequestDTO):
+    try:
+        result = container.flight_repository.get_hourly_counts_by_date_ranges_destination(
+            request.date_ranges
+        )
+        return result
+    except Exception as e:
+        print(f"Error in analyze_date_ranges_destination: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 from typing import List
