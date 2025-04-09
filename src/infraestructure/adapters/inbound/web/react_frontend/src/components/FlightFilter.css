@@ -128,3 +128,23 @@
 .remove-range-btn:hover {
     background-color: #cc0000;
 }
+
+.level-range-inputs {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.level-input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    background-color: white;
+}
+
+.level-input:focus {
+    outline: none;
+    border-color: #1a237e;
+    box-shadow: 0 0 0 2px rgba(26, 35, 126, 0.1);
+}

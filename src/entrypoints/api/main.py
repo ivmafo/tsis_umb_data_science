@@ -1,5 +1,7 @@
 # src\entrypoints\api\main.py
 import traceback
+from typing import List, Optional
+from src.core.entities.sector_analysis import SectorDetailedAnalysis
 from datetime import datetime
 from fastapi import FastAPI, HTTPException, UploadFile, File, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -234,36 +236,49 @@ async def get_aircraft_types():
 
 
 
-@app.get("/api/flights/origins-count")
-async def get_origins_count(
-    years: str = None,
-    months: str = None,
-    origins: str = None,
-    destinations: str = None,
-    flightTypes: str = None,
-    airlines: str = None,
-    aircraftTypes: str = None    
+@app.get("/api/flights/origins-count", response_model=List[FlightOriginCountDTO])
+def get_origins_count(
+    years: Optional[str] = None,
+    months: Optional[str] = None,
+    origins: Optional[str] = None,
+    destinations: Optional[str] = None,
+    flight_types: Optional[str] = None,
+    airlines: Optional[str] = None,
+    aircraft_types: Optional[str] = None,
+    level_min: Optional[int] = None,
+    level_max: Optional[int] = None
 ):
     try:
+        # Parse comma-separated values into lists
+        years_list = years.split(',') if years else []
+        months_list = months.split(',') if months else []
+        origins_list = origins.split(',') if origins else []
+        destinations_list = destinations.split(',') if destinations else []
+        flight_types_list = flight_types.split(',') if flight_types else []
+        airlines_list = airlines.split(',') if airlines else []
+        aircraft_types_list = aircraft_types.split(',') if aircraft_types else []
+        
+        # Create filter DTO with all parameters including level_min and level_max
         filters = FlightFilterDTO(
-            years=years.split(',') if years else None,
-            months=months.split(',') if months else None,
-            origins=origins.split(',') if origins else None,
-            destinations=destinations.split(',') if destinations else None,
-            flight_types=flightTypes.split(',') if flightTypes else None,
-            airlines=airlines.split(',') if airlines else None,
-            aircraft_types=aircraftTypes.split(',') if aircraftTypes else None
+            years=years_list,
+            months=months_list,
+            origins=origins_list,
+            destinations=destinations_list,
+            flight_types=flight_types_list,
+            airlines=airlines_list,
+            aircraft_types=aircraft_types_list,
+            level_min=level_min,
+            level_max=level_max
         )
         
-        result = container.get_flight_origins_count_use_case.execute(filters)
-        # Convert to list if not already a list
-        if isinstance(result, list):
-            return result
-        return []
+        # Log the filters for debugging
+        print(f"Origins count filters: {filters.__dict__}")
         
+        # Use the flight_repository attribute directly instead of get_flight_repository() method
+        return container.flight_repository.get_origins_count(filters)
     except Exception as e:
-        print(f"Error in get_origins_count: {str(e)}")
-        traceback.print_exc()  # Add this to get more detailed error information
+        print(f"Error in get_origins_count endpoint: {str(e)}")
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/flights/destinations-count")
@@ -274,7 +289,9 @@ async def get_destinations_count(
     destinations: str = None,
     flightTypes: str = None,
     airlines: str = None,
-    aircraftTypes: str = None
+    aircraftTypes: str = None,
+    level_min: Optional[int] = None,
+    level_max: Optional[int] = None
 ):
     try:
         filters = FlightFilterDTO(
@@ -284,7 +301,9 @@ async def get_destinations_count(
             destinations=destinations.split(',') if destinations else None,
             flight_types=flightTypes.split(',') if flightTypes else None,
             airlines=airlines.split(',') if airlines else None,
-            aircraft_types=aircraftTypes.split(',') if aircraftTypes else None
+            aircraft_types=aircraftTypes.split(',') if aircraftTypes else None,
+            level_min=level_min,
+            level_max=level_max
         )
         
         result = container.flight_repository.get_destinations_count(filters)
@@ -302,7 +321,9 @@ async def get_airlines_count(
     destinations: str = None,
     flightTypes: str = None,
     airlines: str = None,
-    aircraftTypes: str = None
+    aircraftTypes: str = None,
+    level_min: Optional[int] = None,
+    level_max: Optional[int] = None
 ):
     try:
         filters = FlightFilterDTO(
@@ -312,7 +333,9 @@ async def get_airlines_count(
             destinations=destinations.split(',') if destinations else None,
             flight_types=flightTypes.split(',') if flightTypes else None,
             airlines=airlines.split(',') if airlines else None,
-            aircraft_types=aircraftTypes.split(',') if aircraftTypes else None
+            aircraft_types=aircraftTypes.split(',') if aircraftTypes else None,
+            level_min=level_min,
+            level_max=level_max
         )
         
         result = container.flight_repository.get_airlines_count(filters)
@@ -330,7 +353,9 @@ async def get_flight_types_count(
     destinations: str = None,
     flightTypes: str = None,
     airlines: str = None,
-    aircraftTypes: str = None
+    aircraftTypes: str = None,
+    level_min: Optional[int] = None,
+    level_max: Optional[int] = None
 ):
     try:
         filters = FlightFilterDTO(
@@ -340,7 +365,9 @@ async def get_flight_types_count(
             destinations=destinations.split(',') if destinations else None,
             flight_types=flightTypes.split(',') if flightTypes else None,
             airlines=airlines.split(',') if airlines else None,
-            aircraft_types=aircraftTypes.split(',') if aircraftTypes else None
+            aircraft_types=aircraftTypes.split(',') if aircraftTypes else None,
+            level_min=level_min,
+            level_max=level_max
         )
         
         result = container.flight_repository.get_flight_types_count(filters)
@@ -480,8 +507,7 @@ def get_sector_capacity(sector: str, date: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# Add these imports at the top with other imports
-from src.core.entities.sector_analysis import SectorDetailedAnalysis
+
 
 # Add these endpoints after the existing ones
 @app.get("/api/sector-analysis/sectors")

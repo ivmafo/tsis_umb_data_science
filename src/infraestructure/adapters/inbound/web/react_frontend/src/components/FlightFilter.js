@@ -22,39 +22,19 @@ import './FlightFilter.css';
  * @param {Function} props.onFilterChange - Callback para notificar cambios en los filtros
  */
 function FlightFilter({ onFilterChange }) {
-    /**
-     * Obtiene las opciones disponibles para cada criterio de filtrado.
-     * 
-     * @async
-     * @function
-     * @throws {Error} Error en la obtención de datos
-     */
-    const fetchOptions = async () => {
-        // Agrupa todas las funciones fetch
-        await Promise.all([
-            fetchYears(),
-            fetchMonths(),
-            fetchOrigins(),
-            fetchDestinations(),
-            fetchFlightTypes(),
-            fetchAirlines(),
-            fetchAircraftTypes(),
-            fetchLevelRanges()
-        ]);
-    };
-
-    /**
-     * Maneja los cambios en cualquier filtro y notifica al componente padre.
-     * 
-     * @function
-     * @param {string} filterType - Tipo de filtro modificado
-     * @param {Array} selectedOptions - Opciones seleccionadas
-     */
-    const handleFilterChange = (filterType, selectedOptions) => {
-        // Las funciones handle*Change existentes implementan esta lógica
-    };
-
-    // State declarations
+    // Add monthNames array definition
+    const monthNames = [
+        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+    
+    // State declarations (keep only one of each)
+    const [levelRange, setLevelRange] = useState({
+        min: 0,
+        max: 100000
+    });
+    const [levelRanges, setLevelRanges] = useState([]);
+    const [selectedLevelRanges, setSelectedLevelRanges] = useState([]);
     const [airlines, setAirlines] = useState([]);
     const [selectedAirlines, setSelectedAirlines] = useState([]);
     const [flightTypes, setFlightTypes] = useState([]);
@@ -70,17 +50,7 @@ function FlightFilter({ onFilterChange }) {
     const [aircraftTypes, setAircraftTypes] = useState([]);
     const [selectedAircraftTypes, setSelectedAircraftTypes] = useState([]);
 
-    const monthNames = {
-        1: 'Enero', 2: 'Febrero', 3: 'Marzo', 4: 'Abril',
-        5: 'Mayo', 6: 'Junio', 7: 'Julio', 8: 'Agosto',
-        9: 'Septiembre', 10: 'Octubre', 11: 'Noviembre', 12: 'Diciembre'
-    };
-
-    // Add these state declarations with the other states at the top
-    // State declarations for level ranges
-    const [levelRanges, setLevelRanges] = useState([]);
-    const [selectedLevelRanges, setSelectedLevelRanges] = useState([]);
-    
+    // Remove duplicate levelRange declaration and update useEffect
     useEffect(() => {
         fetchYears();
         fetchMonths();
@@ -91,7 +61,67 @@ function FlightFilter({ onFilterChange }) {
         fetchAircraftTypes();
         fetchLevelRanges();
     }, []);
-    
+
+    // Combined handler for both numeric inputs and graph selection
+    // Remove the duplicate handleLevelRangeChange and keep only this version
+    const handleLevelRangeChange = (typeOrEvent, value) => {
+        if (typeof typeOrEvent === 'object' && typeOrEvent.target.tagName === 'SELECT') {
+            // Handle select input for graph
+            const selectedOptions = Array.from(typeOrEvent.target.selectedOptions, option => option.value);
+            setSelectedLevelRanges(selectedOptions);
+            onFilterChange({ 
+                years: selectedYears, 
+                months: selectedMonths,
+                origins: selectedOrigins,
+                destinations: selectedDestinations,
+                flightTypes: selectedFlightTypes,
+                airlines: selectedAirlines,
+                aircraftTypes: selectedAircraftTypes,
+                levelRanges: selectedOptions,
+                level_min: levelRange.min,
+                level_max: levelRange.max
+            });
+        } else {
+            // Handle numeric input
+            const type = typeOrEvent; // 'min' or 'max'
+            const newValue = value === '' ? (type === 'min' ? 0 : 100000) : parseInt(value);
+            setLevelRange(prev => ({
+                ...prev,
+                [type]: newValue
+            }));
+            onFilterChange({ 
+                years: selectedYears, 
+                months: selectedMonths,
+                origins: selectedOrigins,
+                destinations: selectedDestinations,
+                flightTypes: selectedFlightTypes,
+                airlines: selectedAirlines,
+                aircraftTypes: selectedAircraftTypes,
+                levelRanges: selectedLevelRanges,
+                level_min: type === 'min' ? newValue : levelRange.min,
+                level_max: type === 'max' ? newValue : levelRange.max
+            });
+        }
+    };
+
+    // Remove the duplicate handleYearChange and keep only one version
+    const handleYearChange = (e) => {
+        const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+        setSelectedYears(selectedOptions);
+        onFilterChange({ 
+            years: selectedOptions, 
+            months: selectedMonths,
+            origins: selectedOrigins,
+            destinations: selectedDestinations,
+            flightTypes: selectedFlightTypes,
+            airlines: selectedAirlines,
+            aircraftTypes: selectedAircraftTypes,
+            levelRanges: selectedLevelRanges,
+            level_min: levelRange.min,
+            level_max: levelRange.max
+        });
+    };
+
     const fetchLevelRanges = async () => {
         try {
             const response = await fetch('http://localhost:8000/api/level-ranges');
@@ -102,20 +132,21 @@ function FlightFilter({ onFilterChange }) {
         }
     };
     
-    const handleLevelRangeChange = (e) => {
-        const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
-        setSelectedLevelRanges(selectedOptions);
-        onFilterChange({ 
-            years: selectedYears, 
-            months: selectedMonths, 
-            origins: selectedOrigins,
-            destinations: selectedDestinations,
-            flightTypes: selectedFlightTypes,
-            airlines: selectedAirlines,
-            aircraftTypes: selectedAircraftTypes,
-            levelRanges: selectedOptions
-        });
-    };
+    // REMOVE THIS DUPLICATE FUNCTION
+    // const handleLevelRangeChange = (e) => {
+    //     const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+    //     setSelectedLevelRanges(selectedOptions);
+    //     onFilterChange({ 
+    //         years: selectedYears, 
+    //         months: selectedMonths, 
+    //         origins: selectedOrigins,
+    //         destinations: selectedDestinations,
+    //         flightTypes: selectedFlightTypes,
+    //         airlines: selectedAirlines,
+    //         aircraftTypes: selectedAircraftTypes,
+    //         levelRanges: selectedOptions
+    //     });
+    // };
 
     
     const fetchAircraftTypes = async () => {
@@ -190,20 +221,22 @@ function FlightFilter({ onFilterChange }) {
         }
     };
 
-    const handleYearChange = (e) => {
-        const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
-        setSelectedYears(selectedOptions);
-        onFilterChange({ 
-            years: selectedOptions, 
-            months: selectedMonths,
-            origins: selectedOrigins,
-            destinations: selectedDestinations,
-            flightTypes: selectedFlightTypes,
-            airlines: selectedAirlines,
-            aircraftTypes: selectedAircraftTypes,
-            levelRanges: selectedLevelRanges  // Agregar esta línea
-        });
-    };
+    // REMOVE THIS DUPLICATE FUNCTION - Already defined above
+    // const handleYearChange = (e) => {
+    //     const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
+    //     setSelectedYears(selectedOptions);
+    //     onFilterChange({ 
+    //         years: selectedOptions, 
+    //         months: selectedMonths,
+    //         origins: selectedOrigins,
+    //         destinations: selectedDestinations,
+    //         flightTypes: selectedFlightTypes,
+    //         airlines: selectedAirlines,
+    //         aircraftTypes: selectedAircraftTypes,
+    //         level_min: levelRange.min,
+    //         level_max: levelRange.max
+    //     });
+    // };
 
     const handleMonthChange = (e) => {
         const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
@@ -216,10 +249,13 @@ function FlightFilter({ onFilterChange }) {
             flightTypes: selectedFlightTypes,
             airlines: selectedAirlines,
             aircraftTypes: selectedAircraftTypes,
-            levelRanges: selectedLevelRanges
+            levelRanges: selectedLevelRanges,
+            level_min: levelRange.min,
+            level_max: levelRange.max
         });
     };
 
+    // Make sure all handlers include levelRanges in addition to level_min and level_max
     const handleOriginChange = (e) => {
         const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
         setSelectedOrigins(selectedOptions);
@@ -231,7 +267,9 @@ function FlightFilter({ onFilterChange }) {
             flightTypes: selectedFlightTypes,
             airlines: selectedAirlines,
             aircraftTypes: selectedAircraftTypes,
-            levelRanges: selectedLevelRanges
+            levelRanges: selectedLevelRanges,
+            level_min: levelRange.min,
+            level_max: levelRange.max
         });
     };
 
@@ -246,7 +284,9 @@ function FlightFilter({ onFilterChange }) {
             flightTypes: selectedFlightTypes,
             airlines: selectedAirlines,
             aircraftTypes: selectedAircraftTypes,
-            levelRanges: selectedLevelRanges
+            levelRanges: selectedLevelRanges,
+            level_min: levelRange.min,
+            level_max: levelRange.max
         });
     };
 
@@ -261,7 +301,9 @@ function FlightFilter({ onFilterChange }) {
             flightTypes: selectedOptions,
             airlines: selectedAirlines,
             aircraftTypes: selectedAircraftTypes,
-            levelRanges: selectedLevelRanges
+            levelRanges: selectedLevelRanges,
+            level_min: levelRange.min,
+            level_max: levelRange.max
         });
     };
 
@@ -276,7 +318,9 @@ function FlightFilter({ onFilterChange }) {
             flightTypes: selectedFlightTypes,
             airlines: selectedOptions,
             aircraftTypes: selectedAircraftTypes,
-            levelRanges: selectedLevelRanges
+            levelRanges: selectedLevelRanges,
+            level_min: levelRange.min,
+            level_max: levelRange.max
         });
     };
 
@@ -291,7 +335,9 @@ function FlightFilter({ onFilterChange }) {
             flightTypes: selectedFlightTypes,
             airlines: selectedAirlines,
             aircraftTypes: selectedOptions,
-            levelRanges: selectedLevelRanges
+            levelRanges: selectedLevelRanges,
+            level_min: levelRange.min,
+            level_max: levelRange.max
         });
     };
 
@@ -311,7 +357,7 @@ function FlightFilter({ onFilterChange }) {
                 <label>Meses:</label>
                 <select multiple value={selectedMonths} onChange={handleMonthChange} className="multiple-select">
                     {months.map(month => (
-                        <option key={month} value={month}>{monthNames[month]}</option>
+                        <option key={month} value={month}>{monthNames[month-1]}</option>
                     ))}
                 </select>
             </div>
@@ -362,16 +408,26 @@ function FlightFilter({ onFilterChange }) {
             </div>
 
             <div className="filter-group">
-                <label>Rango de Nivel:</label>
-                <select multiple value={selectedLevelRanges} onChange={handleLevelRangeChange} className="multiple-select">
-                    {levelRanges.map(range => (
-                        <option key={range.id} value={range.id}>
-                            {range.alias} ({range.min_level} - {range.max_level})
-                        </option>
-                    ))}
-                </select>
+                <label>Nivel de Vuelo</label>
+                <div className="level-range-inputs">
+                    <input
+                        type="number"
+                        placeholder="Desde"
+                        value={levelRange.min}
+                        onChange={(e) => handleLevelRangeChange('min', e.target.value)}
+                        min="0"
+                        className="level-input"
+                    />
+                    <input
+                        type="number"
+                        placeholder="Hasta"
+                        value={levelRange.max}
+                        onChange={(e) => handleLevelRangeChange('max', e.target.value)}
+                        min="0"
+                        className="level-input"
+                    />
+                </div>
             </div>
-            {/* Remove the entire level ranges filter group that was here */}
 
             <small className="helper-text">
                 Mantén presionado Ctrl (Cmd en Mac) para seleccionar múltiples opciones

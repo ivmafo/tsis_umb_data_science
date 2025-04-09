@@ -13,16 +13,27 @@ function TreeMapChart({ filters }) {
             const queryParams = new URLSearchParams();
             if (filters) {
                 Object.entries(filters).forEach(([key, value]) => {
+                    // Handle array values
                     if (Array.isArray(value) && value.length > 0) {
                         queryParams.append(key, value.join(','));
+                    } 
+                    // Handle numeric values like level_min and level_max - ensure they're included
+                    else if ((typeof value === 'number' || typeof value === 'string') && value !== null && value !== undefined && String(value).trim() !== '') {
+                        queryParams.append(key, value);
                     }
                 });
             }
 
+            console.log("TreeMapChart - Query params:", queryParams.toString());
+
             const response = await fetch(`http://localhost:8000/api/flights/origins-count?${queryParams}`);
+            if (!response.ok) {
+                throw new Error(`API error: ${response.status}`);
+            }
             const responseData = await response.json();
+            console.log("TreeMapChart - API response:", responseData);
             
-            // Verificar que responseData sea un array
+            // Verify that responseData is an array
             if (Array.isArray(responseData) && responseData.length > 0) {
                 // Transform data for TreeMap
                 const transformedData = {
@@ -35,6 +46,7 @@ function TreeMapChart({ filters }) {
                 };
                 setData([transformedData]);
             } else {
+                console.error('Invalid data format received:', responseData);
                 setData([{
                     name: 'Origins',
                     children: [{
@@ -45,7 +57,7 @@ function TreeMapChart({ filters }) {
                 }]);
             }
         } catch (error) {
-            console.error('Error fetching origin counts:', error);
+            console.error('Error fetching origin count data:', error);
             setData([{
                 name: 'Origins',
                 children: [{
@@ -59,7 +71,9 @@ function TreeMapChart({ filters }) {
         }
     };
 
+    // Make sure to re-fetch when filters change
     useEffect(() => {
+        console.log("TreeMapChart - Filters changed:", filters);
         fetchData();
     }, [filters]);
 
