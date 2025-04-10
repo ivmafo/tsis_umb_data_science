@@ -285,7 +285,7 @@ const DateRangeAnalysis = () => {
                         </h3>
                         <ResponsiveContainer width="100%" height={500}>
                             <LineChart 
-                                data={originChartData}
+                                data={destinationChartData}
                                 margin={{ top: 40, right: 30, left: 20, bottom: 60 }}>
                                 <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                                 <XAxis 
@@ -298,7 +298,7 @@ const DateRangeAnalysis = () => {
                                 />
                                 <YAxis 
                                     label={{ 
-                                        value: 'Cantidad de vuelos (Origen)', 
+                                        value: 'Cantidad de vuelos (Destino)', 
                                         angle: -90, 
                                         position: 'insideLeft',
                                         offset: -10,

@@ -509,7 +509,83 @@ def get_sector_capacity(sector: str, date: str):
 
 
 
-# Add these endpoints after the existing ones
+# Agregar estos imports al inicio del archivo
+from src.core.dtos.region_dtos import RegionDTO
+from pydantic import BaseModel
+
+# Agregar esta clase para validar los datos de entrada
+class RegionRequest(BaseModel):
+    name: str
+    code: str
+    description: str = None
+
+# Agregar estos endpoints después de los existentes
+@app.get("/api/regions")
+async def get_regions():
+    try:
+        regions = container.get_all_regions_use_case.execute()
+        return regions
+    except Exception as e:
+        print(f"Error getting regions: {str(e)}")
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/regions/{id}")
+async def get_region(id: int):
+    try:
+        region = container.get_region_by_id_use_case.execute(id)
+        if not region:
+            raise HTTPException(status_code=404, detail=f"Región con ID {id} no encontrada")
+        return region
+    except Exception as e:
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/regions")
+async def create_region(region: RegionRequest):
+    try:
+        print(f"Creating region with data: {region.dict()}")  # Debug log
+        result = container.create_region_use_case.execute(region.dict())
+        return result
+    except Exception as e:
+        print(f"Error creating region: {str(e)}")  # Debug log
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=500, 
+            detail=f"Error al crear la región: {str(e)}"
+        )
+
+@app.put("/api/regions/{id}")
+async def update_region(id: int, region: RegionRequest):
+    try:
+        print(f"Updating region {id} with data: {region.dict()}")  # Debug log
+        result = container.update_region_use_case.execute(id, region.dict())
+        if not result:
+            raise HTTPException(
+                status_code=404, 
+                detail=f"Región con ID {id} no encontrada"
+            )
+        return result
+    except Exception as e:
+        print(f"Error updating region: {str(e)}")  # Debug log
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=500, 
+            detail=f"Error al actualizar la región: {str(e)}"
+        )
+
+@app.delete("/api/regions/{id}")
+async def delete_region(id: int):
+    try:
+        result = container.delete_region_use_case.execute(id)
+        if result:
+            return {"message": f"Región eliminada exitosamente"}
+        raise HTTPException(status_code=404, detail=f"Región no encontrada")
+    except Exception as e:
+        print(f"Error deleting region: {str(e)}")  # Debug log
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/api/sector-analysis/sectors")
 async def get_analysis_sectors():
     try:

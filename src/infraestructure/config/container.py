@@ -39,6 +39,15 @@ from src.core.use_cases.sector_analysis_use_cases import (
 )
 # Add to imports
 from src.core.use_cases.get_flight_hourly_counts import GetFlightHourlyCountsUseCase
+# Add to imports
+from src.infraestructure.adapters.outbound.postgres_region_repository import PostgresRegionRepository
+from src.core.use_cases.region_use_cases import (
+    GetAllRegionsUseCase,
+    GetRegionByIdUseCase,
+    CreateRegionUseCase,
+    UpdateRegionUseCase,
+    DeleteRegionUseCase
+)
 
 class DependencyContainer:
     _instance = None
@@ -72,6 +81,7 @@ class DependencyContainer:
         self.sector_capacity_repository = PostgresSectorCapacityRepository(self.connection)
         # Add this line
         self.sector_analysis_repository = PostgresSectorAnalysisRepository(self.connection)
+        self.region_repository = PostgresRegionRepository(self.connection)
 
     def _init_use_cases(self):
         # Casos de uso de configuración
@@ -113,10 +123,18 @@ class DependencyContainer:
             self.flight_repository
         )
 
-    # Move this method outside of _init_use_cases
+
+
+        # Inicializar casos de uso de regiones
+        self.get_all_regions_use_case = GetAllRegionsUseCase(self.region_repository)
+        self.get_region_by_id_use_case = GetRegionByIdUseCase(self.region_repository)
+        self.create_region_use_case = CreateRegionUseCase(self.region_repository)
+        self.update_region_use_case = UpdateRegionUseCase(self.region_repository)
+        self.delete_region_use_case = DeleteRegionUseCase(self.region_repository)
+
     def get_sector_capacity_use_case(self):
         return self.sector_capacity_use_case
-
+        
     def cleanup(self):
         if hasattr(self, 'connection') and self.connection:
             self.db_pool.release_connection(self.connection)

@@ -8,7 +8,8 @@ import {
     FaChartBar, 
     FaLayerGroup,
     FaPlane,
-    FaChartArea
+    FaChartArea,
+    FaGlobe // Add this import for the regions icon
 } from 'react-icons/fa';
 
 function Sidebar({ onSelect }) {
@@ -46,6 +47,11 @@ function Sidebar({ onSelect }) {
                     <FaPlane className="menu-icon" />
                     <span>ATC Capacity</span>
                 </li>
+                <li onClick={() => onSelect('regions')}>
+                    <FaGlobe className="menu-icon" />
+                    <span>Gestión de Regiones</span>
+                </li>
+
                 <li onClick={() => onSelect('sector-analysis')}>
                     <FaChartArea className="menu-icon" />
                     <span>Análisis de Sectores</span>

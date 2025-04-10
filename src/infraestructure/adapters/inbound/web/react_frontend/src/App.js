@@ -7,11 +7,10 @@ import ConfigManager from './components/ConfigManager';
 import Dashboard from './components/Dashboard';
 import LevelRangesManager from './components/LevelRangesManager';
 import ATCCapacityManager from './components/ATCCapacityManager';
+import SectorAnalysisManager from './components/SectorAnalysisManager';
+import RegionsManager from './components/RegionsManager'; // Add this import
 import Footer from './components/Footer';
 import './App.css';
-
-// Add import at the top with other imports
-import SectorAnalysisManager from './components/SectorAnalysisManager';
 
 function App() {
   const [selectedOption, setSelectedOption] = useState('dashboard');
@@ -34,6 +33,8 @@ function App() {
         return <SectorAnalysisManager />;
       case 'atc-capacity':
         return <ATCCapacityManager />;
+      case 'regions': // Add this case
+        return <RegionsManager />;
       default:
         return <Dashboard />;
     }
