@@ -49,6 +49,18 @@ from src.core.use_cases.region_use_cases import (
     DeleteRegionUseCase
 )
 
+# Add these imports at the top of the file
+from src.core.ports.airport_region_repository import AirportRegionRepository
+from src.infraestructure.adapters.outbound.postgres_airport_region_repository import PostgresAirportRegionRepository
+from src.core.use_cases.airport_region_use_cases import (
+    GetAllAirportRegionsUseCase,
+    GetAirportRegionByIdUseCase,
+    GetAirportRegionsByIcaoUseCase,
+    CreateAirportRegionUseCase,
+    UpdateAirportRegionUseCase,
+    DeleteAirportRegionUseCase
+)
+
 class DependencyContainer:
     _instance = None
 
@@ -82,6 +94,7 @@ class DependencyContainer:
         # Add this line
         self.sector_analysis_repository = PostgresSectorAnalysisRepository(self.connection)
         self.region_repository = PostgresRegionRepository(self.connection)
+        self.airport_region_repository = PostgresAirportRegionRepository(self.connection)
 
     def _init_use_cases(self):
         # Casos de uso de configuración
@@ -131,6 +144,14 @@ class DependencyContainer:
         self.create_region_use_case = CreateRegionUseCase(self.region_repository)
         self.update_region_use_case = UpdateRegionUseCase(self.region_repository)
         self.delete_region_use_case = DeleteRegionUseCase(self.region_repository)
+
+        # Initialize airport region use cases
+        self.get_all_airport_regions_use_case = GetAllAirportRegionsUseCase(self.airport_region_repository)
+        self.get_airport_region_by_id_use_case = GetAirportRegionByIdUseCase(self.airport_region_repository)
+        self.get_airport_regions_by_icao_use_case = GetAirportRegionsByIcaoUseCase(self.airport_region_repository)
+        self.create_airport_region_use_case = CreateAirportRegionUseCase(self.airport_region_repository)
+        self.update_airport_region_use_case = UpdateAirportRegionUseCase(self.airport_region_repository)
+        self.delete_airport_region_use_case = DeleteAirportRegionUseCase(self.airport_region_repository)
 
     def get_sector_capacity_use_case(self):
         return self.sector_capacity_use_case

@@ -56,6 +56,10 @@ function Sidebar({ onSelect }) {
                     <FaChartArea className="menu-icon" />
                     <span>Análisis de Sectores</span>
                 </li>
+                <li onClick={() => onSelect('airport-regions')}>
+                    <FaPlane className="menu-icon" />
+                    <span>Airport Regions</span>
+                </li>
             </ul>
         </div>
     );

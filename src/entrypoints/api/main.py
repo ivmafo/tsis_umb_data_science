@@ -53,6 +53,12 @@ app.include_router(regions.router, prefix="/api/regions")
 app.include_router(sector_analysis.router, prefix="/api/sector-analysis")
 app.include_router(files.router)
 
+# Add to your imports
+from src.entrypoints.api.routers import airport_regions
+
+# Add to your router includes
+app.include_router(airport_regions.router, prefix="/api")
+
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})

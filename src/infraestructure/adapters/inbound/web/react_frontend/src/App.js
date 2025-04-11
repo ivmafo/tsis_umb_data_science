@@ -12,6 +12,9 @@ import RegionsManager from './components/RegionsManager'; // Add this import
 import Footer from './components/Footer';
 import './App.css';
 
+// Add to imports
+import AirportRegions from './components/AirportRegions';
+
 function App() {
   const [selectedOption, setSelectedOption] = useState('dashboard');
 
@@ -35,6 +38,8 @@ function App() {
         return <ATCCapacityManager />;
       case 'regions': // Add this case
         return <RegionsManager />;
+      case 'airport-regions': // Add this case
+        return <AirportRegions />;
       default:
         return <Dashboard />;
     }
@@ -50,5 +55,7 @@ function App() {
     </div>
   );
 }
+
+
 
 export default App;
