@@ -37,49 +37,63 @@ class PostgresFlightRepository(FlightRepository):
             print(f"Database error in _execute_query: {str(e)}")
             raise e
 
-    def save(self, flight: Flight) -> Flight:
+    def save(self, flight_data):
         try:
             with self.connection.cursor(cursor_factory=RealDictCursor) as cursor:
-                query = """
-                    INSERT INTO 
-                    public.fligths (
-                        fecha, sid, ssr, callsign, matricula,
-                        tipo_aeronave, empresa, numero_vuelo,
-                        tipo_vuelo, tiempo_inicial, origen,
-                        fecha_salida, hora_salida, hora_pv, destino,
-                        fecha_llegada, hora_llegada, nivel, duracion, distancia, velocidad, eq_ssr,
-                        nombre_origen, nombre_destino,fecha_registro
-                    ) VALUES %s
-                    RETURNING *;
-                """
-
-                # Convertir el vuelo a tupla de valores
-                values = [(
-                    flight.fecha, flight.sid, flight.ssr, flight.callsign,
-                    flight.matricula, flight.tipo_aeronave, flight.empresa,
-                    flight.numero_vuelo, flight.tipo_vuelo, flight.tiempo_inicial,
-                    flight.origen, flight.fecha_salida, flight.hora_salida,
-                    flight.hora_pv, flight.destino, flight.fecha_llegada,
-                    flight.hora_llegada, flight.nivel, flight.duracion,
-                    flight.distancia, flight.velocidad, flight.eq_ssr,
-                    flight.nombre_origen, flight.nombre_destino, flight.fecha_registro
-                )]
-
-                # Usar execute_values con template específico
-                execute_values(
-                    cursor, 
-                    query, 
-                    values,
-                    template="(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                    page_size=1000
-                )
-                result = cursor.fetchone()
+                columns = [
+                    'fecha', 'sid', 'ssr', 'callsign', 'matricula', 'tipo_aeronave',
+                    'empresa', 'numero_vuelo', 'tipo_vuelo', 'tiempo_inicial', 'origen',
+                    'fecha_salida', 'hora_salida', 'hora_pv', 'destino', 'fecha_llegada',
+                    'hora_llegada', 'nivel', 'duracion', 'distancia', 'velocidad',
+                    'eq_ssr', 'nombre_origen', 'nombre_destino', 'fecha_registro'
+                ]
+    
+                # Convert input to list if it's not already
+                flights = flight_data if isinstance(flight_data, list) else [flight_data]
+                
+                values = []
+                batch_size = 1000
+                
+                for flight in flights:
+                    # Convert Flight object to dict if necessary
+                    if hasattr(flight, '__dict__'):
+                        flight_dict = flight.__dict__
+                    elif isinstance(flight, dict):
+                        flight_dict = flight
+                    else:
+                        print(f"Warning: Invalid flight data type: {type(flight)}")
+                        continue
+                        
+                    value_tuple = tuple(flight_dict.get(col) for col in columns)
+                    values.append(value_tuple)
+                    
+                    if len(values) >= batch_size:
+                        execute_values(
+                            cursor,
+                            f"""
+                            INSERT INTO fligths ({', '.join(columns)})
+                            VALUES %s
+                            """,
+                            values
+                        )
+                        values = []
+                    
+                # Insert remaining records
+                if values:
+                    execute_values(
+                        cursor,
+                        f"""
+                        INSERT INTO fligths ({', '.join(columns)})
+                        VALUES %s
+                        """,
+                        values
+                    )
+                
                 self.connection.commit()
-                return Flight(**result) if result else None
-
+                return flight_data
         except Exception as e:
             self.connection.rollback()
-            print(f"Error al guardar el vuelo: {e}")
+            print(f"Error saving flights: {str(e)}")
             raise
 
     def find_by_id(self, flight_id: str) -> Optional[Flight]:
@@ -268,7 +282,12 @@ class PostgresFlightRepository(FlightRepository):
                 where_clauses.append("nivel::integer <= %s")
                 params.append(filters.level_max)
             
-            query = "SELECT origen as origin, COUNT(*) as count FROM fligths"
+            query = """
+                SELECT 
+                    COALESCE(origen, 'Unknown') as origin,
+                    COUNT(*) as count 
+                FROM fligths
+            """
             
             if where_clauses:
                 query += " WHERE " + " AND ".join(where_clauses)
@@ -276,7 +295,13 @@ class PostgresFlightRepository(FlightRepository):
             query += " GROUP BY origen ORDER BY count DESC"
 
             results = self._execute_query(query, params)
-            return [FlightOriginCountDTO(origin=row['origin'], count=row['count']) for row in results]
+            return [
+                FlightOriginCountDTO(
+                    origin=row['origin'] if row['origin'] else 'Unknown',
+                    count=row['count']
+                ) 
+                for row in results
+            ]
             
         except Exception as e:
             print(f"Error in get_origins_count: {str(e)}")
@@ -287,45 +312,13 @@ class PostgresFlightRepository(FlightRepository):
             where_clauses = []
             params = []
             
-            # Existing filters
-            if filters.years:
-                where_clauses.append("EXTRACT(YEAR FROM fecha)::text = ANY(%s)")
-                params.append(filters.years)
-            
-            if filters.months:
-                where_clauses.append("EXTRACT(MONTH FROM fecha)::text = ANY(%s)")
-                params.append(filters.months)
-            
-            if filters.origins:
-                where_clauses.append("origen = ANY(%s)")
-                params.append(filters.origins)
-            
-            if filters.destinations:
-                where_clauses.append("destino = ANY(%s)")
-                params.append(filters.destinations)
-            
-            if filters.flight_types:
-                where_clauses.append("tipo_vuelo = ANY(%s)")
-                params.append(filters.flight_types)
-            
-            if filters.airlines:
-                where_clauses.append("empresa = ANY(%s)")
-                params.append(filters.airlines)
-            
-            if filters.aircraft_types:
-                where_clauses.append("tipo_aeronave = ANY(%s)")
-                params.append(filters.aircraft_types)
-            
-            # Add level_min and level_max filters
-            if hasattr(filters, 'level_min') and filters.level_min is not None:
-                where_clauses.append("nivel::integer >= %s")
-                params.append(filters.level_min)
-                
-            if hasattr(filters, 'level_max') and filters.level_max is not None:
-                where_clauses.append("nivel::integer <= %s")
-                params.append(filters.level_max)
-            
-            query = "SELECT destino as destination, COUNT(*) as count FROM fligths"
+            # Modified query to handle NULL values
+            query = """
+                SELECT 
+                    COALESCE(destino, 'Unknown') as destination,
+                    COUNT(*) as count 
+                FROM fligths
+            """
             
             if where_clauses:
                 query += " WHERE " + " AND ".join(where_clauses)
@@ -333,7 +326,13 @@ class PostgresFlightRepository(FlightRepository):
             query += " GROUP BY destino ORDER BY count DESC"
 
             results = self._execute_query(query, params)
-            return [FlightDestinationCountDTO(destination=row['destination'], count=row['count']) for row in results]
+            return [
+                FlightDestinationCountDTO(
+                    destination=row['destination'] if row['destination'] else 'Unknown',
+                    count=row['count']
+                ) 
+                for row in results
+            ]
             
         except Exception as e:
             print(f"Error in get_destinations_count: {str(e)}")

@@ -6,21 +6,8 @@ class ExcelFlightTransformer:
     def __init__(self, file_path):
         self.file_path = file_path
         self.df = None
-
-    def get_total_rows(self):
-        try:
-            if self.df is None:
-                self.df = pd.read_excel(self.file_path)
-            total = len(self.df)
-            # Remove print that might be blocking
-            # print(f"Total rows to process: {total}")
-            return total
-        except Exception as e:
-            print(f"Error reading Excel file: {str(e)}")
-            raise
-
-    def transform_flights(self):
-        column_mapping = {
+        self._processed_rows = 0
+        self.column_mapping = {
             "fecha": ["Fecha", "fecha"],
             "sid": ["id","ID","sid","SID"],
             "ssr": ["SSR"],
@@ -48,55 +35,90 @@ class ExcelFlightTransformer:
             "fecha_registro": ["Fecha de Registro"]
         }
 
-        df = pd.read_excel(self.file_path)
+    def get_total_rows(self):
+        try:
+            if self.df is None:
+                self.df = pd.read_excel(self.file_path)
+            total = len(self.df)
+            return total
+        except Exception as e:
+            print(f"Error reading Excel file: {str(e)}")
+            raise
 
-        for new_name, old_names in column_mapping.items():
-            for old_name in old_names:
-                if old_name in df.columns:
-                    df.rename(columns={old_name: new_name}, inplace=True)
-                    break
+    def get_processed_rows(self):
+        return self._processed_rows
 
-        # Remove DataFrame print that might be blocking
-        # print(df.head())
+    def transform_flights(self):
+        try:
+            if self.df is None:
+                self.df = pd.read_excel(self.file_path)
+                print(f"Columnas en el Excel: {self.df.columns.tolist()}")  # Debug: muestra las columnas
 
-        flights = []
-        for _, row in df.iterrows():
-            flight_data = {}
-            try: 
-                # Process flight data
-                flight_data['fecha'] = self.safe_get_date(row, 'fecha')         
-                flight_data['sid'] = self.safe_get_int(row, 'sid')
-                flight_data['ssr'] = self.safe_get_str(row,'ssr')                       
-                flight_data['callsign'] = self.safe_get_str(row, 'callsign')
-                flight_data['matricula'] = self.safe_get_str(row, 'matricula')
-                flight_data['tipo_aeronave'] = self.safe_get_str(row, 'tipo_aeronave')
-                flight_data['empresa'] = self.safe_get_str(row, 'empresa')
-                flight_data['numero_vuelo'] = self.safe_get_int(row, 'numero_vuelo')
-                flight_data['tipo_vuelo'] = self.safe_get_str(row, 'tipo_vuelo')
-                flight_data['tiempo_inicial'] = self.safe_get_datetime(row, 'tiempo_inicial')
-                flight_data['origen'] = self.safe_get_str(row, 'origen')
-                flight_data['fecha_salida'] = self.safe_get_date(row, 'fecha_salida')
-                flight_data['hora_salida'] = self.safe_get_time(row, 'hora_salida')
-                #flight_data['hora_pv'] =self.safe_get_time_as_datetime(row, 'hora_pv', flight_data['fecha_salida'])
-                flight_data['hora_pv'] = self.safe_get_time(row, 'hora_pv')
-                flight_data['destino'] = self.safe_get_str(row, 'destino')
-                flight_data['fecha_llegada'] = self.safe_get_date(row, 'fecha_llegada')
-                flight_data['hora_llegada'] = self.safe_get_time(row, 'hora_llegada')
-                flight_data['nivel'] = self.safe_get_int(row, 'nivel')
-                flight_data['duracion'] = self.safe_get_int(row, 'duracion')
-                flight_data['distancia'] = self.safe_get_int(row, 'distancia')
-                flight_data['velocidad'] = self.safe_get_int(row, 'velocidad')
-                flight_data['eq_ssr'] = self.safe_get_str(row, 'eq_ssr')
-                flight_data['nombre_origen'] = self.safe_get_str(row, 'nombre_origen')
-                flight_data['nombre_destino'] = self.safe_get_str(row, 'nombre_destino')
-                flight_data['fecha_registro'] = self.safe_get_date(row, 'fecha_registro')
+            # Mostrar las primeras filas para debug
+            print("\nPrimeras filas del Excel:")
+            print(self.df.head())
 
-                flights.append(flight_data)
-            except Exception as e:
-                print(f"Error processing row: {str(e)}")
-                raise  # Raise the error instead of breaking
+            for new_name, old_names in self.column_mapping.items():
+                for old_name in old_names:
+                    if old_name in self.df.columns:
+                        self.df.rename(columns={old_name: new_name}, inplace=True)
+                        print(f"Columna mapeada: {old_name} -> {new_name}")  # Debug: muestra mapeos exitosos
+                        break
 
-        return flights
+            print("\nColumnas después del mapeo:")
+            print(self.df.columns.tolist())  # Debug: muestra columnas después del mapeo
+
+            flights = []
+            for index, row in self.df.iterrows():
+                try:
+                    # Debug: mostrar valores de la columna sid antes de procesamiento
+                    raw_sid = row.get('sid')
+                    #print(f"\nProcesando fila {index + 1}")
+                    #print(f"SID raw value: {raw_sid}, tipo: {type(raw_sid)}")
+
+                    flight_data = {
+                        'fecha': self.safe_get_date(row, 'fecha'),
+                        'sid': self.safe_get_int(row, 'sid'),
+                        'ssr': self.safe_get_str(row, 'ssr'),
+                        'callsign': self.safe_get_str(row, 'callsign'),
+                        'matricula': self.safe_get_str(row, 'matricula'),
+                        'tipo_aeronave': self.safe_get_str(row, 'tipo_aeronave'),
+                        'empresa': self.safe_get_str(row, 'empresa'),
+                        'numero_vuelo': self.safe_get_int(row, 'numero_vuelo'),
+                        'tipo_vuelo': self.safe_get_str(row, 'tipo_vuelo'),
+                        'tiempo_inicial': self.safe_get_datetime(row, 'tiempo_inicial'),
+                        'origen': self.safe_get_str(row, 'origen'),
+                        'fecha_salida': self.safe_get_date(row, 'fecha_salida'),
+                        'hora_salida': self.safe_get_time(row, 'hora_salida'),
+                        'hora_pv': self.safe_get_time(row, 'hora_pv'),
+                        'destino': self.safe_get_str(row, 'destino'),
+                        'fecha_llegada': self.safe_get_date(row, 'fecha_llegada'),
+                        'hora_llegada': self.safe_get_time(row, 'hora_llegada'),
+                        'nivel': self.safe_get_int(row, 'nivel'),
+                        'duracion': self.safe_get_int(row, 'duracion'),
+                        'distancia': self.safe_get_int(row, 'distancia'),
+                        'velocidad': self.safe_get_int(row, 'velocidad'),
+                        'eq_ssr': self.safe_get_str(row, 'eq_ssr'),
+                        'nombre_origen': self.safe_get_str(row, 'nombre_origen'),
+                        'nombre_destino': self.safe_get_str(row, 'nombre_destino'),
+                        'fecha_registro': self.safe_get_date(row, 'fecha_registro')
+                    }
+                    
+                    
+
+                    flights.append(flight_data)
+                    self._processed_rows += 1
+                    
+                except Exception as e:
+                    print(f"Error procesando fila {index + 1}: {str(e)}")
+                    print(f"Valores de la fila: {row.to_dict()}")
+                    raise
+
+            print(f"\nTotal de vuelos procesados: {len(flights)}")
+            return flights
+        except Exception as e:
+            print(f"Error transformando vuelos: {str(e)}")
+            raise
 
     def safe_get_date(self, row, column_name):
         date_str = row.get(column_name)
@@ -120,12 +142,17 @@ class ExcelFlightTransformer:
 
     def safe_get_int(self, row, column_name):
         value = row.get(column_name)
+        #print(f"safe_get_int para {column_name}: valor={value}, tipo={type(value)}")  # Debug
+        
         if pd.isna(value) or value is None or str(value).lower() == 'nan' or not value:
+            #print(f"Valor inválido para {column_name}: {value}")  # Debug
             return None
         try:
-            return int(value)
-        except (ValueError, TypeError):
-            print(f"Valor no válido para {column_name}: {value}")
+            int_value = int(float(str(value).replace(',', '')))  # Maneja números con comas y decimales
+            #print(f"Valor convertido exitosamente: {int_value}")  # Debug
+            return int_value
+        except (ValueError, TypeError) as e:
+            #print(f"Error convirtiendo {column_name}: {value}. Error: {str(e)}")  # Debug
             return None
 
     def safe_get_str(self, row, column_name):
@@ -142,7 +169,7 @@ class ExcelFlightTransformer:
         try:
             return pd.to_datetime(value)
         except (ValueError, TypeError):
-            print(f"Valor no válido para {column_name}: {value}")
+            #print(f"Valor no válido para {column_name}: {value}")
             return None
 
     def validar_y_formatear_fecha(self, fecha_str):
@@ -219,7 +246,7 @@ class ExcelFlightTransformer:
                 except:
                     raise ValueError(f"Formato de hora no válido: {hora_str}")  # Lanza una excepción si el formato no es válido
                     return  None
-                    
+
             return hora
         except ValueError as e:
             #print(f"Error al convertir la hora convertir_hora: {hora_str}. Error: {e}")

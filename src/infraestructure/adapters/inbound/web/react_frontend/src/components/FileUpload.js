@@ -28,12 +28,22 @@ function FileUpload({ onUploadSuccess }) {
       if (!isActive) return;
 
       try {
-        const response = await fetch('http://localhost:8000/api/process-status');
+        const response = await fetch('http://localhost:8000/api/process-status', {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+          },
+          timeout: 5000 // 5 segundos de timeout
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const data = await response.json();
         
         if (!isActive) return;
 
-        // Forzar actualización del estado
         setProcessStatus(prevStatus => ({
           ...prevStatus,
           status: data.status,
@@ -41,11 +51,6 @@ function FileUpload({ onUploadSuccess }) {
           processed_rows: data.processed_rows,
           percentage: data.percentage
         }));
-        
-        if (data.status === 'processing') {
-          // Continuar el polling mientras esté procesando
-          return;
-        }
         
         if (data.status === 'completed' || data.status === 'error') {
           clearInterval(intervalId);
@@ -56,6 +61,10 @@ function FileUpload({ onUploadSuccess }) {
         }
       } catch (error) {
         console.error('Error checking status:', error);
+        // No detener el polling en caso de error temporal
+        if (error.message.includes('ERR_INSUFFICIENT_RESOURCES')) {
+          await new Promise(resolve => setTimeout(resolve, 2000)); // Esperar 2 segundos antes de reintentar
+        }
       }
     }
 
@@ -99,25 +108,32 @@ function FileUpload({ onUploadSuccess }) {
         }
       };
 
-      xhr.onload = async () => {
-        if (xhr.status === 200) {
-          const result = JSON.parse(xhr.response);
-          setMessage(result.message);
-          if (onUploadSuccess) {
-            onUploadSuccess();
-          }
-        } else {
+      xhr.onerror = () => {
           setMessage('Error al subir el archivo.');
           setIsUploading(false);
-        }
+          console.error('Upload failed:', xhr.status, xhr.statusText);
       };
 
-      xhr.onerror = () => {
-        setMessage('Error al subir el archivo.');
-        setIsUploading(false);
+      xhr.onload = async () => {
+          if (xhr.status === 200) {
+              try {
+                  const result = JSON.parse(xhr.response);
+                  setMessage(result.message);
+                  if (onUploadSuccess) {
+                      onUploadSuccess();
+                  }
+              } catch (error) {
+                  console.error('Error parsing response:', error);
+                  setMessage('Error al procesar la respuesta del servidor.');
+              }
+          } else {
+              setMessage('Error al subir el archivo.');
+              console.error('Upload failed:', xhr.status, xhr.statusText);
+          }
+          setIsUploading(false);
       };
 
-      xhr.open('POST', 'http://localhost:8000/upload');
+      xhr.open('POST', 'http://localhost:8000/api/upload');
       xhr.send(formData);
     } catch (error) {
       console.error('Error uploading file:', error);
