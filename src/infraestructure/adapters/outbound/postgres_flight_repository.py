@@ -49,12 +49,12 @@ class PostgresFlightRepository(FlightRepository):
                 ]
     
                 # Convert input to list if it's not already
-                flights = flight_data if isinstance(flight_data, list) else [flight_data]
+                fligths = flight_data if isinstance(flight_data, list) else [flight_data]
                 
                 values = []
                 batch_size = 1000
                 
-                for flight in flights:
+                for flight in fligths:
                     # Convert Flight object to dict if necessary
                     if hasattr(flight, '__dict__'):
                         flight_dict = flight.__dict__
@@ -93,13 +93,13 @@ class PostgresFlightRepository(FlightRepository):
                 return flight_data
         except Exception as e:
             self.connection.rollback()
-            print(f"Error saving flights: {str(e)}")
+            print(f"Error saving fligths: {str(e)}")
             raise
 
     def find_by_id(self, flight_id: str) -> Optional[Flight]:
         try:
             with self.connection.cursor(cursor_factory=RealDictCursor) as cursor:
-                query = "SELECT * FROM flights WHERE id = %s;"
+                query = "SELECT * FROM fligths WHERE id = %s;"
                 cursor.execute(query, (flight_id,))
                 result = cursor.fetchone()
 
@@ -116,7 +116,7 @@ class PostgresFlightRepository(FlightRepository):
     def find_by_callsign(self, callsign: str) -> Optional[Flight]:
         try:
             with self.connection.cursor(cursor_factory=RealDictCursor) as cursor:
-                query = "SELECT * FROM flights WHERE callsign = %s;"
+                query = "SELECT * FROM fligths WHERE callsign = %s;"
                 cursor.execute(query, (callsign,))
                 result = cursor.fetchone()
 
@@ -467,11 +467,8 @@ class PostgresFlightRepository(FlightRepository):
             print(f"Error in get_flight_types_count: {str(e)}")
             raise e
 
-    def get_hourly_counts_by_date_ranges(self, date_ranges: List[DateRangeDTO], analysis_type: str = 'origin_analysis') -> List[FlightHourlyCountDTO]:
+    def get_hourly_counts_by_date_ranges(self, date_ranges: List[DateRangeDTO], analysis_type: str) -> List[FlightHourlyCountDTO]:
         try:
-            if not date_ranges:
-                return []
-
             query = """
             WITH RECURSIVE hours AS (
                 SELECT generate_series(0, 23) AS hour
@@ -482,24 +479,27 @@ class PostgresFlightRepository(FlightRepository):
                     label,
                     start_date::date, 
                     end_date::date,
-                    origin_airport
-                FROM unnest(%s::int[], %s::text[], %s::date[], %s::date[], %s::text[]) 
-                AS dr(id, label, start_date, end_date, origin_airport)
+                    origin_airport,
+                    nivel_min, 
+                    nivel_max
+                FROM unnest(%s::text[], %s::text[], %s::date[], %s::date[], %s::text[], %s::int[], %s::int[]) 
+                AS dr(id, label, start_date, end_date, origin_airport, nivel_min, nivel_max)
             ),
             flight_counts AS (
                 SELECT 
                     date_part('hour', hora_salida)::int AS hour,
-                    dr.label || ' (' || f.origen || ')' as combined_label,
+                    dr.label as label,
                     COUNT(*) AS flight_count
                 FROM fligths f
                 INNER JOIN date_ranges dr ON f.origen = dr.origin_airport
-                WHERE f.fecha_salida::date BETWEEN dr.start_date AND dr.end_date
+                WHERE f.fecha BETWEEN dr.start_date AND dr.end_date
+                  AND (f.nivel::integer BETWEEN dr.nivel_min AND dr.nivel_max)
                 GROUP BY 1, 2
             )
             SELECT 
                 h.hour,
                 json_object_agg(
-                    COALESCE(fc.combined_label, 'sin_datos'),
+                    COALESCE(fc.label, 'sin_datos'),
                     COALESCE(fc.flight_count, 0)
                 ) as counts
             FROM hours h
@@ -507,32 +507,37 @@ class PostgresFlightRepository(FlightRepository):
             GROUP BY h.hour
             ORDER BY h.hour;
             """
+            # Preparar los arrays para unnest
+            ids = [str(r.id) for r in date_ranges]
+            labels = [r.label for r in date_ranges]
+            start_dates = [r.start_date for r in date_ranges]
+            end_dates = [r.end_date for r in date_ranges]
+            origins = [r.origin_airport for r in date_ranges]
+            nivel_mins = [r.nivel_min if r.nivel_min is not None else 0 for r in date_ranges]
+            nivel_maxs = [r.nivel_max if r.nivel_max is not None else 99999 for r in date_ranges]
 
-            params = [
-                [r.id for r in date_ranges],
-                [r.label for r in date_ranges],
-                [r.start_date for r in date_ranges],
-                [r.end_date for r in date_ranges],
-                [r.origin_airport for r in date_ranges]
-            ]
+       
 
-            results = self._execute_query(query, tuple(params))
-            return [
-                FlightHourlyCountDTO(
-                    hour=row['hour'],
-                    counts=row['counts'] if row['counts'] else {}
-                )
-                for row in results
-            ]
+            with self.connection.cursor() as cursor:
+                cursor.execute(query, (ids, labels, start_dates, end_dates, origins, nivel_mins, nivel_maxs))
+
+                print("*****************************")
+                print("*****************************")
+                print("*****************************")
+                print("debug query : ")
+                print(query, (ids, labels, start_dates, end_dates, origins, nivel_mins, nivel_maxs)) 
+                results = cursor.fetchall()
+                
+                return [
+                    {"hour": row[0], **row[1]} for row in results
+                ]
+                
         except Exception as e:
-            print(f"Error in get_hourly_counts_by_date_ranges: {str(e)}")
-            return [FlightHourlyCountDTO(hour=h, counts={}) for h in range(24)]
+            print(f"Error in get_hourly_counts_by_date_ranges: {e}")
+            raise
 
     def get_hourly_counts_by_date_ranges_destination(self, date_ranges: List[DateRangeDTO]) -> List[FlightHourlyCountDTO]:
         try:
-            if not date_ranges:
-                return []
-
             query = """
             WITH RECURSIVE hours AS (
                 SELECT generate_series(0, 23) AS hour
@@ -543,24 +548,27 @@ class PostgresFlightRepository(FlightRepository):
                     label,
                     start_date::date, 
                     end_date::date,
-                    destination_airport
-                FROM unnest(%s::int[], %s::text[], %s::date[], %s::date[], %s::text[]) 
-                AS dr(id, label, start_date, end_date, destination_airport)
+                    destination_airport,
+                    nivel_min, 
+                    nivel_max
+                FROM unnest(%s::text[], %s::text[], %s::date[], %s::date[], %s::text[], %s::int[], %s::int[]) 
+                AS dr(id, label, start_date, end_date, destination_airport, nivel_min, nivel_max)
             ),
             flight_counts AS (
                 SELECT 
                     date_part('hour', hora_llegada)::int AS hour,
-                    dr.label || ' (' || f.destino || ')' as combined_label,
+                    dr.label as label,
                     COUNT(*) AS flight_count
                 FROM fligths f
                 INNER JOIN date_ranges dr ON f.destino = dr.destination_airport
-                WHERE f.fecha_llegada::date BETWEEN dr.start_date AND dr.end_date
+                WHERE f.fecha BETWEEN dr.start_date AND dr.end_date
+                  AND (f.nivel::integer BETWEEN dr.nivel_min AND dr.nivel_max)
                 GROUP BY 1, 2
             )
             SELECT 
                 h.hour,
                 json_object_agg(
-                    COALESCE(fc.combined_label, 'sin_datos'),
+                    COALESCE(fc.label, 'sin_datos'),
                     COALESCE(fc.flight_count, 0)
                 ) as counts
             FROM hours h
@@ -568,23 +576,24 @@ class PostgresFlightRepository(FlightRepository):
             GROUP BY h.hour
             ORDER BY h.hour;
             """
+            
+            # Preparar los arrays para unnest
+            ids = [str(r.id) for r in date_ranges]
+            labels = [r.label for r in date_ranges]
+            start_dates = [r.start_date for r in date_ranges]
+            end_dates = [r.end_date for r in date_ranges]
+            destinations = [r.destination_airport for r in date_ranges]
+            nivel_mins = [r.nivel_min if r.nivel_min is not None else 0 for r in date_ranges]
+            nivel_maxs = [r.nivel_max if r.nivel_max is not None else 99999 for r in date_ranges]
 
-            params = [
-                [r.id for r in date_ranges],
-                [r.label for r in date_ranges],
-                [r.start_date for r in date_ranges],
-                [r.end_date for r in date_ranges],
-                [r.destination_airport for r in date_ranges]
-            ]
-
-            results = self._execute_query(query, tuple(params))
-            return [
-                FlightHourlyCountDTO(
-                    hour=row['hour'],
-                    counts=row['counts'] if row['counts'] else {}
-                )
-                for row in results
-            ]
+            with self.connection.cursor() as cursor:
+                cursor.execute(query, (ids, labels, start_dates, end_dates, destinations, nivel_mins, nivel_maxs))
+                results = cursor.fetchall()
+                
+                return [
+                    {"hour": row[0], **row[1]} for row in results
+                ]
+                
         except Exception as e:
             print(f"Error in get_hourly_counts_by_date_ranges_destination: {e}")
             raise

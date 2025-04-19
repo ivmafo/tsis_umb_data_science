@@ -81,12 +81,14 @@ class DateRangeDTO(BaseModel):
     """
     DTO para representar un rango de fechas.
     """
-    id: int
+    id: str
     start_date: str
     end_date: str
     label: str
-    origin_airport: str
-    destination_airport: str
+    origin_airport: Optional[str] = None
+    destination_airport: Optional[str] = None
+    nivel_min: Optional[int] = None
+    nivel_max: Optional[int] = None
 
 class DateRangesAnalysisRequestDTO(BaseModel):
     """
