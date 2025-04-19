@@ -142,14 +142,14 @@ const DateRangeAnalysis = () => {
 
         try {
             const dateRangesPayload = dateRanges.map(range => ({
-                id: String(range.id), // Aseguramos que el ID sea string
+                id: String(range.id),
                 start_date: range.startDate,
                 end_date: range.endDate,
                 label: range.label,
                 origin_airport: range.originAirport,
                 destination_airport: range.destinationAirport,
                 nivel_min: parseInt(range.nivelMin) || 0,
-                nivel_max: parseInt(range.nivelMax) || 99999
+                nivel_max: parseInt(range.nivelMax) || 1
             }));
 
             console.log('Payload enviado:', dateRangesPayload);

@@ -8,30 +8,20 @@ from pydantic import BaseModel, validator
 from typing import List, Optional, Dict
 from datetime import datetime
 
-class FlightFilterDTO:
-    def __init__(
-        self, 
-        years: List[str] = None, 
-        months: List[str] = None, 
-        origins: List[str] = None, 
-        destinations: List[str] = None, 
-        flight_types: List[str] = None,
-        airlines: List[str] = None,
-        aircraft_types: List[str] = None,
-        level_ranges: List[str] = None,
-        level_min: int = None,
-        level_max: int = None
-    ):
-        self.years = years or []
-        self.months = months or []
-        self.origins = origins or []
-        self.destinations = destinations or []
-        self.flight_types = flight_types or []
-        self.airlines = airlines or []
-        self.aircraft_types = aircraft_types or []
-        self.level_ranges = level_ranges or []
-        self.level_min = level_min
-        self.level_max = level_max
+class FlightFilterDTO(BaseModel):
+    years: Optional[List[str]] = []
+    months: Optional[List[str]] = []
+    origins: Optional[List[str]] = []
+    destinations: Optional[List[str]] = []
+    flight_types: Optional[List[str]] = []
+    airlines: Optional[List[str]] = []
+    aircraft_types: Optional[List[str]] = []
+    level_ranges: Optional[List[str]] = []
+    level_min: Optional[int] = None
+    level_max: Optional[int] = None
+
+    class Config:
+        arbitrary_types_allowed = True
 
 class FlightOriginCountDTO(BaseModel):
     """

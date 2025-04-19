@@ -9,13 +9,16 @@ manteniendo la independencia de la implementación específica de la base de dat
 """
 
 from abc import ABC, abstractmethod
-from typing import Optional, List
+from typing import List, Optional
 from src.core.entities.flight import Flight
 from src.core.dtos.flight_dtos import (
-    FlightFilterDTO, 
+    FlightFilterDTO,
     FlightOriginCountDTO,
-    DateRangeDTO,
-    FlightHourlyCountDTO
+    FlightDestinationCountDTO,
+    FlightAirlineCountDTO,
+    FlightTypeCountDTO,
+    FlightHourlyCountDTO,
+    DateRangeDTO
 )
 
 class FlightRepository(ABC):
@@ -105,5 +108,60 @@ class FlightRepository(ABC):
         Returns:
             List[FlightHourlyCountDTO]: Lista de conteos por hora
         """
+        pass
+
+    @abstractmethod
+    def get_distinct_months(self) -> List[str]:
+        """Gets distinct months from flights"""
+        pass
+
+    @abstractmethod
+    def get_distinct_destinations(self) -> List[str]:
+        """Gets distinct destinations from flights"""
+        pass
+
+    @abstractmethod
+    def get_distinct_origins(self) -> List[str]:
+        """Gets distinct origins from flights"""
+        pass
+
+    @abstractmethod
+    def get_distinct_aircraft_types(self) -> List[str]:
+        """Gets distinct aircraft types from flights"""
+        pass
+
+    @abstractmethod
+    def get_distinct_airlines(self) -> List[str]:
+        """Gets distinct airlines from flights"""
+        pass
+
+    @abstractmethod
+    def get_distinct_flight_types(self) -> List[str]:
+        """Gets distinct flight types from flights"""
+        pass
+
+    @abstractmethod
+    def get_distinct_years(self) -> List[str]:
+        """
+        Gets distinct years from flight records.
+
+        Returns:
+            List[str]: List of distinct years
+        """
+        pass
+
+    @abstractmethod
+    def get_destinations_count(self, filters: Optional[FlightFilterDTO] = None) -> List[FlightDestinationCountDTO]:
+        """Gets count of flights by destination"""
+        pass
+
+    @abstractmethod
+    def get_airlines_count(self, filters: Optional[FlightFilterDTO] = None) -> List[FlightAirlineCountDTO]:
+        """Gets count of flights by airline"""
+        pass
+
+    @abstractmethod
+    def get_flight_types_count(self, filters: Optional[FlightFilterDTO] = None) -> List[FlightTypeCountDTO]:
+        """Gets count of flights by type"""
         pass
 

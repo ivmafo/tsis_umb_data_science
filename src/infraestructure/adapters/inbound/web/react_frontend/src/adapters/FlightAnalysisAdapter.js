@@ -6,14 +6,14 @@ export class FlightAnalysisAdapter {
         
         return {
             date_ranges: dateRanges.map(range => ({
-                id: range.id.toString(), // Aseguramos que sea string
+                id: range.id.toString(),
                 start_date: range.startDate,
                 end_date: range.endDate,
                 label: range.label,
                 origin_airport: range.originAirport || null,
                 destination_airport: range.destinationAirport || null,
-                nivel_min: range.nivelMin ? parseInt(range.nivelMin) : null,
-                nivel_max: range.nivelMax ? parseInt(range.nivelMax) : null
+                nivel_min: range.nivelMin !== undefined ? parseInt(range.nivelMin) : 0,
+                nivel_max: range.nivelMax !== undefined ? parseInt(range.nivelMax) : 99999
             }))
         };
     }
