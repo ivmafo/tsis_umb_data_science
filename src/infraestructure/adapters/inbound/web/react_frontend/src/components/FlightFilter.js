@@ -131,22 +131,7 @@ function FlightFilter({ onFilterChange }) {
             console.error('Error fetching level ranges:', error);
         }
     };
-    
-    // REMOVE THIS DUPLICATE FUNCTION
-    // const handleLevelRangeChange = (e) => {
-    //     const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
-    //     setSelectedLevelRanges(selectedOptions);
-    //     onFilterChange({ 
-    //         years: selectedYears, 
-    //         months: selectedMonths, 
-    //         origins: selectedOrigins,
-    //         destinations: selectedDestinations,
-    //         flightTypes: selectedFlightTypes,
-    //         airlines: selectedAirlines,
-    //         aircraftTypes: selectedAircraftTypes,
-    //         levelRanges: selectedOptions
-    //     });
-    // };
+
 
     
     const fetchAircraftTypes = async () => {
@@ -221,22 +206,7 @@ function FlightFilter({ onFilterChange }) {
         }
     };
 
-    // REMOVE THIS DUPLICATE FUNCTION - Already defined above
-    // const handleYearChange = (e) => {
-    //     const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
-    //     setSelectedYears(selectedOptions);
-    //     onFilterChange({ 
-    //         years: selectedOptions, 
-    //         months: selectedMonths,
-    //         origins: selectedOrigins,
-    //         destinations: selectedDestinations,
-    //         flightTypes: selectedFlightTypes,
-    //         airlines: selectedAirlines,
-    //         aircraftTypes: selectedAircraftTypes,
-    //         level_min: levelRange.min,
-    //         level_max: levelRange.max
-    //     });
-    // };
+
 
     const handleMonthChange = (e) => {
         const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);

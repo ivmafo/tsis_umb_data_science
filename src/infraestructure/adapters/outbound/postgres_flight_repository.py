@@ -31,11 +31,12 @@ class PostgresFlightRepository(FlightRepository):
         try:
             with self.connection.cursor(cursor_factory=RealDictCursor) as cursor:
                 cursor.execute(query, params if params else ())
-                return cursor.fetchall()
+                results = cursor.fetchall()
+                return results
         except Exception as e:
-            self.connection.rollback()
             print(f"Database error in _execute_query: {str(e)}")
-            raise e
+            self.connection.rollback()  # Add explicit rollback
+            raise
 
     def save(self, flight_data):
         try:
@@ -130,158 +131,209 @@ class PostgresFlightRepository(FlightRepository):
             print(f"Error al encontrar el vuelo: {e}")
             return None
 
-    def get_distinct_years(self) -> list:
+    def get_years(self) -> List[int]:
+        with self.connection.cursor(cursor_factory=RealDictCursor) as cursor:
+            cursor.execute("""
+                SELECT DISTINCT EXTRACT(YEAR FROM fecha)::integer as year 
+                FROM fligths 
+                ORDER BY year
+            """)
+            return [row['year'] for row in cursor.fetchall()]
+
+    def get_months(self) -> List[int]:
+        with self.connection.cursor(cursor_factory=RealDictCursor) as cursor:
+            cursor.execute("""
+                SELECT DISTINCT EXTRACT(MONTH FROM fecha)::integer as month 
+                FROM fligths 
+                ORDER BY month
+            """)
+            return [row['month'] for row in cursor.fetchall()]
+
+    def get_origins(self) -> List[str]:
+        with self.connection.cursor(cursor_factory=RealDictCursor) as cursor:
+            cursor.execute("""
+                SELECT DISTINCT origen 
+                FROM fligths 
+                WHERE origen IS NOT NULL 
+                ORDER BY origen
+            """)
+            return [row['origen'] for row in cursor.fetchall()]
+
+    def get_destinations(self) -> List[str]:
+        with self.connection.cursor(cursor_factory=RealDictCursor) as cursor:
+            cursor.execute("""
+                SELECT DISTINCT destino 
+                FROM fligths 
+                WHERE destino IS NOT NULL 
+                ORDER BY destino
+            """)
+            return [row['destino'] for row in cursor.fetchall()]
+
+    def get_aircraft_types(self) -> List[str]:
+        """
+        Get list of distinct aircraft types. This is an alias for get_distinct_aircraft_types
+        to maintain compatibility with the API.
+        """
+        return self.get_distinct_aircraft_types()
+
+    def get_airlines(self) -> List[str]:
         try:
-            with self.connection.cursor(cursor_factory=RealDictCursor) as cursor:
-                query = """
-                    SELECT DISTINCT EXTRACT(YEAR FROM fecha) as year 
-                    FROM fligths 
-                    WHERE fecha IS NOT NULL 
-                    ORDER BY year DESC;
-                """
-                cursor.execute(query)
-                return [int(row['year']) for row in cursor.fetchall()]
+            query = """
+                SELECT DISTINCT empresa 
+                FROM fligths 
+                WHERE empresa IS NOT NULL 
+                AND empresa != '' 
+                ORDER BY empresa
+            """
+            results = self._execute_query(query)
+            return [row['empresa'] for row in results]
         except Exception as e:
-            print(f"Error getting distinct years: {e}")
+            print(f"Error in get_airlines: {str(e)}")
+            self.connection.rollback()
             return []
 
-    def get_distinct_months(self) -> list:
+    def get_distinct_years(self) -> List[int]:
         try:
-            with self.connection.cursor(cursor_factory=RealDictCursor) as cursor:
-                query = """
-                    SELECT DISTINCT EXTRACT(MONTH FROM fecha)::integer as month 
-                    FROM fligths 
-                    WHERE fecha IS NOT NULL 
-                    ORDER BY month;
-                """
-                cursor.execute(query)
-                months = [row['month'] for row in cursor.fetchall()]
-                return months
+            query = """
+                SELECT DISTINCT EXTRACT(YEAR FROM fecha)::integer as year 
+                FROM fligths 
+                ORDER BY year
+            """
+            results = self._execute_query(query)
+            return [row['year'] for row in results]
         except Exception as e:
-            print(f"Error getting distinct months: {e}")
+            print(f"Error in get_distinct_years: {str(e)}")
+            self.connection.rollback()
             return []
 
-    def get_distinct_origins(self) -> list:
+    def get_distinct_months(self) -> List[int]:
         try:
-            with self.connection.cursor(cursor_factory=RealDictCursor) as cursor:
-                query = """
-                    SELECT DISTINCT origen 
-                    FROM fligths 
-                    WHERE origen IS NOT NULL AND origen != ''
-                    ORDER BY origen;
-                """
-                cursor.execute(query)
-                origins = [row['origen'] for row in cursor.fetchall()]
-                return origins
+            query = """
+                SELECT DISTINCT EXTRACT(MONTH FROM fecha)::integer as month 
+                FROM fligths 
+                ORDER BY month
+            """
+            results = self._execute_query(query)
+            return [row['month'] for row in results]
         except Exception as e:
-            print(f"Error getting distinct origins: {e}")
+            print(f"Error in get_distinct_months: {str(e)}")
+            self.connection.rollback()
             return []
 
-    def get_distinct_destinations(self) -> list:
+    def get_distinct_origins(self) -> List[str]:
         try:
-            with self.connection.cursor(cursor_factory=RealDictCursor) as cursor:
-                query = """
-                    SELECT DISTINCT destino 
-                    FROM fligths 
-                    WHERE destino IS NOT NULL AND destino != ''
-                    ORDER BY destino;
-                """
-                cursor.execute(query)
-                destinations = [row['destino'] for row in cursor.fetchall()]
-                return destinations
+            query = """
+                SELECT DISTINCT origen 
+                FROM fligths 
+                WHERE origen IS NOT NULL 
+                AND origen != '' 
+                ORDER BY origen
+            """
+            results = self._execute_query(query)
+            return [row['origen'] for row in results]
         except Exception as e:
-            print(f"Error getting distinct destinations: {e}")
+            print(f"Error in get_distinct_origins: {str(e)}")
+            self.connection.rollback()
             return []
 
-    def get_distinct_flight_types(self) -> list:
+    def get_distinct_destinations(self) -> List[str]:
         try:
-            with self.connection.cursor(cursor_factory=RealDictCursor) as cursor:
-                query = """
-                    SELECT DISTINCT tipo_vuelo 
-                    FROM fligths 
-                    WHERE tipo_vuelo IS NOT NULL AND tipo_vuelo != ''
-                    ORDER BY tipo_vuelo;
-                """
-                cursor.execute(query)
-                return [row['tipo_vuelo'] for row in cursor.fetchall()]
+            query = """
+                SELECT DISTINCT destino 
+                FROM fligths 
+                WHERE destino IS NOT NULL 
+                AND destino != '' 
+                ORDER BY destino
+            """
+            results = self._execute_query(query)
+            return [row['destino'] for row in results]
         except Exception as e:
-            print(f"Error getting distinct flight types: {e}")
+            print(f"Error in get_distinct_destinations: {str(e)}")
+            self.connection.rollback()
             return []
 
-    def get_distinct_airlines(self) -> list:
+    def get_distinct_airlines(self) -> List[str]:
         try:
-            with self.connection.cursor(cursor_factory=RealDictCursor) as cursor:
-                query = """
-                    SELECT DISTINCT empresa 
-                    FROM fligths 
-                    WHERE empresa IS NOT NULL 
-                    AND empresa != '' 
-                    ORDER BY empresa;
-                """
-                cursor.execute(query)
-                return [row['empresa'] for row in cursor.fetchall()]
+            query = """
+                SELECT DISTINCT empresa 
+                FROM fligths 
+                WHERE empresa IS NOT NULL 
+                AND empresa != '' 
+                ORDER BY empresa
+            """
+            results = self._execute_query(query)
+            return [row['empresa'] for row in results]
         except Exception as e:
-            print(f"Error getting distinct airlines: {e}")
+            print(f"Error in get_distinct_airlines: {str(e)}")
+            self.connection.rollback()
             return []
 
-    def get_distinct_aircraft_types(self) -> list:
+    def get_distinct_flight_types(self) -> List[str]:
         try:
-            with self.connection.cursor(cursor_factory=RealDictCursor) as cursor:
-                query = """
-                    SELECT DISTINCT tipo_aeronave 
-                    FROM fligths 
-                    WHERE tipo_aeronave IS NOT NULL 
-                    AND tipo_aeronave != '' 
-                    ORDER BY tipo_aeronave;
-                """
-                cursor.execute(query)
-                return [row['tipo_aeronave'] for row in cursor.fetchall()]
+            query = """
+                SELECT DISTINCT tipo_vuelo 
+                FROM fligths 
+                WHERE tipo_vuelo IS NOT NULL 
+                AND tipo_vuelo != '' 
+                ORDER BY tipo_vuelo
+            """
+            results = self._execute_query(query)
+            return [row['tipo_vuelo'] for row in results]
         except Exception as e:
-            print(f"Error getting distinct aircraft types: {e}")
+            print(f"Error in get_distinct_flight_types: {str(e)}")
+            self.connection.rollback()
             return []
 
-    def get_origins_count(self, filters: FlightFilterDTO) -> List[FlightOriginCountDTO]:
+    def get_distinct_aircraft_types(self) -> List[str]:
+        try:
+            query = """
+                SELECT DISTINCT tipo_aeronave 
+                FROM fligths 
+                WHERE tipo_aeronave IS NOT NULL 
+                AND tipo_aeronave != '' 
+                ORDER BY tipo_aeronave
+            """
+            results = self._execute_query(query)
+            return [row['tipo_aeronave'] for row in results]
+        except Exception as e:
+            print(f"Error in get_distinct_aircraft_types: {str(e)}")
+            self.connection.rollback()
+            return []
+
+    def get_origins_count(self, filters: Optional[FlightFilterDTO] = None) -> List[FlightOriginCountDTO]:
         try:
             where_clauses = []
             params = []
             
-            if filters.years:
-                where_clauses.append("EXTRACT(YEAR FROM fecha)::text = ANY(%s)")
-                params.append(filters.years)
-            
-            if filters.months:
-                where_clauses.append("EXTRACT(MONTH FROM fecha)::text = ANY(%s)")
-                params.append(filters.months)
-            
-            if filters.origins:
-                where_clauses.append("origen = ANY(%s)")
-                params.append(filters.origins)
-            
-            if filters.destinations:
-                where_clauses.append("destino = ANY(%s)")
-                params.append(filters.destinations)
-            
-            if filters.flight_types:
-                where_clauses.append("tipo_vuelo = ANY(%s)")
-                params.append(filters.flight_types)
-            
-            if filters.airlines:
-                where_clauses.append("empresa = ANY(%s)")
-                params.append(filters.airlines)
-            
-            if filters.aircraft_types:
-                where_clauses.append("tipo_aeronave = ANY(%s)")
-                params.append(filters.aircraft_types)
-            
-            # Add level_min and level_max filters
-            if hasattr(filters, 'level_min') and filters.level_min is not None:
-                where_clauses.append("nivel::integer >= %s")
-                params.append(filters.level_min)
+            if filters:
+                if filters.years:
+                    where_clauses.append("EXTRACT(YEAR FROM fecha)::text = ANY(%s)")
+                    params.append(filters.years)
                 
-            if hasattr(filters, 'level_max') and filters.level_max is not None:
-                where_clauses.append("nivel::integer <= %s")
-                params.append(filters.level_max)
-            
+                if filters.months:
+                    where_clauses.append("EXTRACT(MONTH FROM fecha)::text = ANY(%s)")
+                    params.append(filters.months)
+                
+                if filters.origins:
+                    where_clauses.append("origen = ANY(%s)")
+                    params.append(filters.origins)
+                
+                if filters.destinations:
+                    where_clauses.append("destino = ANY(%s)")
+                    params.append(filters.destinations)
+                
+                if filters.flight_types:
+                    where_clauses.append("tipo_vuelo = ANY(%s)")
+                    params.append(filters.flight_types)
+                
+                if filters.airlines:
+                    where_clauses.append("empresa = ANY(%s)")
+                    params.append(filters.airlines)
+                
+                if filters.aircraft_types:
+                    where_clauses.append("tipo_aeronave = ANY(%s)")
+                    params.append(filters.aircraft_types)
+
             query = """
                 SELECT 
                     COALESCE(origen, 'Unknown') as origin,
@@ -297,22 +349,50 @@ class PostgresFlightRepository(FlightRepository):
             results = self._execute_query(query, params)
             return [
                 FlightOriginCountDTO(
-                    origin=row['origin'] if row['origin'] else 'Unknown',
+                    origin=row['origin'],
                     count=row['count']
                 ) 
                 for row in results
             ]
-            
         except Exception as e:
             print(f"Error in get_origins_count: {str(e)}")
-            raise e
+            self.connection.rollback()
+            raise
 
-    def get_destinations_count(self, filters: FlightFilterDTO) -> List[FlightDestinationCountDTO]:
+    def get_destinations_count(self, filters: Optional[FlightFilterDTO] = None) -> List[FlightDestinationCountDTO]:
         try:
             where_clauses = []
             params = []
             
-            # Modified query to handle NULL values
+            if filters:
+                if filters.years:
+                    where_clauses.append("EXTRACT(YEAR FROM fecha)::text = ANY(%s)")
+                    params.append(filters.years)
+                
+                if filters.months:
+                    where_clauses.append("EXTRACT(MONTH FROM fecha)::text = ANY(%s)")
+                    params.append(filters.months)
+                
+                if filters.origins:
+                    where_clauses.append("origen = ANY(%s)")
+                    params.append(filters.origins)
+                
+                if filters.destinations:
+                    where_clauses.append("destino = ANY(%s)")
+                    params.append(filters.destinations)
+                
+                if filters.flight_types:
+                    where_clauses.append("tipo_vuelo = ANY(%s)")
+                    params.append(filters.flight_types)
+                
+                if filters.airlines:
+                    where_clauses.append("empresa = ANY(%s)")
+                    params.append(filters.airlines)
+                
+                if filters.aircraft_types:
+                    where_clauses.append("tipo_aeronave = ANY(%s)")
+                    params.append(filters.aircraft_types)
+
             query = """
                 SELECT 
                     COALESCE(destino, 'Unknown') as destination,
@@ -328,21 +408,22 @@ class PostgresFlightRepository(FlightRepository):
             results = self._execute_query(query, params)
             return [
                 FlightDestinationCountDTO(
-                    destination=row['destination'] if row['destination'] else 'Unknown',
+                    destination=row['destination'],
                     count=row['count']
                 ) 
                 for row in results
             ]
-            
         except Exception as e:
             print(f"Error in get_destinations_count: {str(e)}")
-            raise e
+            self.connection.rollback()
+            raise
 
-    def get_airlines_count(self, filters: FlightFilterDTO) -> List[FlightAirlineCountDTO]:
-            try:
-                where_clauses = []
-                params = []
-                
+    def get_airlines_count(self, filters: Optional[FlightFilterDTO] = None) -> List[FlightAirlineCountDTO]:
+        try:
+            where_clauses = []
+            params = []
+            
+            if filters:
                 if filters.years:
                     where_clauses.append("EXTRACT(YEAR FROM fecha)::text = ANY(%s)")
                     params.append(filters.years)
@@ -371,7 +452,6 @@ class PostgresFlightRepository(FlightRepository):
                     where_clauses.append("tipo_aeronave = ANY(%s)")
                     params.append(filters.aircraft_types)
                 
-
     
                 # Modified query to handle NULL values
                 query = """
@@ -394,10 +474,26 @@ class PostgresFlightRepository(FlightRepository):
                     ) 
                     for row in results
                 ]
-                
-            except Exception as e:
-                print(f"Error in get_airlines_count: {str(e)}")
-                raise e
+        except Exception as e:
+            print(f"Error in get_airlines_count: {str(e)}")
+            self.connection.rollback()
+            raise
+
+    def get_flight_types(self) -> List[str]:
+        try:
+            query = """
+                SELECT DISTINCT tipo_vuelo 
+                FROM fligths 
+                WHERE tipo_vuelo IS NOT NULL 
+                AND tipo_vuelo != '' 
+                ORDER BY tipo_vuelo
+            """
+            results = self._execute_query(query)
+            return [row['tipo_vuelo'] for row in results]
+        except Exception as e:
+            print(f"Error in get_flight_types: {str(e)}")
+            self.connection.rollback()
+            return []
 
     def get_flight_types_count(self, filters: FlightFilterDTO) -> List[FlightTypeCountDTO]:
         try:

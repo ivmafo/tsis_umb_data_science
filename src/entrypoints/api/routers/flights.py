@@ -80,50 +80,65 @@ async def analyze_date_ranges_destination(request: DateRangesAnalysisRequestDTO)
         traceback.print_exc()
         raise HTTPException(status_code=422, detail=str(e))
 
-@router.get("/months")
-async def get_months():
-    try:
-        months = container.flight_repository.get_distinct_months()
-        return months
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@router.get("/destinations")
-async def get_destinations():
-    try:
-        destinations = container.flight_repository.get_distinct_destinations()
-        return destinations
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@router.get("/origins")
-async def get_origins():
-    try:
-        origins = container.flight_repository.get_distinct_origins()
-        return origins
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
 @router.get("/aircraft-types")
 async def get_aircraft_types():
     try:
-        types = container.flight_repository.get_distinct_aircraft_types()
-        return types
+        types = container.flight_repository.get_aircraft_types()
+        return {"aircraftTypes": types}
     except Exception as e:
+        print(f"Error in get_aircraft_types endpoint: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/airlines")
 async def get_airlines():
     try:
-        airlines = container.flight_repository.get_distinct_airlines()
-        return airlines
+        airlines = container.flight_repository.get_airlines()
+        return {"airlines": airlines}
     except Exception as e:
+        print(f"Error in get_airlines endpoint: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/months")
+async def get_months():
+    try:
+        months = container.flight_repository.get_months()
+        return {"months": months}
+    except Exception as e:
+        print(f"Error in get_months endpoint: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/origins")
+async def get_origins():
+    try:
+        origins = container.flight_repository.get_origins()
+        return {"origins": origins}
+    except Exception as e:
+        print(f"Error in get_origins endpoint: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/destinations")
+async def get_destinations():
+    try:
+        destinations = container.flight_repository.get_destinations()
+        return {"destinations": destinations}
+    except Exception as e:
+        print(f"Error in get_destinations endpoint: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/airlines-count")
+async def get_airlines_count():
+    try:
+        repository = container.flight_repository
+        counts = repository.get_airlines_count()
+        return counts
+    except Exception as e:
+        print(f"Error in get_airlines_count endpoint: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/flight-types")
 async def get_flight_types():
     try:
-        types = container.flight_repository.get_distinct_flight_types()
+        types = container.flight_repository.get_flight_types()
         return types
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -171,9 +186,71 @@ async def get_destinations_count(filters: Optional[FlightFilterDTO] = None):
 @router.get("/years")
 async def get_years():
     try:
-        return container.flight_repository.get_distinct_years()
+        # Get a fresh instance of the repository
+        repository = container.flight_repository
+        years = repository.get_years()
+        if not years:
+            return {"years": []}
+        return {"years": years}
     except Exception as e:
-        traceback.print_exc()
+        print(f"Error in get_years: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/types")
+async def get_flight_types():
+    try:
+        repository = container.flight_repository
+        types = repository.get_flight_types()
+        if not types:
+            return {"types": []}
+        return {"types": types}
+    except Exception as e:
+        print(f"Error in get_flight_types: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/months")
+async def get_months():
+    try:
+        with container.flight_repository() as repo:
+            months = repo.get_months()
+            return {"months": months}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/origins")
+async def get_origins():
+    try:
+        with container.flight_repository() as repo:
+            origins = repo.get_origins()
+            return {"origins": origins}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/destinations")
+async def get_destinations():
+    try:
+        with container.flight_repository() as repo:
+            destinations = repo.get_destinations()
+            return {"destinations": destinations}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/types")
+async def get_flight_types():
+    try:
+        with container.flight_repository() as repo:
+            types = repo.get_flight_types()
+            return {"types": types}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/airlines")
+async def get_airlines():
+    try:
+        with container.flight_repository() as repo:
+            airlines = repo.get_airlines()
+            return {"airlines": airlines}
+    except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/airlines-count", response_model=List[FlightAirlineCountDTO])
