@@ -5,8 +5,9 @@ Estos DTOs se utilizan para transferir datos entre las diferentes capas de la ap
 """
 
 from pydantic import BaseModel, validator
+from dataclasses import dataclass
 from typing import List, Optional, Dict
-from datetime import datetime
+from datetime import datetime, date
 
 class FlightFilterDTO(BaseModel):
     years: Optional[List[str]] = []
@@ -103,4 +104,13 @@ class FlightHourlyCountDTO(BaseModel):
     """
     hour: int
     counts: Dict[str, int]
+
+
+@dataclass
+class FlightMonthlyCountDTO:
+    year: int
+    month: int
+    counts: Dict[str, int]
+
+# Update the imports in the repository file
 

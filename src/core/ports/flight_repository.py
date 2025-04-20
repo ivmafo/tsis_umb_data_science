@@ -18,7 +18,8 @@ from src.core.dtos.flight_dtos import (
     FlightAirlineCountDTO,
     FlightTypeCountDTO,
     FlightHourlyCountDTO,
-    DateRangeDTO
+    DateRangeDTO,
+    FlightMonthlyCountDTO
 )
 
 class FlightRepository(ABC):
@@ -164,4 +165,12 @@ class FlightRepository(ABC):
     def get_flight_types_count(self, filters: Optional[FlightFilterDTO] = None) -> List[FlightTypeCountDTO]:
         """Gets count of flights by type"""
         pass
+
+    @abstractmethod
+    def get_monthly_counts_by_date_ranges(self, date_ranges: List[DateRangeDTO], analysis_type: str) -> List[FlightMonthlyCountDTO]:
+        pass
+
+    @abstractmethod
+    def get_monthly_counts_by_date_ranges_destination(self, date_ranges: List[DateRangeDTO]) -> List[FlightMonthlyCountDTO]:
+        pass   
 

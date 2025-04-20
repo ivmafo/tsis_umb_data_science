@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Line } from 'recharts';
-import { ResponsiveContainer, LineChart, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
+import { ResponsiveContainer, LineChart, XAxis, YAxis, Tooltip, Legend, CartesianGrid, BarChart, Bar } from 'recharts';
 import { FlightAnalysisService } from '../services/FlightAnalysisService';
 import { FlightAnalysisAdapter } from '../adapters/FlightAnalysisAdapter';
 import './DateRangeAnalysis.css';
@@ -22,6 +22,8 @@ const DateRangeAnalysis = () => {
     const [error, setError] = useState('');
     const [originChartData, setOriginChartData] = useState([]);
     const [destinationChartData, setDestinationChartData] = useState([]);
+    const [monthlyOriginData, setMonthlyOriginData] = useState([]);
+    const [monthlyDestinationData, setMonthlyDestinationData] = useState([]);
 
     useEffect(() => {
         fetchAirports();
@@ -136,10 +138,10 @@ const DateRangeAnalysis = () => {
 
     const analyzeDateRanges = async () => {
         if (!validateDateRanges()) return;
-
+    
         setLoading(true);
         setError('');
-
+    
         try {
             const dateRangesPayload = dateRanges.map(range => ({
                 id: String(range.id),
@@ -149,20 +151,19 @@ const DateRangeAnalysis = () => {
                 origin_airport: range.originAirport,
                 destination_airport: range.destinationAirport,
                 nivel_min: parseInt(range.nivelMin) || 0,
-                nivel_max: parseInt(range.nivelMax) || 1
+                nivel_max: parseInt(range.nivelMax) || 99999
             }));
-
+    
             console.log('Payload enviado:', dateRangesPayload);
-
-            const [originData, destinationData] = await Promise.all([
+    
+            const [originData, destinationData, monthlyOrigin, monthlyDestination] = await Promise.all([
                 FlightAnalysisService.analyzeFlights(dateRangesPayload, ''),
-                FlightAnalysisService.analyzeFlights(dateRangesPayload, 'destination')
+                FlightAnalysisService.analyzeFlights(dateRangesPayload, 'destination'),
+                FlightAnalysisService.getMonthlyOriginAnalysis(dateRangesPayload),
+                FlightAnalysisService.getMonthlyDestinationAnalysis(dateRangesPayload)
             ]);
-
-            console.log('Datos origen:', originData);
-            console.log('Datos destino:', destinationData);
-
-            // Formatear datos para las gráficas
+    
+            // Format hourly data
             const formattedOriginData = originData.map(item => ({
                 hour: `${String(item.hour).padStart(2, '0')}:00`,
                 ...dateRanges.reduce((acc, range) => ({
@@ -170,7 +171,7 @@ const DateRangeAnalysis = () => {
                     [range.label]: item[range.label] || 0
                 }), {})
             }));
-
+    
             const formattedDestinationData = destinationData.map(item => ({
                 hour: `${String(item.hour).padStart(2, '0')}:00`,
                 ...dateRanges.reduce((acc, range) => ({
@@ -178,12 +179,48 @@ const DateRangeAnalysis = () => {
                     [range.label]: item[range.label] || 0
                 }), {})
             }));
-
+    
+            // Format monthly data
+            const formattedMonthlyOrigin = monthlyOrigin.map(item => {
+                const monthYear = `${item.year}-${String(item.month).padStart(2, '0')}`;
+                const data = {
+                    period: monthYear
+                };
+                
+                // Add data for each range
+                dateRanges.forEach(range => {
+                    data[range.label] = item[range.label] || 0;
+                });
+                
+                return data;
+            });
+    
+            const formattedMonthlyDestination = monthlyDestination.map(item => {
+                const monthYear = `${item.year}-${String(item.month).padStart(2, '0')}`;
+                const data = {
+                    period: monthYear
+                };
+                
+                // Add data for each range
+                dateRanges.forEach(range => {
+                    data[range.label] = item[range.label] || 0;
+                });
+                
+                return data;
+            });
+    
+            // Update state
             setOriginChartData(formattedOriginData);
             setDestinationChartData(formattedDestinationData);
-            
+            setMonthlyOriginData(formattedMonthlyOrigin);
+            setMonthlyDestinationData(formattedMonthlyDestination);
+    
+            // Debug logs
             console.log('Datos formateados origen:', formattedOriginData);
             console.log('Datos formateados destino:', formattedDestinationData);
+            console.log('Datos mensuales origen:', formattedMonthlyOrigin);
+            console.log('Datos mensuales destino:', formattedMonthlyDestination);
+    
         } catch (error) {
             console.error('Error en el análisis:', error);
             setError('Error al analizar los datos: ' + error.message);
@@ -299,6 +336,61 @@ const DateRangeAnalysis = () => {
                     </ResponsiveContainer>
                 </div>
             )}
+
+
+            {/* Monthly Analysis by Origin */}
+            {monthlyOriginData.length > 0 && (
+                <div className="chart-container">
+                    <h3>Análisis Mensual por Origen</h3>
+                    <ResponsiveContainer width="100%" height={400}>
+                        <BarChart data={monthlyOriginData}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis 
+                                dataKey="period" 
+                                label={{ value: 'Mes/Año', position: 'bottom' }}
+                            />
+                            <YAxis label={{ value: 'Cantidad de Vuelos', angle: -90, position: 'left' }} />
+                            <Tooltip />
+                            <Legend />
+                            {dateRanges.map((range, index) => (
+                                <Bar
+                                    key={range.id}
+                                    dataKey={range.label}
+                                    fill={getCustomColors(index)}
+                                />
+                            ))}
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
+            )}
+
+            {monthlyDestinationData.length > 0 && (
+                <div className="chart-container">
+                    <h3>Análisis Mensual por Destino</h3>
+                    <ResponsiveContainer width="100%" height={400}>
+                        <BarChart data={monthlyDestinationData}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis 
+                                dataKey="period" 
+                                label={{ value: 'Mes/Año', position: 'bottom' }}
+                            />
+                            <YAxis label={{ value: 'Cantidad de Vuelos', angle: -90, position: 'left' }} />
+                            <Tooltip />
+                            <Legend />
+                            {dateRanges.map((range, index) => (
+                                <Bar
+                                    key={range.id}
+                                    dataKey={range.label}
+                                    fill={getCustomColors(index)}
+                                />
+                            ))}
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
+            )}
+
+
+
         </div>
     );
 };

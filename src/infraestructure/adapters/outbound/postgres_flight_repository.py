@@ -693,3 +693,151 @@ class PostgresFlightRepository(FlightRepository):
         except Exception as e:
             print(f"Error in get_hourly_counts_by_date_ranges_destination: {e}")
             raise
+
+    def get_monthly_counts_by_date_ranges(self, date_ranges: List[DateRangeDTO], analysis_type: str) -> List[Dict]:
+        try:
+            query = """
+            WITH date_ranges AS (
+                SELECT 
+                    id as range_id,
+                    label,
+                    start_date::date, 
+                    end_date::date,
+                    origin_airport,
+                    nivel_min, 
+                    nivel_max
+                FROM unnest(%s::text[], %s::text[], %s::date[], %s::date[], %s::text[], %s::int[], %s::int[]) 
+                AS dr(id, label, start_date, end_date, origin_airport, nivel_min, nivel_max)
+            ),
+            flight_counts AS (
+                SELECT 
+                    EXTRACT(YEAR FROM fecha)::int AS year,
+                    EXTRACT(MONTH FROM fecha)::int AS month,
+                    dr.label as label,
+                    COUNT(*) AS flight_count
+                FROM fligths f
+                INNER JOIN date_ranges dr ON f.origen = dr.origin_airport
+                WHERE f.fecha BETWEEN dr.start_date AND dr.end_date
+                  AND (f.nivel::integer BETWEEN dr.nivel_min AND dr.nivel_max)
+                GROUP BY 1, 2, 3
+            ),
+            year_month_series AS (
+                SELECT 
+                    y.year,
+                    m.month
+                FROM (
+                    SELECT DISTINCT EXTRACT(YEAR FROM generate_series(
+                        (SELECT MIN(start_date) FROM date_ranges),
+                        (SELECT MAX(end_date) FROM date_ranges),
+                        '1 month'::interval
+                    ))::int as year
+                ) y
+                CROSS JOIN (SELECT generate_series(1, 12) as month) m
+            )
+            SELECT 
+                ym.year,
+                ym.month,
+                json_object_agg(
+                    COALESCE(fc.label, 'sin_datos'),
+                    COALESCE(fc.flight_count, 0)
+                ) as counts
+            FROM year_month_series ym
+            LEFT JOIN flight_counts fc ON ym.year = fc.year AND ym.month = fc.month
+            GROUP BY ym.year, ym.month
+            ORDER BY ym.year, ym.month;
+            """
+            
+            # Prepare arrays for unnest
+            ids = [str(r.id) for r in date_ranges]
+            labels = [r.label for r in date_ranges]
+            start_dates = [r.start_date for r in date_ranges]
+            end_dates = [r.end_date for r in date_ranges]
+            origins = [r.origin_airport for r in date_ranges]
+            nivel_mins = [r.nivel_min if r.nivel_min is not None else 0 for r in date_ranges]
+            nivel_maxs = [r.nivel_max if r.nivel_max is not None else 99999 for r in date_ranges]
+
+            with self.connection.cursor() as cursor:
+                cursor.execute(query, (ids, labels, start_dates, end_dates, origins, nivel_mins, nivel_maxs))
+                results = cursor.fetchall()
+                
+                return [
+                    {"year": row[0], "month": row[1], **row[2]} for row in results
+                ]
+                
+        except Exception as e:
+            print(f"Error in get_monthly_counts_by_date_ranges: {e}")
+            raise
+
+    def get_monthly_counts_by_date_ranges_destination(self, date_ranges: List[DateRangeDTO]) -> List[Dict]:
+        try:
+            query = """
+            WITH date_ranges AS (
+                SELECT 
+                    id as range_id,
+                    label,
+                    start_date::date, 
+                    end_date::date,
+                    destination_airport,
+                    nivel_min, 
+                    nivel_max
+                FROM unnest(%s::text[], %s::text[], %s::date[], %s::date[], %s::text[], %s::int[], %s::int[]) 
+                AS dr(id, label, start_date, end_date, destination_airport, nivel_min, nivel_max)
+            ),
+            flight_counts AS (
+                SELECT 
+                    EXTRACT(YEAR FROM fecha)::int AS year,
+                    EXTRACT(MONTH FROM fecha)::int AS month,
+                    dr.label as label,
+                    COUNT(*) AS flight_count
+                FROM fligths f
+                INNER JOIN date_ranges dr ON f.destino = dr.destination_airport
+                WHERE f.fecha BETWEEN dr.start_date AND dr.end_date
+                  AND (f.nivel::integer BETWEEN dr.nivel_min AND dr.nivel_max)
+                GROUP BY 1, 2, 3
+            ),
+            year_month_series AS (
+                SELECT 
+                    y.year,
+                    m.month
+                FROM (
+                    SELECT DISTINCT EXTRACT(YEAR FROM generate_series(
+                        (SELECT MIN(start_date) FROM date_ranges),
+                        (SELECT MAX(end_date) FROM date_ranges),
+                        '1 month'::interval
+                    ))::int as year
+                ) y
+                CROSS JOIN (SELECT generate_series(1, 12) as month) m
+            )
+            SELECT 
+                ym.year,
+                ym.month,
+                json_object_agg(
+                    COALESCE(fc.label, 'sin_datos'),
+                    COALESCE(fc.flight_count, 0)
+                ) as counts
+            FROM year_month_series ym
+            LEFT JOIN flight_counts fc ON ym.year = fc.year AND ym.month = fc.month
+            GROUP BY ym.year, ym.month
+            ORDER BY ym.year, ym.month;
+            """
+            
+            # Prepare arrays for unnest
+            ids = [str(r.id) for r in date_ranges]
+            labels = [r.label for r in date_ranges]
+            start_dates = [r.start_date for r in date_ranges]
+            end_dates = [r.end_date for r in date_ranges]
+            destinations = [r.destination_airport for r in date_ranges]
+            nivel_mins = [r.nivel_min if r.nivel_min is not None else 0 for r in date_ranges]
+            nivel_maxs = [r.nivel_max if r.nivel_max is not None else 99999 for r in date_ranges]
+
+            with self.connection.cursor() as cursor:
+                cursor.execute(query, (ids, labels, start_dates, end_dates, destinations, nivel_mins, nivel_maxs))
+                results = cursor.fetchall()
+                
+                return [
+                    {"year": row[0], "month": row[1], **row[2]} for row in results
+                ]
+                
+        except Exception as e:
+            print(f"Error in get_monthly_counts_by_date_ranges_destination: {e}")
+            raise

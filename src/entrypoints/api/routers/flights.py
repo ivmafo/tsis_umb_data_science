@@ -314,3 +314,33 @@ async def get_flight_types_count(
     except Exception as e:
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/monthly-analysis")
+async def analyze_monthly_data(request: DateRangesAnalysisRequestDTO):
+    try:
+        print("Debug - Monthly Analysis Request:", request.dict())
+        result = container.flight_repository.get_monthly_counts_by_date_ranges(
+            request.date_ranges,
+            request.type
+        )
+        print("Debug - Monthly Analysis Result:", result)
+        return result
+    except Exception as e:
+        print("Error in monthly analysis:", str(e))
+        traceback.print_exc()
+        raise HTTPException(status_code=422, detail=str(e))
+
+@router.post("/monthly-analysis-destination")
+async def analyze_monthly_destination_data(request: DateRangesAnalysisRequestDTO):
+    try:
+        print("Debug - Monthly Destination Analysis Request:", request.dict())
+        result = container.flight_repository.get_monthly_counts_by_date_ranges_destination(
+            request.date_ranges
+        )
+        print("Debug - Monthly Destination Analysis Result:", result)
+        return result
+    except Exception as e:
+        print("Error in monthly destination analysis:", str(e))
+        traceback.print_exc()
+        raise HTTPException(status_code=422, detail=str(e))

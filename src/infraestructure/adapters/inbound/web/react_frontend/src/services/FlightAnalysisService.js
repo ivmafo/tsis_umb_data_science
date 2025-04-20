@@ -37,4 +37,56 @@ export class FlightAnalysisService {
             throw error;
         }
     }
+
+    static async getMonthlyOriginAnalysis(dateRanges) {
+        try {
+            const response = await fetch('http://localhost:8000/api/flights/monthly-analysis', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    date_ranges: dateRanges,
+                    type: 'origin'
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Error fetching monthly origin analysis');
+            }
+
+            const data = await response.json();
+            console.log('Monthly origin data received:', data);
+            return data;
+        } catch (error) {
+            console.error('Error in getMonthlyOriginAnalysis:', error);
+            throw error;
+        }
+    }
+
+    static async getMonthlyDestinationAnalysis(dateRanges) {
+        try {
+            const response = await fetch('http://localhost:8000/api/flights/monthly-analysis-destination', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    date_ranges: dateRanges,
+                    type: 'destination'
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Error fetching monthly destination analysis');
+            }
+
+            const data = await response.json();
+            console.log('Monthly destination data received:', data);
+            return data;
+        } catch (error) {
+            console.error('Error in getMonthlyDestinationAnalysis:', error);
+            throw error;
+        }
+    }
 }
