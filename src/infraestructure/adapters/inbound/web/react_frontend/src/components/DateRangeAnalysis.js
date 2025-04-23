@@ -317,176 +317,149 @@ const DateRangeAnalysis = () => {
 
             {error && <div className="error-message">{error}</div>}
 
-            {originChartData.length > 0 && (
-                <div className="chart-container">
-                    <h3>Análisis por Origen</h3>
-                    <ResponsiveContainer width="100%" height={400}>
-                        <LineChart data={originChartData}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="hour" />
-                            <YAxis />
-                            <Tooltip />
-                            <Legend />
-                            {dateRanges.map((range, index) => (
-                                <Line
-                                    key={range.id}
-                                    type="monotone"
-                                    dataKey={range.label}
-                                    stroke={getCustomColors(index)}
-                                    dot={true}
+            <div className="charts-grid">
+                {originChartData.length > 0 && (
+                    <div className="chart-container">
+                        <h3>Análisis por Origen</h3>
+                        <ResponsiveContainer width="100%" height={400}>
+                            <LineChart data={originChartData}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="hour" />
+                                <YAxis />
+                                <Tooltip />
+                                <Legend />
+                                {dateRanges.map((range, index) => (
+                                    <Line
+                                        key={range.id}
+                                        type="monotone"
+                                        dataKey={range.label}
+                                        stroke={getCustomColors(index)}
+                                        dot={true}
+                                    />
+                                ))}
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
+                )}
+
+                {destinationChartData.length > 0 && (
+                    <div className="chart-container">
+                        <h3>Análisis por Destino</h3>
+                        <ResponsiveContainer width="100%" height={400}>
+                            <LineChart data={destinationChartData}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="hour" />
+                                <YAxis />
+                                <Tooltip />
+                                <Legend />
+                                {dateRanges.map((range, index) => (
+                                    <Line
+                                        key={range.id}
+                                        type="monotone"
+                                        dataKey={range.label}
+                                        stroke={getCustomColors(index)}
+                                        dot={true}
+                                    />
+                                ))}
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
+                )}
+
+                {monthlyOriginData.length > 0 && (
+                    <div className="chart-container">
+                        <h3>Análisis Mensual por Origen</h3>
+                        <ResponsiveContainer width="100%" height={400}>
+                            <BarChart data={monthlyOriginData}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis 
+                                    dataKey="period" 
+                                    label={{ value: 'Mes/Año', position: 'bottom' }}
                                 />
-                            ))}
-                        </LineChart>
-                    </ResponsiveContainer>
-                </div>
-            )}
+                                <YAxis label={{ value: 'Cantidad de Vuelos', angle: -90, position: 'left' }} />
+                                <Tooltip />
+                                <Legend />
+                                {dateRanges.map((range, index) => (
+                                    <Bar
+                                        key={range.id}
+                                        dataKey={range.label}
+                                        fill={getCustomColors(index)}
+                                    />
+                                ))}
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                )}
 
-            {destinationChartData.length > 0 && (
-                <div className="chart-container">
-                    <h3>Análisis por Destino</h3>
-                    <ResponsiveContainer width="100%" height={400}>
-                        <LineChart data={destinationChartData}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="hour" />
-                            <YAxis />
-                            <Tooltip />
-                            <Legend />
-                            {dateRanges.map((range, index) => (
-                                <Line
-                                    key={range.id}
-                                    type="monotone"
-                                    dataKey={range.label}
-                                    stroke={getCustomColors(index)}
-                                    dot={true}
+                {monthlyDestinationData.length > 0 && (
+                    <div className="chart-container">
+                        <h3>Análisis Mensual por Destino</h3>
+                        <ResponsiveContainer width="100%" height={400}>
+                            <BarChart data={monthlyDestinationData}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis 
+                                    dataKey="period" 
+                                    label={{ value: 'Mes/Año', position: 'bottom' }}
                                 />
-                            ))}
-                        </LineChart>
-                    </ResponsiveContainer>
-                </div>
-            )}
+                                <YAxis label={{ value: 'Cantidad de Vuelos', angle: -90, position: 'left' }} />
+                                <Tooltip />
+                                <Legend />
+                                {dateRanges.map((range, index) => (
+                                    <Bar
+                                        key={range.id}
+                                        dataKey={range.label}
+                                        fill={getCustomColors(index)}
+                                    />
+                                ))}
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                )}
 
+                {yearlyOriginData.length > 0 && (
+                    <div className="chart-container">
+                        <h3>Análisis Anual por Origen</h3>
+                        <ResponsiveContainer width="100%" height={400}>
+                            <BarChart data={yearlyOriginData}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="year" />
+                                <YAxis />
+                                <Tooltip />
+                                <Legend />
+                                {dateRanges.map((range, index) => (
+                                    <Bar 
+                                        key={range.id} 
+                                        dataKey={range.label} 
+                                        fill={getCustomColors(index)}
+                                    />
+                                ))}
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                )}
 
-            {/* Monthly Analysis by Origin */}
-            {monthlyOriginData.length > 0 && (
-                <div className="chart-container">
-                    <h3>Análisis Mensual por Origen</h3>
-                    <ResponsiveContainer width="100%" height={400}>
-                        <BarChart data={monthlyOriginData}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis 
-                                dataKey="period" 
-                                label={{ value: 'Mes/Año', position: 'bottom' }}
-                            />
-                            <YAxis label={{ value: 'Cantidad de Vuelos', angle: -90, position: 'left' }} />
-                            <Tooltip />
-                            <Legend />
-                            {dateRanges.map((range, index) => (
-                                <Bar
-                                    key={range.id}
-                                    dataKey={range.label}
-                                    fill={getCustomColors(index)}
-                                />
-                            ))}
-                        </BarChart>
-                    </ResponsiveContainer>
-                </div>
-            )}
-
-            {monthlyDestinationData.length > 0 && (
-                <div className="chart-container">
-                    <h3>Análisis Mensual por Destino</h3>
-                    <ResponsiveContainer width="100%" height={400}>
-                        <BarChart data={monthlyDestinationData}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis 
-                                dataKey="period" 
-                                label={{ value: 'Mes/Año', position: 'bottom' }}
-                            />
-                            <YAxis label={{ value: 'Cantidad de Vuelos', angle: -90, position: 'left' }} />
-                            <Tooltip />
-                            <Legend />
-                            {dateRanges.map((range, index) => (
-                                <Bar
-                                    key={range.id}
-                                    dataKey={range.label}
-                                    fill={getCustomColors(index)}
-                                />
-                            ))}
-                        </BarChart>
-                    </ResponsiveContainer>
-                </div>
-
-
-                
-
-            )}
-
-            {/* Gráfico de análisis anual por origen */}
-            <div className="chart-container">
-                <h3>Análisis Anual por Origen</h3>
-                <ResponsiveContainer width="100%" height={400}>
-                    <BarChart data={yearlyOriginData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="year" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        {dateRanges.map((range, index) => (
-                            <Bar 
-                                key={range.id} 
-                                dataKey={range.label} 
-                                fill={getCustomColors(index)}
-                            />
-                        ))}
-                    </BarChart>
-                </ResponsiveContainer>
+                {yearlyDestinationData.length > 0 && (
+                    <div className="chart-container">
+                        <h3>Análisis Anual por Destino</h3>
+                        <ResponsiveContainer width="100%" height={400}>
+                            <BarChart data={yearlyDestinationData}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="year" />
+                                <YAxis />
+                                <Tooltip />
+                                <Legend />
+                                {dateRanges.map((range, index) => (
+                                    <Bar 
+                                        key={range.id} 
+                                        dataKey={range.label} 
+                                        fill={getCustomColors(index)}
+                                    />
+                                ))}
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                )}
             </div>
-
-            {/* Gráfico de análisis anual por destino */}
-            <div className="chart-container">
-                <h3>Análisis Anual por Destino</h3>
-                <ResponsiveContainer width="100%" height={400}>
-                    <BarChart data={yearlyDestinationData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="year" />
-                        <YAxis />
-                        <Tooltip />
-                        <Legend />
-                        {dateRanges.map((range, index) => (
-                            <Bar 
-                                key={range.id} 
-                                dataKey={range.label} 
-                                fill={getCustomColors(index)}
-                            />
-                        ))}
-                    </BarChart>
-                </ResponsiveContainer>
-            </div>
-            {/* Yearly Analysis by Destination */}
-            {yearlyDestinationData.length > 0 && (
-                <div className="chart-container">
-                    <h3>Análisis Anual por Destino</h3>
-                    <ResponsiveContainer width="100%" height={400}>
-                        <BarChart data={yearlyDestinationData}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis 
-                                dataKey="year" 
-                                label={{ value: 'Año', position: 'bottom' }}
-                            />
-                            <YAxis label={{ value: 'Cantidad de Vuelos', angle: -90, position: 'left' }} />
-                            <Tooltip />
-                            <Legend />
-                            {dateRanges.map((range, index) => (
-                                <Bar
-                                    key={range.id}
-                                    dataKey={range.label}
-                                    fill={getCustomColors(index)}
-                                />
-                            ))}
-                        </BarChart>
-                    </ResponsiveContainer>
-                </div>
-            )}
         </div>
     );
 };
