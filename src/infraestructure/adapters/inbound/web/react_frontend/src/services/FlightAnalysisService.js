@@ -89,4 +89,46 @@ export class FlightAnalysisService {
             throw error;
         }
     }
+
+    static async getYearlyOriginAnalysis(dateRanges) {
+        try {
+            const response = await fetch('http://localhost:8000/api/flights/yearly-counts-origin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ date_ranges: dateRanges })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error('Error in yearly origin analysis:', error);
+            throw error;
+        }
+    }
+
+    static async getYearlyDestinationAnalysis(dateRanges) {
+        try {
+            const response = await fetch('http://localhost:8000/api/flights/yearly-counts-destination', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ date_ranges: dateRanges })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error('Error in yearly destination analysis:', error);
+            throw error;
+        }
+    }
 }

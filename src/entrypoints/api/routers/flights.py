@@ -344,3 +344,33 @@ async def analyze_monthly_destination_data(request: DateRangesAnalysisRequestDTO
         print("Error in monthly destination analysis:", str(e))
         traceback.print_exc()
         raise HTTPException(status_code=422, detail=str(e))
+
+@router.post("/yearly-counts-origin")
+async def get_yearly_origin_counts(request: DateRangesAnalysisRequestDTO):
+    try:
+        print("Debug - Yearly Origin Analysis Request:", request.dict())
+        result = container.get_flight_yearly_counts_use_case.execute(
+            request.date_ranges,
+            'origin'
+        )
+        print("Debug - Yearly Origin Analysis Result:", result)
+        return result
+    except Exception as e:
+        print("Error in yearly origin analysis:", str(e))
+        traceback.print_exc()
+        raise HTTPException(status_code=422, detail=str(e))
+
+@router.post("/yearly-counts-destination")
+async def get_yearly_destination_counts(request: DateRangesAnalysisRequestDTO):
+    try:
+        print("Debug - Yearly Destination Analysis Request:", request.dict())
+        result = container.get_flight_yearly_counts_use_case.execute(
+            request.date_ranges,
+            'destination'
+        )
+        print("Debug - Yearly Destination Analysis Result:", result)
+        return result
+    except Exception as e:
+        print("Error in yearly destination analysis:", str(e))
+        traceback.print_exc()
+        raise HTTPException(status_code=422, detail=str(e))

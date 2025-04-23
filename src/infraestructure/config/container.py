@@ -61,6 +61,9 @@ from src.core.use_cases.airport_region_use_cases import (
     DeleteAirportRegionUseCase
 )
 
+# Primero, agregar el import
+from src.core.use_cases.get_flight_yearly_counts import GetFlightYearlyCountsUseCase
+
 class DependencyContainer:
     _instance = None
 
@@ -133,6 +136,11 @@ class DependencyContainer:
             self.sector_capacity_repository
         )
         self.get_flight_hourly_counts_use_case = GetFlightHourlyCountsUseCase(
+            self.flight_repository
+        )
+
+        # Agregar el caso de uso para el análisis anual
+        self.get_flight_yearly_counts_use_case = GetFlightYearlyCountsUseCase(
             self.flight_repository
         )
 

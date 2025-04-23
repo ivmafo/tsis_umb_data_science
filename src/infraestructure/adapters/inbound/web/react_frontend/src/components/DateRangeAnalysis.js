@@ -136,9 +136,12 @@ const DateRangeAnalysis = () => {
         );
     };
 
+    // Agregar después de los estados existentes
+    const [yearlyOriginData, setYearlyOriginData] = useState([]);
+    const [yearlyDestinationData, setYearlyDestinationData] = useState([]);
+    
     const analyzeDateRanges = async () => {
         if (!validateDateRanges()) return;
-    
         setLoading(true);
         setError('');
     
@@ -156,11 +159,13 @@ const DateRangeAnalysis = () => {
     
             console.log('Payload enviado:', dateRangesPayload);
     
-            const [originData, destinationData, monthlyOrigin, monthlyDestination] = await Promise.all([
+            const [originData, destinationData, monthlyOrigin, monthlyDestination,yearlyOrigin, yearlyDestination] = await Promise.all([
                 FlightAnalysisService.analyzeFlights(dateRangesPayload, ''),
                 FlightAnalysisService.analyzeFlights(dateRangesPayload, 'destination'),
                 FlightAnalysisService.getMonthlyOriginAnalysis(dateRangesPayload),
-                FlightAnalysisService.getMonthlyDestinationAnalysis(dateRangesPayload)
+                FlightAnalysisService.getMonthlyDestinationAnalysis(dateRangesPayload),
+                FlightAnalysisService.getYearlyOriginAnalysis(dateRangesPayload),
+                FlightAnalysisService.getYearlyDestinationAnalysis(dateRangesPayload)
             ]);
     
             // Format hourly data
@@ -215,11 +220,34 @@ const DateRangeAnalysis = () => {
             setMonthlyOriginData(formattedMonthlyOrigin);
             setMonthlyDestinationData(formattedMonthlyDestination);
     
-            // Debug logs
-            console.log('Datos formateados origen:', formattedOriginData);
-            console.log('Datos formateados destino:', formattedDestinationData);
-            console.log('Datos mensuales origen:', formattedMonthlyOrigin);
-            console.log('Datos mensuales destino:', formattedMonthlyDestination);
+            // Format yearly data
+            const formattedYearlyOrigin = yearlyOrigin.map(item => ({
+                year: item.year,
+                ...dateRanges.reduce((acc, range) => ({
+                    ...acc,
+                    [range.label]: item[range.label] || 0
+                }), {})
+            }));
+    
+            const formattedYearlyDestination = yearlyDestination.map(item => ({
+                year: item.year,
+                ...dateRanges.reduce((acc, range) => ({
+                    ...acc,
+                    [range.label]: item[range.label] || 0
+                }), {})
+            }));
+    
+            // Update all states including yearly data
+            setOriginChartData(formattedOriginData);
+            setDestinationChartData(formattedDestinationData);
+            setMonthlyOriginData(formattedMonthlyOrigin);
+            setMonthlyDestinationData(formattedMonthlyDestination);
+            setYearlyOriginData(formattedYearlyOrigin);
+            setYearlyDestinationData(formattedYearlyDestination);
+    
+            // Add debug logs for yearly data
+            console.log('Datos anuales origen:', formattedYearlyOrigin);
+            console.log('Datos anuales destino:', formattedYearlyDestination);
     
         } catch (error) {
             console.error('Error en el análisis:', error);
@@ -387,10 +415,78 @@ const DateRangeAnalysis = () => {
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
+
+
+                
+
             )}
 
+            {/* Gráfico de análisis anual por origen */}
+            <div className="chart-container">
+                <h3>Análisis Anual por Origen</h3>
+                <ResponsiveContainer width="100%" height={400}>
+                    <BarChart data={yearlyOriginData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="year" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        {dateRanges.map((range, index) => (
+                            <Bar 
+                                key={range.id} 
+                                dataKey={range.label} 
+                                fill={getCustomColors(index)}
+                            />
+                        ))}
+                    </BarChart>
+                </ResponsiveContainer>
+            </div>
 
-
+            {/* Gráfico de análisis anual por destino */}
+            <div className="chart-container">
+                <h3>Análisis Anual por Destino</h3>
+                <ResponsiveContainer width="100%" height={400}>
+                    <BarChart data={yearlyDestinationData}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="year" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        {dateRanges.map((range, index) => (
+                            <Bar 
+                                key={range.id} 
+                                dataKey={range.label} 
+                                fill={getCustomColors(index)}
+                            />
+                        ))}
+                    </BarChart>
+                </ResponsiveContainer>
+            </div>
+            {/* Yearly Analysis by Destination */}
+            {yearlyDestinationData.length > 0 && (
+                <div className="chart-container">
+                    <h3>Análisis Anual por Destino</h3>
+                    <ResponsiveContainer width="100%" height={400}>
+                        <BarChart data={yearlyDestinationData}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis 
+                                dataKey="year" 
+                                label={{ value: 'Año', position: 'bottom' }}
+                            />
+                            <YAxis label={{ value: 'Cantidad de Vuelos', angle: -90, position: 'left' }} />
+                            <Tooltip />
+                            <Legend />
+                            {dateRanges.map((range, index) => (
+                                <Bar
+                                    key={range.id}
+                                    dataKey={range.label}
+                                    fill={getCustomColors(index)}
+                                />
+                            ))}
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
+            )}
         </div>
     );
 };
