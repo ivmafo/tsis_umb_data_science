@@ -82,29 +82,7 @@ const SectorAnalysisManager = () => {
         <div className="sector-analysis-manager">
             <h2>Análisis Detallado de Sectores</h2>
             
-            <div className="controls">
-                <input 
-                    type="text"
-                    value={selectedSector}
-                    onChange={(e) => setSelectedSector(e.target.value)}
-                    placeholder="Ingrese el sector"
-                    className="sector-input"
-                />
-
-                <input
-                    type="date"
-                    value={dateRange.startDate}
-                    onChange={(e) => setDateRange({...dateRange, startDate: e.target.value})}
-                    className="date-input"
-                />
-
-                <input
-                    type="date"
-                    value={dateRange.endDate}
-                    onChange={(e) => setDateRange({...dateRange, endDate: e.target.value})}
-                    className="date-input"
-                />
-            </div>
+            
 
             {error && <div className="error-message">{error}</div>}
             {loading && <div className="loading">Cargando datos...</div>}
