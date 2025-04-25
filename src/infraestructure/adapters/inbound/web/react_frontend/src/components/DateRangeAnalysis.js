@@ -5,6 +5,20 @@ import { FlightAnalysisService } from '../services/FlightAnalysisService';
 import { FlightAnalysisAdapter } from '../adapters/FlightAnalysisAdapter';
 import './DateRangeAnalysis.css';
 
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+            
+import * as turf from '@turf/turf';
+
+// At the top of the file, add these imports
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+    iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+    iconUrl: require('leaflet/dist/images/marker-icon.png'),
+    shadowUrl: require('leaflet/dist/images/marker-shadow.png')
+});
+
 const DateRangeAnalysis = () => {
     const [dateRanges, setDateRanges] = useState([{
         id: '1',
@@ -26,6 +40,17 @@ const DateRangeAnalysis = () => {
     const [monthlyDestinationData, setMonthlyDestinationData] = useState([]);
     const [firData, setFirData] = useState([]);
 
+    const generateColorFromString = (str) => {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        const c = (hash & 0x00FFFFFF)
+            .toString(16)
+            .toUpperCase();
+        return '#' + '00000'.substring(0, 6 - c.length) + c;
+    };
+    
     useEffect(() => {
         fetchAirports();
     }, []);
@@ -504,6 +529,73 @@ const DateRangeAnalysis = () => {
                 </div>
             </div>
             
+
+            
+            
+        
+            // Reemplazar la sección del mapa
+            <div className="map-container" style={{ height: '500px', marginTop: '20px' }}>
+                <h3>Mapa de Rutas de Vuelo</h3>
+                {firData && firData.length > 0 && (
+                    <MapContainer
+                        center={[4.6097, -74.0817]}
+                        zoom={5}
+                        style={{ height: '100%', width: '100%' }}
+                    >
+                        <TileLayer
+                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        />
+                        {firData.map((flight, index) => {
+                            const originPosition = [
+                                parseFloat(flight.latitude_origen || flight.latitude_origin) || 0,
+                                parseFloat(flight.longitude_origen || flight.longitude_origin) || 0
+                            ];
+                            const destPosition = [
+                                parseFloat(flight.latitude_destino || flight.latitude_destination) || 0,
+                                parseFloat(flight.longitude_destino || flight.longitude_destination) || 0
+                            ];
+        
+                            const start = turf.point([originPosition[1], originPosition[0]]);
+                            const end = turf.point([destPosition[1], destPosition[0]]);
+                            const greatCircle = turf.greatCircle(start, end, {
+                                npoints: 200,
+                                offset: 20
+                            });
+        
+                            const arcCoords = greatCircle.geometry.coordinates.map(coord => [coord[1], coord[0]]);
+                            // Usar el mismo color que en las gráficas basado en el índice del rango
+                            const rangeIndex = dateRanges.findIndex(range => range.label === flight.label);
+                            const routeColor = getCustomColors(rangeIndex);
+        
+                            return (
+                                <React.Fragment key={index}>
+                                    <Marker position={originPosition}>
+                                        <Popup>
+                                            Origen: {flight.origen || flight.origin}<br />
+                                            FIR: {flight.fir}<br />
+                                            No Vuelos: {flight.count}
+                                        </Popup>
+                                    </Marker>
+                                    <Marker position={destPosition}>
+                                        <Popup>
+                                            Destino: {flight.destino || flight.destination}<br />
+                                            FIR: {flight.fir}<br />
+                                            No Vuelos: {flight.count}
+                                        </Popup>
+                                    </Marker>
+                                    <Polyline
+                                        positions={arcCoords}
+                                        color={routeColor}
+                                        weight={2}
+                                        opacity={0.7}
+                                    />
+                                </React.Fragment>
+                            );
+                        })}
+                    </MapContainer>
+                )}
+            </div>
         </div>
     );
 };
