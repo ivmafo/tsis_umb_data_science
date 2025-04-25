@@ -24,6 +24,7 @@ const DateRangeAnalysis = () => {
     const [destinationChartData, setDestinationChartData] = useState([]);
     const [monthlyOriginData, setMonthlyOriginData] = useState([]);
     const [monthlyDestinationData, setMonthlyDestinationData] = useState([]);
+    const [firData, setFirData] = useState([]);
 
     useEffect(() => {
         fetchAirports();
@@ -159,15 +160,22 @@ const DateRangeAnalysis = () => {
     
             console.log('Payload enviado:', dateRangesPayload);
     
-            const [originData, destinationData, monthlyOrigin, monthlyDestination,yearlyOrigin, yearlyDestination] = await Promise.all([
-                FlightAnalysisService.analyzeFlights(dateRangesPayload, ''),
-                FlightAnalysisService.analyzeFlights(dateRangesPayload, 'destination'),
-                FlightAnalysisService.getMonthlyOriginAnalysis(dateRangesPayload),
-                FlightAnalysisService.getMonthlyDestinationAnalysis(dateRangesPayload),
-                FlightAnalysisService.getYearlyOriginAnalysis(dateRangesPayload),
-                FlightAnalysisService.getYearlyDestinationAnalysis(dateRangesPayload)
+            // Inside analyzeDateRanges function, add to the Promise.all array:
+            // In analyzeDateRanges function, remove the duplicate line and extra bracket
+            const [originData, destinationData, monthlyOrigin, monthlyDestination, yearlyOrigin, yearlyDestination, firResults] = await Promise.all([
+            FlightAnalysisService.analyzeFlights(dateRangesPayload, ''),
+            FlightAnalysisService.analyzeFlights(dateRangesPayload, 'destination'),
+            FlightAnalysisService.getMonthlyOriginAnalysis(dateRangesPayload),
+            FlightAnalysisService.getMonthlyDestinationAnalysis(dateRangesPayload),
+            FlightAnalysisService.getYearlyOriginAnalysis(dateRangesPayload),
+            FlightAnalysisService.getYearlyDestinationAnalysis(dateRangesPayload),
+            FlightAnalysisService.getFlightCountsByFir(dateRangesPayload)
             ]);
     
+            
+    
+            // After other state updates, add:
+            setFirData(firResults);
             // Format hourly data
             const formattedOriginData = originData.map(item => ({
                 hour: `${String(item.hour).padStart(2, '0')}:00`,
@@ -460,6 +468,42 @@ const DateRangeAnalysis = () => {
                     </div>
                 )}
             </div>
+            
+            
+            
+            
+            <div className="table-container">
+                <h3>Análisis por FIR y Coordenadas</h3>
+                <div className="table-wrapper">
+                    <table className="fir-table">
+                        <thead>
+                            <tr>
+                                <th>Etiqueta</th>
+                                <th>Origen</th>
+                                <th>Destino</th>
+                                <th>FIR</th>
+                                <th>Coordenadas Origen</th>
+                                <th>Coordenadas Destino</th>
+                                <th>Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {firData.map((row, index) => (
+                                <tr key={index}>
+                                    <td>{row.label || 'N/A'}</td>
+                                    <td>{row.origen || row.origin || 'N/A'}</td>
+                                    <td>{row.destino || row.destination || 'N/A'}</td>
+                                    <td>{row.fir || 'N/A'}</td>
+                                    <td>{`(${row.latitude_origen || row.latitude_origin || 'N/A'}, ${row.longitude_origen || row.longitude_origin || 'N/A'})`}</td>
+                                    <td>{`(${row.latitude_destino || row.latitude_destination || 'N/A'}, ${row.longitude_destino || row.longitude_destination || 'N/A'})`}</td>
+                                    <td>{row.count || 0}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
         </div>
     );
 };

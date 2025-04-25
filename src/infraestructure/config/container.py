@@ -64,6 +64,9 @@ from src.core.use_cases.airport_region_use_cases import (
 # Primero, agregar el import
 from src.core.use_cases.get_flight_yearly_counts import GetFlightYearlyCountsUseCase
 
+# Add to imports at the top
+from src.core.use_cases.get_flight_counts_by_fir_use_case import GetFlightCountsByFirUseCase
+
 class DependencyContainer:
     _instance = None
 
@@ -168,3 +171,8 @@ class DependencyContainer:
         if hasattr(self, 'connection') and self.connection:
             self.db_pool.release_connection(self.connection)
             self.db_pool.close_all_connections()
+
+    # Add this property
+    @property
+    def get_flight_counts_by_fir_use_case(self) -> GetFlightCountsByFirUseCase:
+        return GetFlightCountsByFirUseCase(self.flight_repository)

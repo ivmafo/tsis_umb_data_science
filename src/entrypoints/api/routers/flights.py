@@ -12,6 +12,7 @@ from src.core.dtos.flight_dtos import (
 )
 from src.infraestructure.config.container import DependencyContainer
 from pydantic import BaseModel, validator  # Agregamos el import de validator
+from src.core.use_cases.get_flight_counts_by_fir_use_case import GetFlightCountsByFirUseCase
 
 router = APIRouter()
 container = DependencyContainer()
@@ -372,5 +373,24 @@ async def get_yearly_destination_counts(request: DateRangesAnalysisRequestDTO):
         return result
     except Exception as e:
         print("Error in yearly destination analysis:", str(e))
+        traceback.print_exc()
+        raise HTTPException(status_code=422, detail=str(e))
+
+@router.post("/flight-counts-by-fir")
+async def get_flight_counts_by_fir(request: DateRangesAnalysisRequestDTO):
+    try:
+        print("Debug - Flight Counts by FIR Request:", request.dict())
+        
+        # Create use case instance
+        use_case = GetFlightCountsByFirUseCase(container.flight_repository)
+        
+        # Execute use case
+        result = use_case.execute(request.date_ranges)
+        
+        print("Debug - Flight Counts by FIR Result:", result)
+        return result
+        
+    except Exception as e:
+        print("Error in flight counts by FIR analysis:", str(e))
         traceback.print_exc()
         raise HTTPException(status_code=422, detail=str(e))

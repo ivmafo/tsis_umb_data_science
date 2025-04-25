@@ -131,4 +131,34 @@ export class FlightAnalysisService {
             throw error;
         }
     }
+
+   
+    // Add this new method
+    static async getFlightCountsByFir(dateRanges) {
+        try {
+            console.log('Sending FIR request with data:', dateRanges);
+            const response = await fetch('http://localhost:8000/api/flights/flight-counts-by-fir', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    date_ranges: dateRanges
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Error fetching FIR data');
+            }
+
+            const data = await response.json();
+            console.log('FIR data received:', data);
+            return data;
+        } catch (error) {
+            console.error('Error in getFlightCountsByFir:', error);
+            throw error;
+        }
+    }
+
+
 }

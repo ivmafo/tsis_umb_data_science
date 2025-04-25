@@ -900,3 +900,101 @@ class PostgresFlightRepository(FlightRepository):
         except Exception as e:
             print(f"Error in get_yearly_counts_by_date_ranges: {e}")
             raise
+
+    def get_flight_counts_by_fir(self, date_ranges: List[DateRangeDTO]) -> List[Dict]:
+        try:
+            print("Debug - Repository: Processing FIR request with date ranges:", date_ranges)
+            query = """
+            WITH date_ranges AS (
+                SELECT 
+                    id as range_id,
+                    label,
+                    start_date::date, 
+                    end_date::date,
+                    origin_airport,
+                    nivel_min, 
+                    nivel_max
+                FROM unnest(%s::text[], %s::text[], %s::date[], %s::date[], %s::text[], %s::int[], %s::int[]) 
+                AS dr(id, label, start_date, end_date, origin_airport, nivel_min, nivel_max)
+            ),
+            flight_counts AS (
+                SELECT 
+                    dr.label,
+                    f.origen,
+                    f.destino,
+                    r.name as fir,
+                    o.longitude as longitude_origen,
+                    o.latitude as latitude_origen,
+                    d.longitude as longitude_destino,
+                    d.latitude as latitude_destino,
+                    COUNT(*) as count
+                FROM fligths f
+                INNER JOIN date_ranges dr 
+                    ON f.origen = dr.origin_airport
+                    AND f.fecha BETWEEN dr.start_date AND dr.end_date
+                    AND f.nivel::integer BETWEEN dr.nivel_min AND dr.nivel_max
+                JOIN public.airport_regions ar 
+                    ON ar.icao_code = f.destino
+                JOIN public.regions r 
+                    ON r.id = ar.region_id
+                JOIN public.airports o 
+                    ON o.icao_code = f.origen
+                JOIN public.airports d
+                    ON d.icao_code = f.destino
+                GROUP BY 
+                    dr.label,
+                    f.origen,
+                    f.destino,
+                    r.name,
+                    o.longitude,
+                    o.latitude,
+                    d.longitude,
+                    d.latitude
+            )
+            SELECT 
+                label,
+                origen,
+                destino,
+                fir,
+                longitude_origen,
+                latitude_origen,
+                longitude_destino,
+                latitude_destino,
+                count
+            FROM flight_counts
+            ORDER BY 
+                label,
+                count DESC;
+            """
+            
+            # Prepare arrays for unnest
+            ids = [str(r.id) for r in date_ranges]
+            labels = [r.label for r in date_ranges]
+            start_dates = [r.start_date for r in date_ranges]
+            end_dates = [r.end_date for r in date_ranges]
+            origins = [r.origin_airport for r in date_ranges]
+            nivel_mins = [r.nivel_min if r.nivel_min is not None else 0 for r in date_ranges]
+            nivel_maxs = [r.nivel_max if r.nivel_max is not None else 99999 for r in date_ranges]
+
+            with self.connection.cursor() as cursor:
+                cursor.execute(query, (ids, labels, start_dates, end_dates, origins, 
+                                    nivel_mins, nivel_maxs))
+                results = cursor.fetchall()
+                
+                return [
+                    {
+                        "label": row[0],
+                        "origin": row[1],
+                        "destination": row[2],
+                        "fir": row[3],
+                        "longitude_origin": row[4],
+                        "latitude_origin": row[5],
+                        "longitude_destination": row[6],
+                        "latitude_destination": row[7],
+                        "count": row[8]
+                    } for row in results
+                ]
+                
+        except Exception as e:
+            print(f"Error in get_flight_counts_by_fir: {e}")
+            raise
