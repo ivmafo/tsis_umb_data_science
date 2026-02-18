@@ -113,3 +113,60 @@ Archivos esenciales para el ciclo de vida del desarrollo y despliegue.
 
 > [!NOTE]
 > Cada archivo individual ha sido diseñado para seguir el principio de **Responsabilidad Única (SRP)**. Si un archivo crece excesivamente en líneas de código, considere su refactorización en componentes más pequeños dentro de su respectiva capa.
+
+## 🔍 5. Análisis Detallado: Librerías e Importaciones (Deep Dive)
+
+Este apartado detalla la relación entre el código del proyecto y sus dependencias externas, mapeando métodos específicos y su utilidad operativa.
+
+### 🐍 5.1 Capa de Inteligencia y Persistencia (Backend)
+
+#### 🧬 Motor Predictivo (`src/application/use_cases/predict_daily_demand.py`)
+| Librería | Propósito Técnico | Métodos / Implementaciones |
+| :--- | :--- | :--- |
+| **duckdb** | Persistencia OLAP. | `connect()` para sesión in-process; `fetchdf()` para inyectar datos directamente a buffers de Pandas. |
+| **pandas** | Estructuración de series. | `pd.to_datetime()`, `date_range()`, `reindex()` para normalización de fechas faltantes. |
+| **numpy** | Cálculo estadístico. | `np.mean()`, `np.std()` para el intervalo de confianza del 95% en proyecciones. |
+| **scikit-learn** | Regresión por ensamble. | `RandomForestRegressor(n_estimators=100)` para proyecciones recursivas; `predict()`. |
+
+#### 🏎️ Motor ETL (`src/infrastructure/adapters/polars/polars_data_source.py`)
+| Librería | Propósito Técnico | Métodos / Implementaciones |
+| :--- | :--- | :--- |
+| **polars** | Procesamiento paralelo. | `scan_csv()`, `scan_parquet()` (Lazy API); `group_by().agg()` para agregaciones masivas. |
+| **pathlib** | Multiproveedor de rutas. | `Path.suffix`, `Path.stat().st_size` para validación de extensiones y metadatos de archivos. |
+| **uuid** | Integridad referencial. | `uuid4()` para generar SIDs únicos en la ingesta de vuelos SRS. |
+
+#### 🌐 Capa API (`src/infrastructure/adapters/api/predictive_controller.py`)
+| Librería | Propósito Técnico | Métodos / Implementaciones |
+| :--- | :--- | :--- |
+| **fastapi** | Framework de servicios. | `APIRouter` para segmentación de rutas; `Depends` para Inyección de Dependencias (DI). |
+| **pydantic** | Validación de tipos. | Implementado a través de `dtos/metric_dto.py` para asegurar integridad de respuestas JSON. |
+
+---
+
+### ⚛️ 5.2 Capa de Visualización y Experiencia (Frontend)
+
+#### 📊 Gráficos Proyectivos (`web/src/components/SectorSaturationChart.tsx`)
+| Librería | Propósito Técnico | Métodos / Implementaciones |
+| :--- | :--- | :--- |
+| **React** | Lógica de componentes. | `useEffect()` coordinado con filtros; `useState()` para manejo de series temporales dinámicas. |
+| **apexcharts** | Motor de Renderizado. | `type: 'line'` + `type: 'column'` (Ejes Duales); `annotations` para límites críticos (80%/100%). |
+| **lucide-react** | Semántica Visual. | Uso de iconos para representar estados de salud de la predicción (Alerta, Ok). |
+
+#### 📡 Comunicación (`web/src/api/index.ts`)
+| Librería | Propósito Técnico | Métodos / Implementaciones |
+| :--- | :--- | :--- |
+| **axios** | Cliente de red REST. | `axios.create()` con redundancia y manejo de tiempos de espera para cálculos pesados. |
+
+---
+
+### 🏛️ 5.3 Estructura de Datos (Domain Entities)
+
+| Archivo | Librería Base | Uso Específico |
+| :--- | :--- | :--- |
+| `entities/airport.py` | `pydantic` | `BaseModel` para validación de códigos IATA/ICAO mediante expresiones regulares. |
+| `value_objects/date_range.py` | `datetime` | `timedelta` para cálculos de ventanas de tiempo deslizantes en la ingesta. |
+
+---
+
+> [!IMPORTANT]
+> **Sinergia Técnica**: El sistema está diseñado para que el **90% del procesamiento pesado** (ML y ETL) ocurra en la infraestructura (DuckDB/Polars), permitiendo que la capa de **Aplicación** se mantenga pura y la capa de **Frontend** se enfoque exclusivamente en la visualización reactiva de alta fidelidad.
