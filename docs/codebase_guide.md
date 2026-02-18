@@ -170,3 +170,92 @@ Este apartado detalla la relación entre el código del proyecto y sus dependenc
 
 > [!IMPORTANT]
 > **Sinergia Técnica**: El sistema está diseñado para que el **90% del procesamiento pesado** (ML y ETL) ocurra en la infraestructura (DuckDB/Polars), permitiendo que la capa de **Aplicación** se mantenga pura y la capa de **Frontend** se enfoque exclusivamente en la visualización reactiva de alta fidelidad.
+
+## 🧪 6. Análisis de Parámetros y Argumentos (Deep Parameter)
+
+Este nivel de detalle explica cada variable de entrada en las funciones críticas, incluyendo aquellas delegadas a librerías de terceros.
+
+### 🐍 6.1 Parámetros del Backend (Python)
+
+#### `PredictDailyDemand.execute()`
+| Parámetro | Tipo | Valor Defecto | Descripción |
+| :--- | :--- | :--- | :--- |
+| `days_ahead` | `int` | `30` | Horizonte temporal de la proyección. Usado para generar el `date_range` de salida. |
+| `sector_id` | `str` | `None` | UUID del sector. Gatilla una subconsulta SQL para filtrar por polígonos O-D. |
+| `airport` | `str` | `None` | Código ICAO. Filtra registros donde sea Origen **OR** Destino. |
+| `min_level` | `int` | `None` | Altitud mínima. Traducido a condición `nivel >= ?` en DuckDB. |
+| `start_date` / `end_date`| `str` | `None` | Activan el modo **Estacional**. Requieren formato `YYYY-MM-DD`. |
+
+#### `RandomForestRegressor` (Delegación scikit-learn)
+*Argumentos implementados en `PredictDailyDemand`:*
+- `n_estimators=100`: Define la creación de 100 árboles de decisión independientes para reducir la varianza.
+- `random_state=42`: Semilla de aleatoriedad para asegurar resultados reproducibles en cada ejecución.
+
+---
+
+### ⚡ 6.2 Parámetros de Infraestructura y ETL
+
+#### `PolarsDataSource.aggregate_metrics()`
+| Parámetro | Tipo | Descripción |
+| :--- | :--- | :--- |
+| `file_paths` | `List[Path]` | Lista de objetos Path. Soporta mezcla de `.csv` y `.parquet`. |
+| `group_by` | `List[str]` | Dimensiones de agregación (ej. `['origen', 'destino']`). |
+
+#### `pl.scan_csv()` (Delegación Polars)
+- `csv_paths`: Lista de strings. Polars procesa estos archivos en paralelo usando su motor de *query planning*.
+
+---
+
+### ⚛️ 6.3 Parámetros del Frontend (TypeScript)
+
+#### `getAirports(page, pageSize, search)`
+| Parámetro | Tipo | Valor Defecto | Descripción |
+| :--- | :--- | :--- | :--- |
+| `page` | `number` | `1` | Índice de página para la paginación del backend. |
+| `pageSize` | `number` | `10` | Cantidad de registros por petición. |
+| `search` | `string` | `""` | Texto para filtrado dinámico en la tabla de aeropuertos. |
+
+#### `axios.create(config)` (Delegación Axios)
+- `baseURL`: `http://localhost:8000`. Define el punto de anclaje para todas las llamadas asíncronas.
+
+---
+
+---
+
+> [!TIP]
+> **Tipado Estricto**: El uso de **TypeScript** en el frontend y **Type Hints** en Python asegura que los parámetros pasados entre capas mantengan su integridad, reduciendo errores de *Runtime* en los cálculos matemáticos complejos.
+
+## 🏛️ 7. Catálogo de Patrones de Diseño (Architectural Patterns)
+
+A continuación, se presenta la cartografía arquitectónica del proyecto, identificando el **Patrón de Diseño predominante** en cada módulo y la justificación técnica de su implementación.
+
+### 🧠 7.1 Backend (Python) - Arquitectura Hexagonal
+
+| Archivo / Directorio | Patrón de Diseño | Justificación Técnica |
+| :--- | :--- | :--- |
+| **`src/application/di/container.py`** | **Dependency Injection (DI)** | Centraliza la creación de objetos, desacoplando la instanciación del uso. Permite cambiar implementaciones (ej. DuckDB a PostgreSQL) sin tocar el código de negocio. |
+| **`src/domain/repositories/*.py`** | **Repository Interface (Port)** | Define contratos abstractos (`ABC`) que la infraestructura debe cumplir. Es el núcleo de la Inversión de Dependencias (DIP). |
+| **`src/infrastructure/adapters/database/*.py`** | **Repository Implementation (Adapter)** | Implementación concreta de la persistencia. Encapsula las consultas SQL (DuckDB) ocultándolas del dominio. |
+| **`src/application/use_cases/*.py`** | **Command / Use Case** | Cada clase encapsula una única regla de negocio o intención del usuario (SRP). Sigue el patrón `Execute Method`. |
+| **`src/infrastructure/adapters/api/*.py`** | **Controller / Adapter** | Adaptadores de entrada (Primary Adapters) que transforman peticiones HTTP (FastAPI) en llamadas a Casos de Uso. |
+| **`src/infrastructure/config/settings.py`** | **Singleton** | Garantiza una única instancia de configuración para toda la vida de la aplicación. |
+| **`src/application/use_cases/predict_*.py`** | **Strategy (Implícito)** | Los distintos predictores actúan como estrategias intercambiables para resolver problemas de inferencia específicos. |
+
+### ⚛️ 7.2 Frontend (React) - Component Based Architecture
+
+| Archivo / Componente | Patrón de Diseño | Justificación Técnica |
+| :--- | :--- | :--- |
+| **`web/src/api.ts`** | **Facade / Proxy** | Provee una interfaz simplificada y unificada para todas las llamadas de red, ocultando la complejidad de Axios y URLs base. |
+| **`web/src/views/*.tsx`** | **Container Component** | Gestionan el estado de la página, orquestan llamadas a la API y pasan datos a los componentes de presentación. No contienen estilos complejos. |
+| **`web/src/components/*.tsx`** | **Presentational Component** | Se enfocan puramente en cómo se ven los datos (`UI`). Reciben datos vía `props` y emiten eventos. |
+| **`Sidebar.tsx`** | **Composite / Recursion** | Utiliza una estructura recursiva para renderizar menús anidados de profundidad variable. |
+| **`UseEffect` (en todas las vistas)** | **Observer / Subscription** | Observa cambios en filtros o estados (`[filters]`) y reacciona disparando efectos secundarios (recarga de datos). |
+| **`web/src/hooks/*` (Lógica interna)** | **Custom Hook** | (Aunque implementado inline en Vistas) La lógica de `fetchData` encapsula el manejo de estado asíncrono y errores. |
+
+### 📐 7.3 Patrones Transversales
+
+- **Inversión de Control (IoC)**: El `container.py` controla el flujo de dependencias en todo el backend.
+- **Data Transfer Object (DTO)**: Implícito en el uso de modelos Pydantic y Interfaces TypeScript para validar el intercambio de datos entre capas.
+- **Fail-Fast**: Validaciones tempranas en los constructores y métodos `execute` (ej. `if not sector: raise ValueError`).
+
+---
