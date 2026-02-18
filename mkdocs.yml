@@ -58,5 +58,6 @@ nav:
   - 📋 Requerimientos: requirements.md
   - 💻 Frontend: frontend.md
   - 📚 Referencia Técnica: reference.md
+  - 📄 Guía del Código: codebase_guide.md
   - 📘 Manual Técnico Maestro: tech_manual.md
   - 📙 Manual de Usuario: user_manual.md
