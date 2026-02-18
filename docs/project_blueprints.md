@@ -232,18 +232,18 @@ Estos diagramas enfatizan la organización estructural de los objetos que envía
 
 ```mermaid
 graph LR
-    actor User as Controlador ATC
-    participant UI as CapacityView
-    participant Ctrl as API Controller
-    participant UC as CalculateUseCase
-    participant Repo as DuckDB Repo
+    User((Controlador ATC))
+    UI[CapacityView]
+    Ctrl[API Controller]
+    UC[CalculateUseCase]
+    Repo[DuckDB Repo]
 
     linkStyle default stroke-width:2px,fill:none,stroke:black;
 
     User -- 1. Solicita Cálculo --> UI
     UI -- 2. GET /capacity --> Ctrl
-    Ctrl -- 3. execute() --> UC
-    UC -- 4. get_tps() --> Repo
+    Ctrl -- 3. execute --> UC
+    UC -- 4. get_tps --> Repo
     Repo -- 5. SQL Aggregation --> Repo
     Repo -. 6. Return Metrics .-> UC
     UC -- 7. Apply C006 Formula --> UC
