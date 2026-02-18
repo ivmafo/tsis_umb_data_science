@@ -64,6 +64,7 @@ graph TD
 | [📘 Manual Técnico Maestro](tech_manual.md) | Derivaciones matemáticas y lógica de ML. | Data Scientists / Tesistas |
 | [📐 Project Blueprints](project_blueprints.md) | Especificaciones UML detalladas (Clases, Secuencia, Estados). | Arquitectos / Auditores |
 | [📈 Análisis y Resultados](results_analysis.md) | Validación empírica, métricas de ML y discusión. | Directores de Tesis / Stakeholders |
+| [📖 Glosario Técnico](technical_glossary.md) | Diccionario de acrónimos, símbolos y términos. | Todos los lectores |
 
 ---
 
