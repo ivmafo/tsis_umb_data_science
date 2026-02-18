@@ -58,7 +58,7 @@ Donde:
 *   **$C$ (Capacidad)**: Vuelos por hora sostenibles.
 *   **$U$ (Utilización)**: Factor de eficiencia máxima (típicamente 0.8 o 80%).
 *   **$t_{occ}$ (Tiempo de Ocupación)**: Promedio ponderado de segundos que un vuelo tarda en cruzar el sector.
-    $ t_{occ} = \frac{\sum_{i=1}^{N} t_i}{N} $
+    $t_{occ} = \frac{\sum_{i=1}^{N} t_i}{N}$
 *   **$B$ (Buffer)**: Margen de seguridad para imprevistos (0.1 o 10%).
 
 ---
@@ -119,14 +119,14 @@ Imagina un sector (pedazo de cielo) llamado "BOG-NORTE".
 
 2.  **Cálculo**:
     *   *Paso A (Denominador)*: Multiplicamos el tiempo por el margen.
-        $ 45 \text{ seg} \times (1 + 0.10) = 45 \times 1.10 = \mathbf{49.5} \text{ segundos ajustados} $
+        $45 \text{ seg} \times (1 + 0.10) = 45 \times 1.10 = \mathbf{49.5} \text{ segundos ajustados}$
         *(Esto significa que cada avión "ocupa" teóricamente 49.5 segundos)*.
     *   *Paso B (División)*: Dividimos la eficiencia por el tiempo ajustado.
-        $ C = \frac{0.80}{49.5} = \mathbf{0.01616} \text{ vuelos por segundo} $
+        $C = \frac{0.80}{49.5} = \mathbf{0.01616} \text{ vuelos por segundo}$
 
 3.  **Conversión a Horas**:
     *   Una hora tiene 3600 segundos.
-        $ 0.01616 \times 3600 = \mathbf{58.18} \text{ vuelos por hora} $
+        $0.01616 \times 3600 = \mathbf{58.18} \text{ vuelos por hora}$
 
 **Resultado Final**: El sector BOG-NORTE puede manejar máximo **58 aviones por hora**. Si entran 60, se satura.
 
@@ -150,9 +150,9 @@ Queremos predecir el tráfico para el año 2026.
     *   $b$ (Intersección): En el año 0 (base), había teóricamente **5000 vuelos**.
 
 2.  **Cálculo**:
-    $ \text{Tráfico} = (200 \times 2026) + 5000 $
+    $\text{Tráfico} = (200 \times 2026) + 5000$
     
-    $ \text{Tráfico} = 405,200 + 5,000 = \mathbf{410,200} \text{ vuelos} $
+    $\text{Tráfico} = 405,200 + 5,000 = \mathbf{410,200} \text{ vuelos}$
 
 **Nota**: Nuestro sistema usa esto + *Random Forest* (que corrige el error de esta línea recta usando patrones complejos).
 
@@ -170,13 +170,11 @@ El modelo predice que mañana a las 8:00 AM habrá **100 vuelos** ($\hat{y}=100$
 La volatilidad histórica (desviación estándar) a esa hora es de **5 vuelos** ($\sigma=5$).
 
 1.  **Cálculo del Margen**:
-    $ 1.96 \times 5 = \mathbf{9.8} \text{ vuelos} $
+    $1.96 \times 5 = \mathbf{9.8} \text{ vuelos}$
     *(Usamos 1.96 porque eso cubre el 95% de la curva normal)*.
 
 2.  **Rango**:
-    *   Mínimo: $ 100 - 9.8 = 90.2 $
-    *   Máximo: $ 100 + 9.8 = 109.8 $
+    *   Mínimo: $100 - 9.8 = 90.2$
+    *   Máximo: $100 + 9.8 = 109.8$
 
 **Interpretación**: "Esperamos 100 vuelos, pero prepárese para tener entre **90 y 110**."
-
-
