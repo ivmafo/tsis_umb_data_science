@@ -75,9 +75,11 @@ flowchart LR
     G --> H[ResultDTO]
 ```
 
-### Mapeo de Métodos Críticos
-- **`_get_tps()`**: Calcula el promedio de duración de vuelos en el sector mediante agregación SQL en DuckDB.
-- **`execute()`**: Centraliza la aplicación de la fórmula `CH = (3600 * SCV) / TPS`.
+- **`execute()`**: Centraliza la aplicación de la fórmula de capacidad horaria:
+
+$$
+\text{CH} = \frac{3600 \times \text{SCV}}{\text{TPS}}
+$$
 
 ---
 

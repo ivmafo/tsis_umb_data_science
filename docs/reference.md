@@ -26,7 +26,10 @@ Los casos de Uso ([`src/application/use_cases/`](file:///c:/Users/LENOVO/Documen
 [`PredictSeasonalTrend`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/predict_seasonal_trend.py) utiliza la descomposición de series de tiempo.
 
 **Ecuación de Tendencia**:
-$$ y_t = \beta_0 + \beta_1 t + \sum_{n=1}^N \left[ a_n \cos\left(\frac{2\pi n t}{P}\right) + b_n \sin\left(\frac{2\pi n t}{P}\right) \right] + \epsilon_t $$
+
+$$
+y_{t} = \beta_{0} + \beta_{1} t + \sum_{n=1}^N \left[ a_{n} \cos\left(\frac{2\pi nt}{P}\right) + b_{n} \sin\left(\frac{2\pi nt}{P}\right) \right] + \epsilon_{t}
+$$
 
 - **Justificación**: El espacio aéreo presenta ciclos anuales ($P=365.25$) y semanales ($P=7$). El uso de términos de Fourier ($N=10$ para anual, $N=3$ para semanal) permite capturar la ciclicidad sin sobreajuste (overfitting).
 - **Referencia**: Hyndman, R.J., & Athanasopoulos, G. (2018). *Forecasting: Principles and Practice*.
@@ -35,7 +38,7 @@ $$ y_t = \beta_0 + \beta_1 t + \sum_{n=1}^N \left[ a_n \cos\left(\frac{2\pi n t}
 [`PredictDailyDemand`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/predict_daily_demand.py) implementa un modelo de residuos.
 1.  **Paso 1**: Se extrae la tendencia estacional.
 2.  **Paso 2**: El **Random Forest** se entrena sobre los residuos ($\epsilon_t$) usando retardos (lags) de 7, 14 y 30 días.
-3.  **Matemática**: $ \hat{\epsilon}_t = f(L_7, L_{14}, L_{30}) $, donde $f$ son los árboles de decisión generados.
+3.  **Matemática**: $\hat{\epsilon}_{t} = f(L_{7}, L_{14}, L_{30})$, donde $f$ son los árboles de decisión generados.
 
 ---
 

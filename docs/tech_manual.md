@@ -71,16 +71,28 @@ La capacidad técnica de un sector ATC se fundamenta en la cuantificación de la
 
 #### A. Cálculo del TPS (Time in Sector)
 Dada una partición del espacio aéreo $S$, el TPS es la esperanza matemática de la duración de los tránsitos:
-$$ TPS = \frac{1}{N} \sum_{i=1}^{N} (t_{out, i} - t_{in, i}) $$
+
+$$
+\text{TPS} = \frac{1}{N} \sum_{i=1}^{N} (t_{\text{out}, i} - t_{\text{in}, i})
+$$
+
 Implementado en `CalculateSectorCapacity._get_tps()` mediante agregaciones SQL en DuckDB.
 
 #### B. Capacidad Simultánea de Vuelos (SCV)
 Representa el límite de saturación instantánea:
-$$ SCV = \frac{TPS}{TFC \times 1.3} $$
+
+$$
+\text{SCV} = \frac{\text{TPS}}{\text{TFC} \times 1.3}
+$$
+
 Donde **TFC** es la suma de Transferencia, Comunicación, Separación y Coordinación. El factor **1.3** es el **Margen de Seguridad Cognitiva** (30% de reserva).
 
 #### C. Capacidad Horaria (CH)
-$$ CH = \left( \frac{3600 \times SCV}{TPS} \right) \times R $$
+
+$$
+\text{CH} = \left( \frac{3600 \times \text{SCV}}{\text{TPS}} \right) \times R
+$$
+
 **R** es el **Factor de Ajuste de Resiliencia** (0.1 - 1.0), penalizando la capacidad teórica según condiciones meteorológicas o técnicas.
 
 ---
@@ -91,14 +103,22 @@ El sistema utiliza un ensamble para capturar tanto la ciclicidad como las anomal
 
 #### A. Componente Estacional (FFT)
 Se descompone la serie temporal $Y_t$ usando series de Fourier:
-$$ S_t = \sum_{n=1}^{k} [ a_n \cos(\frac{2\pi nt}{P}) + b_n \sin(\frac{2\pi nt}{P}) ] $$
+
+$$
+S_t = \sum_{n=1}^{k} \left[ a_n \cos\left(\frac{2\pi n t}{P}\right) + b_n \sin\left(\frac{2\pi n t}{P}\right) \right]
+$$
+
 - **Anual**: $P=365.25$, $k=10$ armónicos.
 - **Semanal**: $P=7$, $k=3$ armónicos.
 
 #### B. Componente Residual (Random Forest)
-Los residuos $R_t = Y_t - S_t$ son procesados por un bosque aleatorio de 100 árboles:
-$$ \hat{R}_{t+1} = \frac{1}{100} \sum_{m=1}^{100} T_m(L_1, L_7, L_{30}) $$
-Donde $L_n$ son los **Lags** (retardos) de la serie de tiempo.
+Los residuos $R_{t} = Y_{t} - S_{t}$ son procesados por un bosque aleatorio de 100 árboles:
+
+$$
+\hat{R}_{t+1} = \frac{1}{100} \sum_{m=1}^{100} T_{m}(L_{1}, L_{7}, L_{30})
+$$
+
+Donde $L_{n}$ son los **Lags** (retardos) de la serie de tiempo.
 
 ---
 
