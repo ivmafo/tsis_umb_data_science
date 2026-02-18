@@ -232,24 +232,26 @@ Estos diagramas enfatizan la organización estructural de los objetos que envía
 
 ```mermaid
 graph LR
-    User((Controlador ATC))
-    UI[CapacityView]
-    Ctrl[API Controller]
-    UC[CalculateUseCase]
-    Repo[DuckDB Repo]
+    User(("Controlador ATC"))
+    UI["CapacityView"]
+    Ctrl["API Controller"]
+    UC["CalculateUseCase"]
+    Repo["DuckDB Repo"]
+    DB[("DB Engine")]
 
     linkStyle default stroke-width:2px,fill:none,stroke:black;
 
-    User -- 1. Solicita Cálculo --> UI
-    UI -- 2. GET /capacity --> Ctrl
-    Ctrl -- 3. execute --> UC
-    UC -- 4. get_tps --> Repo
-    Repo -- 5. SQL Aggregation --> Repo
-    Repo -. 6. Return Metrics .-> UC
-    UC -- 7. Apply C006 Formula --> UC
-    UC -. 8. Return ResultDTO .-> Ctrl
-    Ctrl -. 9. Return JSON .-> UI
-    UI -. 10. Render Charts .-> User
+    User -- "1. Solicita Cálculo" --> UI
+    UI -- "2. GET /capacity" --> Ctrl
+    Ctrl -- "3. execute()" --> UC
+    UC -- "4. get_tps()" --> Repo
+    Repo -- "5. SQL Aggregation" --> DB
+    DB -. "6. Return Metrics" .-> Repo
+    Repo -. "7. Return Entities" .-> UC
+    UC -- "8. Apply C006" --> UC
+    UC -. "9. Return ResultDTO" .-> Ctrl
+    Ctrl -. "10. Return JSON" .-> UI
+    UI -. "11. Render Charts" .-> User
 ```
 
 #### 🔍 Análisis Detallado: Colaboración
