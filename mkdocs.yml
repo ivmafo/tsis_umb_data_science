@@ -57,3 +57,5 @@ nav:
     - Capa de Infraestructura: infrastructure.md
   - 💻 Frontend: frontend.md
   - 📚 Referencia Técnica: reference.md
+  - 📘 Manual Técnico Maestro: tech_manual.md
+  - 📙 Manual de Usuario: user_manual.md
