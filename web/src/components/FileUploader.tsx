@@ -3,11 +3,33 @@ import { uploadFile, ingestData } from '../api';
 import { UploadCloud, Loader2, Check, XCircle } from 'lucide-react';
 import clsx from 'clsx';
 
+/**
+ * Componente de Entrada: Cargador de Archivos Estratégicos.
+ * 
+ * Proporciona una interfaz visual para la transferencia de archivos Excel (.xlsx)
+ * desde la estación de trabajo local al repositorio de datos del servidor.
+ * 
+ * Atributos Técnicos:
+ * - Automatización de Ingesta: Dispara el proceso de indexación DuckDB inmediatamente tras la carga.
+ * - Validación Prematura: Captura errores de red y de formato antes de confirmar la carga.
+ * - Feedback Multiestado: Gestiona estados de 'idle', 'uploading', 'success' y 'error' visualmente.
+ * 
+ * @param props.onUploadSuccess - Callback invocado para refrescar el inventario tras una carga exitosa.
+ */
 export const FileUploader = ({ onUploadSuccess }: { onUploadSuccess: () => void }) => {
+    // uploading: Bloqueo de UI y activación del spinner de carga asíncrona
     const [uploading, setUploading] = useState(false);
+
+    // status: Máquina de estados finitos para la respuesta visual del componente
     const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+    // message: Información detallada sobre el resultado de la operación (ej: errores de esquema)
     const [message, setMessage] = useState<string | null>(null);
 
+    /**
+     * Controlador de evento de selección de archivo.
+     * Ejecuta la subida binaria y el disparador ETL en secuencia.
+     */
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -17,16 +39,16 @@ export const FileUploader = ({ onUploadSuccess }: { onUploadSuccess: () => void 
         setMessage(null);
 
         try {
+            // Fase 1: Transferencia física del archivo al directorio /data
             await uploadFile(file);
 
-            // Auto-trigger ingestion
             try {
+                // Fase 2: Disparo automático del pipeline de procesamiento
                 await ingestData();
-                setMessage(`Archivo ${file.name} cargado. Ingesta iniciada en segundo plano.`);
+                setMessage(`Archivo ${file.name} cargado. La indexación ha comenzado en segundo plano.`);
             } catch (etlErr) {
-                console.error("Auto-ingest failed trigger", etlErr);
-                // We don't fail the upload just because ETL trigger failed, but we warn
-                setMessage(`Archivo cargado, pero error al iniciar ingesta automática.`);
+                console.error("Fallo técnico en disparo automático de ingesta:", etlErr);
+                setMessage(`Carga física exitosa, pero se requiere inicio manual de procesamiento.`);
             }
 
             setStatus('success');
@@ -34,10 +56,10 @@ export const FileUploader = ({ onUploadSuccess }: { onUploadSuccess: () => void 
             setTimeout(() => setStatus('idle'), 3000);
         } catch (err: any) {
             setStatus('error');
-            setMessage(err.response?.data?.detail || "Error al subir archivo");
+            setMessage(err.response?.data?.detail || "Error en la transferencia de red o formato inválido.");
         } finally {
             setUploading(false);
-            e.target.value = "";
+            e.target.value = ""; // Limpieza del buffer del input
         }
     };
 

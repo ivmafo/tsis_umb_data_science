@@ -6,23 +6,48 @@ import { MethodologySection } from './MethodologySection';
 import { DataTable } from './DataTable';
 
 interface Props {
+    /** Filtros de predicción aplicados desde el dashboard (Sector, Ruta, Aeropuerto) */
     filters?: PredictiveFilters;
 }
 
+/**
+ * Visualización de Demanda de Vuelo Diaria (Serie Temporal).
+ * 
+ * Este componente muestra la proyección del volumen de vuelos a 30 días vista.
+ * Soporta dos comportamientos distintos basados en los filtros de fecha:
+ * 1. Flujo Continuo: Serie temporal real + predicción IA + banda de confianza.
+ * 2. Comparativa Estacional: Superposición de líneas por temporada/año.
+ * 
+ * @param props - Propiedades con los filtros de búsqueda.
+ */
 const DailyDemandChart: React.FC<Props> = ({ filters = {} }) => {
+    // series: Almacena las líneas de datos para el gráfico ApexCharts
     const [series, setSeries] = useState<any[]>([]);
+
+    // history: Datos históricos normalizados para la tabla de visualización
     const [history, setHistory] = useState<any[]>([]);
+
+    // metrics: Metadatos del modelo (Accuracy, RMSFE, R2) y reportes narrativos
     const [metrics, setMetrics] = useState<any>(null);
+
+    // loading: Bloqueo de UI mientras se ejecuta la inferencia en el backend
     const [loading, setLoading] = useState(true);
+
     const [error, setError] = useState<string | null>(null);
 
+    // Dispara la consulta cada vez que el contexto operacional es modificado
     useEffect(() => {
         fetchData();
     }, [filters]);
 
+    /**
+     * Consume el servicio de predicción de demanda diaria.
+     * Mapea el objeto JSON complejo a estructuras de datos para series y tablas.
+     */
     const fetchData = async () => {
         try {
             setLoading(true);
+            // Llama a /predictive/daily-demand con un horizonte de 30 muestras
             const data = await getDailyDemandForecast(30, filters);
 
             if (data.error) {
@@ -31,10 +56,7 @@ const DailyDemandChart: React.FC<Props> = ({ filters = {} }) => {
                 return;
             }
 
-            // Prepare metrics object
             const newMetrics = data.metrics || {};
-
-            // Merge root-level properties into metrics
             if (data.description) newMetrics.description = data.description;
             if (data.explanation_steps) newMetrics.explanation_steps = data.explanation_steps;
             if (data.executive_report) newMetrics.executive_report = data.executive_report;
@@ -42,12 +64,12 @@ const DailyDemandChart: React.FC<Props> = ({ filters = {} }) => {
 
             setMetrics(newMetrics);
 
+            // Bifurcación de lógica según el tipo de respuesta (Estacional o Continua)
             if (data.seasonal) {
-                // SEASONAL MODE
-                // Flatten and Format for Table
+                // LOGICA ESTACIONAL: Alinea datos por MM-DD para comparación interanual
                 const formattedHistory = data.history.flatMap((h: any) =>
                     h.data.map((d: any) => ({
-                        Fecha: `${h.name}-${d.x}`, // e.g. 2023-12-01
+                        Fecha: `${h.name}-${d.x}`,
                         Vuelos: d.y,
                         Temporada: h.name
                     }))
@@ -61,12 +83,12 @@ const DailyDemandChart: React.FC<Props> = ({ filters = {} }) => {
                 }));
 
                 const forecastData = data.forecast.map((d: any) => ({
-                    x: d.date.substring(5), // Extract MM-DD
+                    x: d.date.substring(5),
                     y: d.value
                 }));
 
                 seasonalSeries.push({
-                    name: 'Predicción (Estacional)',
+                    name: 'Predicción Estimada',
                     type: 'line',
                     data: forecastData,
                     dashArray: 5
@@ -74,10 +96,9 @@ const DailyDemandChart: React.FC<Props> = ({ filters = {} }) => {
 
                 setSeries(seasonalSeries);
             } else {
-                // STANDARD MODE
+                // LOGICA CONTINUA: Utiliza timestamps para un eje temporal real (X-axis: datetime)
                 setHistory(data.history || []);
 
-                // Prepare Data
                 const historyData = data.history.map((item: any) => ({
                     x: new Date(item.date).getTime(),
                     y: item.value
@@ -88,38 +109,27 @@ const DailyDemandChart: React.FC<Props> = ({ filters = {} }) => {
                     y: item.value
                 }));
 
-                // Confidence Interval (Range Area)
                 const ciData = data.forecast.map((item: any) => ({
                     x: new Date(item.date).getTime(),
                     y: [item.lower, item.upper]
                 }));
 
                 setSeries([
-                    {
-                        name: 'History',
-                        type: 'line',
-                        data: historyData
-                    },
-                    {
-                        name: 'Forecast',
-                        type: 'line',
-                        data: forecastData
-                    },
-                    {
-                        name: 'Confidence Interval',
-                        type: 'rangeArea',
-                        data: ciData
-                    }
+                    { name: 'History', type: 'line', data: historyData },
+                    { name: 'Forecast', type: 'line', data: forecastData },
+                    { name: 'Confidence Interval', type: 'rangeArea', data: ciData }
                 ]);
             }
             setLoading(false);
         } catch (err: any) {
-            console.error(err);
-            setError(`Failed to load: ${err.message || 'Unknown error'}`);
+            setError(`Error técnico en el motor de demanda: ${err.message}`);
             setLoading(false);
         }
     };
 
+    /**
+     * Configuración del gráfico ApexCharts.
+     */
     const options: ApexOptions = {
         chart: {
             height: 350,
@@ -131,20 +141,16 @@ const DailyDemandChart: React.FC<Props> = ({ filters = {} }) => {
         stroke: {
             curve: 'smooth',
             width: 2,
-            dashArray: filters.start_date ? undefined : [0, 5, 0] // Dynamic dash array
+            // Estilo de línea dinámico según el modo de filtros
+            dashArray: filters.start_date ? undefined : [0, 5, 0]
         },
-        // fill: { // removed fixed fill to allow auto colors for many lines
-        //     type: ['solid', 'solid', 'solid'],
-        //     opacity: [1, 1, 0.3]
-        // },
-        // colors: ['#008FFB', '#00E396', '#00E396'], // let apex choose colors for seasonal
         title: {
             text: filters.start_date ? 'Comparación Estacional (Histórico vs Predicción)' : 'Predicción de Demanda Diaria (Próximos 30 Días)',
             align: 'left',
             style: { fontSize: '16px', fontWeight: 'bold' }
         },
         xaxis: {
-            type: filters.start_date ? 'category' : 'datetime', // Use category for MM-DD
+            type: filters.start_date ? 'category' : 'datetime', // Categorías para MM-DD, Datetime para flujo continuo
             tooltip: { enabled: true },
             labels: filters.start_date ? undefined : { datetimeFormatter: { year: 'yyyy', month: 'MMM \'yy', day: 'dd MMM', hour: 'HH:mm' } }
         },
@@ -155,7 +161,6 @@ const DailyDemandChart: React.FC<Props> = ({ filters = {} }) => {
         tooltip: {
             shared: true,
             intersect: false,
-            // x: { format: 'dd MMM yyyy' }, // format depends on mode
             y: {
                 formatter: (val) => val ? val.toFixed(0) : ''
             }
@@ -168,7 +173,9 @@ const DailyDemandChart: React.FC<Props> = ({ filters = {} }) => {
     if (loading) return <div className="p-4 text-center">Cargando Modelo de Predicción...</div>;
     if (error) return <div className="p-4 text-center text-red-500">{error}</div>;
 
-    // Translation for Series Names
+    /**
+     * Traducción dinámica de nombres de series para la leyenda.
+     */
     const translatedSeries = series.map(s => ({
         ...s,
         name: s.name === 'History' ? 'Histórico' :

@@ -7,12 +7,34 @@ from .manage_sectors import ManageSectors
 from .predict_daily_demand import PredictDailyDemand
 
 class PredictSectorSaturation:
+    """
+    Analizador de riesgo de saturación técnica.
+    Cruza los modelos de demanda predictiva con la capacidad técnica calculada 
+    para identificar momentos exactos de sobrecarga operativa en el futuro.
+    """
     def __init__(self, db_path: str = "data/metrics.duckdb"):
+        """
+        Inicializa el analizador inyectando sus dependencias.
+        """
         self.db_path = db_path
         self.manage_sectors = ManageSectors(db_path)
         self.demand_predictor = PredictDailyDemand(db_path)
 
     def execute(self, sector_id: str = None, days_ahead: int = 30,  start_date: str = None, end_date: str = None, **kwargs) -> Dict[str, Any]:
+        """
+        Calcula el índice de saturación proyectado.
+        
+        Deriva la carga horaria máxima estimada (pico) y la compara con la 
+        Capacidad Declarada del sector para emitir estados de alerta (Normal/Alerta/Crítico).
+        
+        Args:
+            sector_id (str): UUID del sector (Obligatorio).
+            days_ahead (int): Horizonte de proyección.
+            start_date/end_date: Rango para análisis estacional si aplica.
+            
+        Returns:
+            Dict: Reporte ejecutivo de saturación y series históricas/proyectadas.
+        """
         # Support kwargs for other filters if passed, though Sector Saturation primarily needs SectorID
         # The API controller might pass other filters in kwargs or we explicitly add them.
         # But for Saturation, SectorID is mandatory.

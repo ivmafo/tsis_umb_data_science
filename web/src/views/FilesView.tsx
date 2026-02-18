@@ -1,18 +1,23 @@
 import { FileList } from '../components/FileList';
 
+/**
+ * Vista de Gestión: Almacenamiento y Archivos de Datos.
+ * 
+ * Este componente es el contenedor estructural para la administración de 
+ * los volúmenes de datos ingestados. Su propósito es organizar el contexto
+ * visual para `FileList`, permitiendo la inspección y purga de archivos.
+ */
 export const FilesView = () => {
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
+            <header className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-800">Listado de Archivos</h1>
-                    <p className="text-slate-500 mt-1">Gestiona y visualiza los datos cargados en el sistema.</p>
+                    <h1 className="text-3xl font-bold text-slate-800">Repositorio de Archivos</h1>
+                    <p className="text-slate-500 mt-1">Inspección y gestión de volúmenes de datos en la base `data/metrics.duckdb`.</p>
                 </div>
-            </div>
+            </header>
 
-            {/* Reusing existing component, modified for light theme context via props/css if needed, 
-                but defaulting to existing styles which are glassmophic. 
-                I might need to adjust Global CSS to support light layout background. */}
+            {/* Inyección del controlador de lista de archivos persistidos */}
             <FileList />
         </div>
     );

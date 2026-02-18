@@ -4,24 +4,53 @@ import { api } from '../api';
 import { FileText, FileSpreadsheet } from 'lucide-react';
 
 interface FlightsTreemapProps {
+    /** Filtros operativos (Sector, Fechas, Empresas, etc.) */
     filters: any;
+    /** Control de visibilidad para los botones de exportación masiva */
     allowExport?: boolean;
 }
 
+/**
+ * Visualización por Origen: Mapa de Árbol y Rankings de Tráfico.
+ * 
+ * Este componente es una herramienta de diagnóstico rápido para identificar
+ * hubs de origen con mayor presión operativa. Combina un gráfico Treemap
+ * dinámico con tablas de clasificación (Top 10 / Bottom 10).
+ * 
+ * Funcionalidades clave:
+ * - Colorización distribuida para máxima distinción entre aeródromos.
+ * - Cálculo automático de rankings tras cada actualización de filtros.
+ * - Exportación de reportes de origen en formatos estándares.
+ * 
+ * @param props - Filtros y flags de permisos.
+ */
 export const FlightsTreemap = ({ filters, allowExport = true }: FlightsTreemapProps) => {
+    // series: Datos formateados para el motor ApexCharts [ { data: [{ x, y }] } ]
     const [series, setSeries] = useState<any[]>([]);
+
+    // top10: Los 10 aeropuertos con mayor volumen para la tabla de líderes
     const [top10, setTop10] = useState<any[]>([]);
+
+    // bottom10: Los 10 aeropuertos con menor volumen (excluyendo actividad nula)
     const [bottom10, setBottom10] = useState<any[]>([]);
+
+    // loading: Estado de bloqueo durante la sincronización con DuckDB
     const [loading, setLoading] = useState(false);
+
     const [empty, setEmpty] = useState(false);
+
     const [exporting, setExporting] = useState(false);
 
+    /**
+     * Orquestador de obtención de datos.
+     * Transforma el estado reactivo del frontend en un payload compatible con el backend.
+     */
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             setEmpty(false);
             try {
-                // Construct Filters Payload
+                // Mapeo exhaustivo de filtros para la consulta SQL predictiva/estadística
                 const payload = {
                     start_date: filters.startDate || null,
                     end_date: filters.endDate || null,
@@ -39,6 +68,7 @@ export const FlightsTreemap = ({ filters, allowExport = true }: FlightsTreemapPr
                 const response = await api.post('/stats/flights-by-origin', payload);
 
                 if (response.data && response.data.length > 0) {
+                    // Ordenamiento descendente para cálculo de cuantiles y tablas
                     const sortedData = [...response.data].sort((a: any, b: any) => b.value - a.value);
 
                     const formattedData = sortedData.map((item: any) => ({
@@ -46,17 +76,12 @@ export const FlightsTreemap = ({ filters, allowExport = true }: FlightsTreemapPr
                         y: item.value
                     }));
 
-                    setSeries([{
-                        data: formattedData
-                    }]);
-
-                    // Extract Top 10
+                    setSeries([{ data: formattedData }]);
                     setTop10(sortedData.slice(0, 10));
 
-                    // Extract Bottom 10 (Last 10 items)
+                    // Filtrado de ruido (ceros) para el ranking inferior
                     const nonZero = sortedData.filter((d: any) => d.value > 0);
                     setBottom10(nonZero.slice(-10));
-
                 } else {
                     setEmpty(true);
                     setSeries([]);
@@ -64,7 +89,7 @@ export const FlightsTreemap = ({ filters, allowExport = true }: FlightsTreemapPr
                     setBottom10([]);
                 }
             } catch (error) {
-                console.error("Error fetching stats:", error);
+                console.error("Fallo al sincronizar orígenes:", error);
                 setEmpty(true);
             } finally {
                 setLoading(false);
@@ -75,11 +100,14 @@ export const FlightsTreemap = ({ filters, allowExport = true }: FlightsTreemapPr
         return () => clearTimeout(t);
     }, [filters]);
 
+    /**
+     * Motor de exportación de reportes de tráfico de origen.
+     * @param type - Formato de archivo (pdf/excel).
+     */
     const handleExport = async (type: 'pdf' | 'excel') => {
         if (exporting) return;
         setExporting(true);
         try {
-            // Construct Payload (Duplicate logic, ideally refactor)
             const payload = {
                 start_date: filters.startDate || null,
                 end_date: filters.endDate || null,
@@ -94,20 +122,10 @@ export const FlightsTreemap = ({ filters, allowExport = true }: FlightsTreemapPr
                 callsign: filters.selectedCallsign?.map((c: any) => c.value) || [],
             };
 
-            let endpoint = '';
-            let filename = '';
+            const endpoint = type === 'pdf' ? '/reports/origin/pdf' : '/reports/origin/excel';
+            const filename = `rep_origen_${new Date().toISOString().slice(0, 10)}.${type === 'pdf' ? 'pdf' : 'xlsx'}`;
 
-            if (type === 'pdf') {
-                endpoint = '/reports/origin/pdf';
-                filename = 'reporte_origen.pdf';
-            } else {
-                endpoint = '/reports/origin/excel';
-                filename = 'reporte_origen.xlsx';
-            }
-
-            const response = await api.post(endpoint, payload, {
-                responseType: 'blob'
-            });
+            const response = await api.post(endpoint, payload, { responseType: 'blob' });
 
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
@@ -117,19 +135,13 @@ export const FlightsTreemap = ({ filters, allowExport = true }: FlightsTreemapPr
             link.click();
             link.parentNode?.removeChild(link);
         } catch (error: any) {
-            console.error(`Error exporting ${type}:`, error);
-            if (error.response) {
-                alert(`Error al exportar: Servidor respondió con ${error.response.status} - ${error.response.statusText}`);
-            } else if (error.request) {
-                alert("Error al exportar: No se recibió respuesta del servidor. Verifique su conexión.");
-            } else {
-                alert(`Error al exportar: ${error.message}`);
-            }
+            console.error("Fallo al exportar reporte de origen:", error);
         } finally {
             setExporting(false);
         }
     };
 
+    // CONFIGURACIÓN VISUAL DEL TREEMAP (ApexCharts)
     const options: any = {
         legend: {
             show: false
@@ -138,7 +150,7 @@ export const FlightsTreemap = ({ filters, allowExport = true }: FlightsTreemapPr
             height: 500,
             type: 'treemap',
             toolbar: {
-                show: true // Enable toolbar 
+                show: true
             },
             fontFamily: 'Inter, sans-serif',
             animations: {
@@ -148,6 +160,7 @@ export const FlightsTreemap = ({ filters, allowExport = true }: FlightsTreemapPr
         title: {
             text: undefined
         },
+        // Paleta de colores vibrantes para distinguir aeropuertos
         colors: [
             '#3b82f6', '#8b5cf6', '#ec4899', '#f43f5e', '#f97316', '#eab308',
             '#22c55e', '#06b6d4', '#6366f1', '#d946ef', '#ef4444', '#14b8a6',
@@ -170,7 +183,7 @@ export const FlightsTreemap = ({ filters, allowExport = true }: FlightsTreemapPr
                 colors: ['#ffffff']
             },
             formatter: function (text: string, op: any) {
-                return [text, op.value];
+                return [text, op.value]; // Muestra Nombre y Cantidad dentro del cuadro
             },
             offsetY: -4
         },
@@ -185,29 +198,30 @@ export const FlightsTreemap = ({ filters, allowExport = true }: FlightsTreemapPr
         }
     };
 
+    // RENDERIZADO CONDICIONAL: Estados de Carga y Vacío
     if (loading) return (
         <div className="h-96 flex justify-center items-center text-slate-400 gap-2">
             <div className="w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-            Cargando...
+            Cargando estadísticas de origen...
         </div>
     );
 
     if (empty) return (
         <div className="h-96 flex justify-center items-center text-slate-400 bg-slate-50 rounded-xl border-dashed border-2 border-slate-200">
-            No hay datos suficientes para mostrar el treemap.
+            No se encontraron vuelos para los filtros seleccionados.
         </div>
     );
 
     return (
         <div className="w-full bg-white p-2 rounded-xl">
-            {/* Header with Export Buttons */}
+            {/* BOTONES DE EXPORTACIÓN RÁPIDA */}
             {allowExport && (
                 <div className="flex justify-end gap-2 mb-2">
                     <button
                         onClick={() => handleExport('pdf')}
                         disabled={exporting}
                         className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-white bg-rose-500 rounded hover:bg-rose-600 transition-colors disabled:opacity-50"
-                        title="Exportar a PDF"
+                        title="Descargar PDF"
                     >
                         <FileText className="w-3.5 h-3.5" />
                         PDF
@@ -216,16 +230,15 @@ export const FlightsTreemap = ({ filters, allowExport = true }: FlightsTreemapPr
                         onClick={() => handleExport('excel')}
                         disabled={exporting}
                         className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-white bg-emerald-600 rounded hover:bg-emerald-700 transition-colors disabled:opacity-50"
-                        title="Exportar a Excel"
+                        title="Descargar Excel"
                     >
                         <FileSpreadsheet className="w-3.5 h-3.5" />
                         Excel
                     </button>
-
                 </div>
             )}
 
-            {/* Chart Section */}
+            {/* ÁREA DEL GRÁFICO */}
             <div className="h-[520px] mb-6">
                 <Chart
                     options={options}
@@ -235,20 +248,23 @@ export const FlightsTreemap = ({ filters, allowExport = true }: FlightsTreemapPr
                 />
             </div>
 
-            {/* Tables Section - Grid Layout */}
+            {/* SECCIÓN DE RANKINGS (TABLAS DETALLADAS) */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                {/* Top 10 Table */}
+                {/* TABLA: TOP 10 (MAYOR DEMANDA) */}
                 <div className="overflow-hidden rounded-lg border border-slate-200 shadow-sm">
                     <div className="bg-slate-50 px-4 py-3 border-b border-slate-200">
-                        <h3 className="text-sm font-semibold text-slate-700">Top 10 Orígenes (Más frecuentes)</h3>
+                        <h3 className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            <span className="w-2 h-2 bg-indigo-500 rounded-full"></span>
+                            Top 10 Orígenes (Más frecuentes)
+                        </h3>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="min-w-full divide-y divide-slate-200">
                             <thead className="bg-white">
                                 <tr>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider w-16">#</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Origen</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Aeropuerto</th>
                                     <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Vuelos</th>
                                 </tr>
                             </thead>
@@ -265,18 +281,21 @@ export const FlightsTreemap = ({ filters, allowExport = true }: FlightsTreemapPr
                     </div>
                 </div>
 
-                {/* Bottom 10 Table */}
+                {/* TABLA: BOTTOM 10 (MENOR DEMANDA) */}
                 {bottom10.length > 0 && (
                     <div className="overflow-hidden rounded-lg border border-slate-200 shadow-sm">
                         <div className="bg-slate-50 px-4 py-3 border-b border-slate-200">
-                            <h3 className="text-sm font-semibold text-slate-700">Bottom 10 Orígenes (Menos frecuentes)</h3>
+                            <h3 className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                                <span className="w-2 h-2 bg-rose-500 rounded-full"></span>
+                                Bottom 10 Orígenes (Menos frecuentes)
+                            </h3>
                         </div>
                         <div className="overflow-x-auto">
                             <table className="min-w-full divide-y divide-slate-200">
                                 <thead className="bg-white">
                                     <tr>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider w-16">#</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Origen</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Aeropuerto</th>
                                         <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Vuelos</th>
                                     </tr>
                                 </thead>
@@ -285,7 +304,7 @@ export const FlightsTreemap = ({ filters, allowExport = true }: FlightsTreemapPr
                                         <tr key={item.name + 'bottom'} className="hover:bg-slate-50 transition-colors">
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{series[0]?.data.length - 10 + index + 1}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">{item.name}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-mono font-semibold text-red-500">{item.value.toLocaleString()}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-mono font-semibold text-rose-500">{item.value.toLocaleString()}</td>
                                         </tr>
                                     ))}
                                 </tbody>

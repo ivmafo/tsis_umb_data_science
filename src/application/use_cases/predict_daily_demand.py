@@ -6,10 +6,37 @@ from sklearn.ensemble import RandomForestRegressor
 from typing import Dict, Any, List
 
 class PredictDailyDemand:
+    """
+    Motor de predicción de demanda diaria basado en Machine Learning.
+    Utiliza un ensamble de árboles de decisión (Random Forest) para proyectar 
+    el conteo de vuelos futuros basado en patrones históricos y estacionales.
+    """
     def __init__(self, db_path: str = "data/metrics.duckdb"):
+        """
+        Inicializa el predictor.
+        
+        Args:
+            db_path (str): Ruta a la base de datos de métricas.
+        """
         self.db_path = db_path
 
     def execute(self, days_ahead: int = 30, sector_id: str = None, airport: str = None, route: str = None, min_level: int = None, max_level: int = None, start_date: str = None, end_date: str = None) -> Dict[str, Any]:
+        """
+        Orquesta el proceso de predicción según los filtros aplicados.
+        Soporta dos modos: Estándar (Random Forest) y Estacional (Decomposición).
+        
+        Args:
+            days_ahead (int): Horizonte de predicción en días.
+            sector_id (str): Filtra por un sector ATC específico.
+            airport (str): Filtra por vuelos que involucran un aeropuerto (Origen/Destino).
+            route (str): Filtra por una ruta específica (formato ICAO-ICAO).
+            min_level (int): Nivel de vuelo mínimo.
+            max_level (int): Nivel de vuelo máximo.
+            start_date/end_date (str): Si se proveen, activa el modo estacional comparativo.
+            
+        Returns:
+            Dict: Objeto con series históricas, proyecciones e intervalos de confianza.
+        """
         conn = duckdb.connect(self.db_path, read_only=True)
         try:
             # 1. Build Filter Conditions
@@ -257,6 +284,21 @@ class PredictDailyDemand:
             conn.close()
 
     def execute_seasonal(self, conn, where_clause, params, start_date_str, end_date_str):
+        """
+        Implementa la lógica de predicción basada en estacionalidad histórica.
+        Compara el periodo solicitado con los mismos periodos de años anteriores
+        y proyecta el crecimiento basado en la tendencia multianual.
+        
+        Args:
+            conn: Conexión activa a DuckDB.
+            where_clause (str): Filtros espaciales y de nivel ya procesados.
+            params (list): Parámetros para la consulta SQL.
+            start_date_str (str): Inicio del periodo estacional.
+            end_date_str (str): Fin del periodo estacional.
+            
+        Returns:
+            Dict: Análisis comparativo interanual y proyección estacional.
+        """
         # Extract MM-DD from dates
         s = datetime.strptime(start_date_str, "%Y-%m-%d")
         e = datetime.strptime(end_date_str, "%Y-%m-%d")

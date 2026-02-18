@@ -10,16 +10,36 @@ import {
     type Region
 } from '../api';
 
+/**
+ * Vista de Asociación: Mapeo de Regiones y Aeropuertos (RA).
+ * 
+ * Este componente gestiona la relación muchos-a-muchos entre las Regiones
+ * Aeronáuticas y los Aeropuertos (nodos). Es la base para el filtrado espacial
+ * agregador que permite ver la demanda de vuelos 'por región' en lugar de 
+ * 'por punto'.
+ * 
+ * Atributos Técnicos:
+ * - Carga en Paralelo: Utiliza Promise.all para sincronizar el catálogo de
+ *   regiones y las asignaciones existentes de forma atómica.
+ * - Validación Cruzada: Asegura integridad referencial mediante selectores
+ *   poblados dinámicamente desde el maestro de regiones.
+ * - Registro Histórico: Incluye visualización de fecha de creación de la 
+ *   asociación para auditoría.
+ */
 export const RegionAirportsView = () => {
+    // items: Lista de enlaces Region <-> Aeropuerto vigentes
     const [items, setItems] = useState<RegionAirport[]>([]);
+
+    // regions: Catálogo de regiones para poblar el dropdown de asignación
     const [regions, setRegions] = useState<Region[]>([]);
+
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
     const pageSize = 10;
 
-    // Modal
+    // ESTADO: Gestión de transaccionalidad en el modal
     const [showModal, setShowModal] = useState(false);
     const [editingId, setEditingId] = useState<number | null>(null);
     const [formData, setFormData] = useState({
@@ -27,9 +47,15 @@ export const RegionAirportsView = () => {
         region_id: 0
     });
 
+    /**
+     * Orquestador de Datos.
+     * Recupera simultáneamente las asignaciones paginadas y el catálogo maestro
+     * de regiones para evitar inconsistencias en el renderizado de etiquetas.
+     */
     const loadData = async () => {
         setLoading(true);
         try {
+            // Paralelización de peticiones para optimizar TTI (Time to Interactive)
             const [raData, rData] = await Promise.all([
                 getRegionAirports(page, pageSize, search),
                 getRegions()
@@ -38,12 +64,15 @@ export const RegionAirportsView = () => {
             setTotal(raData.total);
             setRegions(rData);
         } catch (err) {
-            console.error(err);
+            console.error("Fallo técnico en carga de asignaciones RA:", err);
         } finally {
             setLoading(false);
         }
     };
 
+    /**
+     * Listener de búsqueda con estabilidad (Debounce implícito por timeout).
+     */
     useEffect(() => {
         const timer = setTimeout(() => {
             loadData();
@@ -51,35 +80,48 @@ export const RegionAirportsView = () => {
         return () => clearTimeout(timer);
     }, [page, search]);
 
+    /**
+     * Limpieza de buffer transaccional.
+     */
     const resetForm = () => {
         setFormData({ icao_code: '', region_id: 0 });
         setEditingId(null);
     };
 
+    /**
+     * Handler de Guardado.
+     * Implementa lógica dual de creación/actualización basándose en el contexto del trigger.
+     */
     const handleCreateOrUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
+            // Reglas de Validación Front-end
             if (!formData.icao_code || formData.region_id <= 0) {
-                alert("Código ICAO y Región son requeridos");
+                alert("Error: El Código ICAO y la Región de destino son obligatorios.");
                 return;
             }
 
             if (editingId) {
+                // Actualización de enlace existente
                 await updateRegionAirport(editingId, formData);
             } else {
+                // Generación de nueva asignación
                 await createRegionAirport(formData);
             }
 
             setShowModal(false);
             resetForm();
-            loadData();
+            loadData(); // Re-sincronizar pool
         } catch (error: any) {
-            console.error("Error saving", error);
-            const msg = error.response?.data?.detail || "Error al guardar asignación";
+            console.error("Fallo en flujo de guardado RA:", error);
+            const msg = error.response?.data?.detail || "Error interno al persistir asignación.";
             alert(msg);
         }
     };
 
+    /**
+     * Inyección de datos en modal para edición.
+     */
     const handleEdit = (item: RegionAirport) => {
         setEditingId(item.id);
         setFormData({
@@ -89,16 +131,23 @@ export const RegionAirportsView = () => {
         setShowModal(true);
     };
 
+    /**
+     * Operación de Purga.
+     * Elimina el enlace lógico sin afectar las entidades base (Region o Aeropuerto).
+     */
     const handleDelete = async (id: number) => {
-        if (!confirm("¿Eliminar asignación?")) return;
+        if (!confirm("¿Desea eliminar esta asignación? El aeropuerto dejará de pertenecer a la región para efectos de cálculo.")) return;
         try {
             await deleteRegionAirport(id);
             loadData();
         } catch (error) {
-            console.error("Error deleting", error);
+            console.error("Fallo al purgar asignación RA:", error);
         }
     };
 
+    /**
+     * Apertura de formulario de creación.
+     */
     const openCreateModal = () => {
         resetForm();
         setShowModal(true);

@@ -8,21 +8,37 @@ from sklearn.preprocessing import StandardScaler
 from typing import Dict, Any, List
 
 class PredictSeasonalTrend:
+    """
+    Caso de uso para la generación de pronósticos de tendencia estacional a largo plazo.
+    
+    Utiliza un modelo híbrido basado en Análisis de Fourier para capturar ciclos anuales/semanales
+    y Regresión Lineal para proyectar la tendencia de fondo.
+    """
     def __init__(self, db_path: str = "data/metrics.duckdb"):
         self.db_path = db_path
 
     def execute(self, start_date: str, end_date: str, sector_id: str = None, airport: str = None, route: str = None, min_level: int = None, max_level: int = None) -> Dict[str, Any]:
         """
-        Generates a long-term seasonal forecast using Fourier Analysis + Linear Trend.
-        Mimics Prophet's seasonality decomposition.
+        Genera un pronóstico detallado descomponiendo la serie temporal en patrones cíclicos.
+        
+        Args:
+            start_date: Fecha de inicio del pronóstico (YYYY-MM-DD).
+            end_date: Fecha de fin del pronóstico (YYYY-MM-DD).
+            sector_id: ID opcional del sector para filtrar.
+            airport: Código de aeropuerto opcional para filtrar.
+            route: Ruta opcional (ej. SKBO-SKRG) para filtrar.
+            min_level/max_level: Rangos de niveles de vuelo opcionales.
+            
+        Returns:
+            Dict: Reporte ejecutivo, historial y proyección futura con intervalos de confianza.
         """
         conn = duckdb.connect(self.db_path, read_only=True)
         try:
-            # 1. Build Query
+            # 1. Construcción de la Consulta con filtros dinámicos
             conditions = ["fecha IS NOT NULL"]
             params = []
 
-            # --- Similarity to PredictDailyDemand Filters ---
+            # Filtrado por definición de sector (orígenes/destinos)
             if sector_id:
                 sector = conn.execute("SELECT definition FROM sectors WHERE id = ?", [sector_id]).fetchone()
                 if sector and sector[0]:
@@ -35,16 +51,19 @@ class PredictSeasonalTrend:
                         destinations_str = "', '".join(destinations)
                         conditions.append(f"origen IN ('{origins_str}') AND destino IN ('{destinations_str}')")
 
+            # Filtros por aeropuerto único (origen o destino)
             if airport:
                 conditions.append("(origen = ? OR destino = ?)")
                 params.extend([airport, airport])
 
+            # Filtros por ruta específica
             if route:
                 parts = route.split('-')
                 if len(parts) == 2:
                     conditions.append("origen = ? AND destino = ?")
                     params.extend([parts[0], parts[1]])
             
+            # Filtros de niveles de vuelo
             if min_level is not None:
                 conditions.append("nivel >= ?")
                 params.append(min_level)
@@ -55,7 +74,7 @@ class PredictSeasonalTrend:
 
             where_clause = " AND ".join(conditions)
 
-            # Get FULL History
+            # Obtener historial completo de vuelos para el entrenamiento
             query = f"""
                 SELECT 
                     fecha::DATE as ds, 
@@ -71,41 +90,35 @@ class PredictSeasonalTrend:
             else:
                 df = conn.execute(query).fetchdf()
 
+            # Validar suficiencia de datos históricos
             if df.empty or len(df) < 30:
-                return {"error": "Insufficient historical data for seasonal decomposition (need > 30 days)."}
+                return {"error": "Datos históricos insuficientes para la descomposición estacional (mínimo 30 días)."}
 
-            # 2. Preprocess & Feature Engineering (Fourier)
+            # 2. Preprocesamiento e Ingeniería de Características (Términos de Fourier)
             df['ds'] = pd.to_datetime(df['ds'])
             
-            # Fill gaps? Linear models handle gaps fine, but for Fourier continuity it's better to verify.
-            # We don't strictly need to fill zeroes if we are modeling potential, but let's stick to observed days.
-            # Actually, to capture "zero demand" days correctly, we should fill.
+            # Rellenar huecos de días sin vuelos con cero para mantener la continuidad matemática
             full_range = pd.date_range(start=df['ds'].min(), end=df['ds'].max(), freq='D')
             df = df.set_index('ds').reindex(full_range, fill_value=0).reset_index()
             df.columns = ['ds', 'y']
 
-            # Helper for Fourier Terms
             def add_fourier_terms(data, date_col='ds'):
-                # T = Time index
-                # We use day_of_year for Annual, day_of_week for Weekly
-                # Actually, simpler: define t as ordinal days since epoch/start
-                
-                # Annual Cycle (365.25 days)
-                # k=1..10
+                """
+                Genera términos de seno y coseno para modelar la estacionalidad periódica.
+                """
+                # Ciclo Anual (365.25 días). Orden 10 para capturar picos complejos.
                 t_year = data[date_col].dt.dayofyear
-                for k in range(1, 11): # 10 orders
+                for k in range(1, 11):
                     data[f'sin_year_{k}'] = np.sin(2 * np.pi * k * t_year / 365.25)
                     data[f'cos_year_{k}'] = np.cos(2 * np.pi * k * t_year / 365.25)
                 
-                # Weekly Cycle (7 days)
-                # k=1..3
+                # Ciclo Semanal (7 días). Orden 3 para diferencias entre fin de semana y semana.
                 t_week = data[date_col].dt.dayofweek
-                for k in range(1, 4): # 3 orders
+                for k in range(1, 4):
                     data[f'sin_week_{k}'] = np.sin(2 * np.pi * k * t_week / 7)
                     data[f'cos_week_{k}'] = np.cos(2 * np.pi * k * t_week / 7)
                 
-                # Trend (Ordinal)
-                # Normalize to avoid large numbers? StandardScaler will handle it.
+                # Índice de Tendencia (Ordinal temporal)
                 data['trend_index'] = data[date_col].map(datetime.toordinal)
                 
                 return data
@@ -116,22 +129,20 @@ class PredictSeasonalTrend:
             X = df_train[feature_cols]
             y = df_train['y']
 
-            # 3. Train Model (Linear Regression)
-            # Pipeline: Scale features -> Linear Regression
+            # 3. Entrenamiento del Modelo (Regresión Lineal Escalada)
             model = make_pipeline(StandardScaler(), LinearRegression())
             model.fit(X, y)
             
-            # Metrics (In-Sample)
+            # Cálculo de métricas de precisión
             y_pred_train = model.predict(X)
-            r2 = model.score(X, y)
-            rmse = np.sqrt(np.mean((y - y_pred_train)**2))
+            r2 = model.score(X, y) # Coeficiente de determinación
+            rmse = np.sqrt(np.mean((y - y_pred_train)**2)) # Error cuadrático medio
             
-            # Residual std for confidence intervals
+            # Desviación estándar de los residuales para intervalos de confianza (95%)
             residuals = y - y_pred_train
             std_resid = np.std(residuals)
 
-            # 4. Forecast
-            # Determine forecast range
+            # 4. Proyección Futura
             req_start = datetime.strptime(start_date, "%Y-%m-%d")
             req_end = datetime.strptime(end_date, "%Y-%m-%d")
             
@@ -142,10 +153,10 @@ class PredictSeasonalTrend:
             X_future = df_future[feature_cols]
             y_future = model.predict(X_future)
             
-            # Clip negative values
+            # Asegurar que no existan valores negativos en la demanda
             y_future = np.maximum(y_future, 0)
 
-            # 5. Build Response
+            # 5. Construcción de la Respuesta detallada
             forecast_data = []
             for d, val in zip(forecast_dates, y_future):
                 forecast_data.append({
@@ -155,23 +166,17 @@ class PredictSeasonalTrend:
                     "upper": int(round(val + 1.96 * std_resid))
                 })
 
-            # Format History (Return all or just recent? Let's return the relevant window around the forecast + some context)
-            # User wants "Last 25 years behavior". Showing 25 years of daily data is too much (9000 points).
-            # Let's return the last 2 years for context in the chart, plus the specifically requested future range.
-            # Or better: The chart component can handle downsampling if needed. Let's return the last 365 days.
-            
+            # Retornar los últimos 2 años de historia para contexto visual
             history_data = [
                 {"date": row['ds'].strftime("%Y-%m-%d"), "value": int(row['y'])}
                 for _, row in df.tail(365 * 2).iterrows() 
             ]
 
-            # Description
+            # Análisis de Tendencia y Estacionalidad para Reporte Ejecutivo
             years_analyzed = (df['ds'].max() - df['ds'].min()).days / 365.25
-            
-            # Trend Analysis
             trend_direction = "Creciente" if model.named_steps['linearregression'].coef_[0] > 0 else "Decreciente"
             
-            # Peak Season Analysis (simple heuristic from history)
+            # Identificación del mes pico basado en promedios históricos
             df['month'] = df['ds'].dt.month_name()
             monthly_avg = df.groupby('month')['y'].mean().sort_values(ascending=False)
             peak_month = monthly_avg.index[0]
@@ -182,16 +187,13 @@ class PredictSeasonalTrend:
                 f"El modelo descompuso la serie en patrones anuales y semanales con una fiabilidad del **{round(r2*100, 1)}%**."
             )
             
-            # Step by Step
             step_by_step = [
                 {"step": "1. Descomposición", "detail": "La serie temporal se separó en tres componentes: Tendencia (Largo Plazo), Estacionalidad Anual (Ciclos de 12 meses) y Estacionalidad Semanal (Días de la semana)."},
                 {"step": "2. Ajuste del Modelo", "detail": f"Se utilizó regresión lineal armónica (Fourier) sobre {round(years_analyzed, 1)} años de datos."},
                 {"step": "3. Proyección", "detail": "Se extendieron los patrones cíclicos detectados hacia el futuro, sumando la tendencia de fondo."}
             ]
 
-
-
-            # --- EXECUTIVE REPORT (STORYTELLING) ---
+            # --- REPORTE EJECUTIVO (Storytelling) ---
             executive_report = {
                 "title": "Informe Ejecutivo de Tendencia Estacional",
                 "narrative": (
@@ -204,10 +206,7 @@ class PredictSeasonalTrend:
                     f"Saber esto nos permite salir del modo reactivo ('apagar fuegos') y pasar al preventivo: sabemos cuándo vendrá la ola, así que podemos preparar la tabla de surf con meses de antelación.\n\n"
                     f"**Descomposición del Caos:**\n"
                     f"Hemos separado la señal del ruido. Lo que parece un gráfico caótico es en realidad la suma de tres fuerzas limpias: el crecimiento a largo plazo + el ciclo anual + la rutina semanal. "
-                    f"Nuestra predicción extiende estas tres fuerzas hacia el futuro para darle el mejor mapa de ruta posible.\n\n"
-                    f"**Glosario:**\n"
-                    f"- **Tendencia Secular**: La dirección 'real' del mercado si elimináramos todas las vacaciones y fines de semana.\n"
-                    f"- **Análisis de Fourier**: Una técnica matemática (usada también en música) para encontrar las 'notas' (frecuencias) que componen la melodía de su tráfico."
+                    f"Nuestra proyección extiende estas fuerzas hacia el futuro para darle el mejor mapa de ruta posible."
                 ),
                 "key_highlights": [
                     {"label": "Tendencia", "value": trend_direction, "insight": "Dirección a largo plazo"},
@@ -216,11 +215,8 @@ class PredictSeasonalTrend:
                 ]
             }
             
-            # DEBUG PRINT
-            print("DEBUG: Returning dict, keys:", list(executive_report.keys()))
-            
             return {
-                "model": "Fourier Decomposition (Linear Regression)",
+                "model": "Descomposición de Fourier (Regresión Lineal)",
                 "history": history_data,
                 "forecast": forecast_data,
                 "metrics": {
@@ -236,7 +232,7 @@ class PredictSeasonalTrend:
             }
 
         except Exception as e:
-            print(f"Error in PredictSeasonalTrend: {e}")
+            print(f"Error en PredictSeasonalTrend: {e}")
             raise e
         finally:
             conn.close()

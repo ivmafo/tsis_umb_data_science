@@ -23,25 +23,50 @@ interface SidebarProps {
     onSelect: (view: string) => void;
 }
 
+/**
+ * Componente de Navegación: Barra Lateral Operativa.
+ * 
+ * Gestiona el árbol de navegación de la aplicación y las acciones de 
+ * mantenimiento global de la persistencia (DuckDB). Es el punto de control
+ * para la transición entre vistas de análisis y configuración.
+ * 
+ * Atributos Técnicos:
+ * - Menú Jerárquico: Soporta anidamiento de primer nivel para agrupar herramientas (ej: ATC).
+ * - Control de Ingesta: Disparador de recarga masiva con bloqueo de estado.
+ * - Sincronización de Vista: Callback 'onSelect' para actualizar el router interno.
+ */
 export const Sidebar = ({ currentView, onSelect }: SidebarProps) => {
+    // expanded: Lista de IDs de menús padres que se encuentran desplegados
     const [expanded, setExpanded] = useState<string[]>(['dashboard']);
+
+    // isIngesting: Estado de bloqueo global mientras el backend reconstruye los índices
     const [isIngesting, setIsIngesting] = useState(false);
 
+    /**
+     * Controlador de Recarga Masiva de Datos.
+     * Realiza un truncado completo de la tabla de vuelos y re-procesa los archivos.
+     */
     const handleIngest = async () => {
-        if (confirm("¿Estás seguro de que quieres borrar y recargar todos los datos? Esta acción no se puede deshacer.")) {
+        if (confirm("ADVERTENCIA DE INTEGRIDAD: ¿Desea reconstruir completamente la base de datos? Se eliminarán los vuelos actuales y se re-indexarán los archivos válidos.")) {
             setIsIngesting(true);
             try {
+                // Ingesta forzada: borra y reprocesa
                 await ingestData(true);
-                alert("Proceso de ingestión iniciado. Los datos se actualizarán en breve.");
+                alert("Proceso de reconstrucción iniciado. El sistema actualizará los gráficos incrementalmente.");
             } catch (error) {
-                alert("Error al iniciar la ingestión.");
-                console.error(error);
+                alert("Fallo crítico en el motor de ingesta masiva.");
+                console.error("Error en handleIngest:", error);
             } finally {
                 setIsIngesting(false);
             }
         }
     };
 
+    /**
+     * Gestiona el estado de expansión de los acordeones del menú.
+     * @param id - Identificador del menú.
+     * @param hasChildren - Flag de si el menú es un contenedor.
+     */
     const toggleExpand = (id: string, hasChildren: boolean) => {
         if (!hasChildren) return;
         setExpanded(prev =>
@@ -49,6 +74,7 @@ export const Sidebar = ({ currentView, onSelect }: SidebarProps) => {
         );
     };
 
+    // DEFINICIÓN DEL MAPA DE NAVEGACIÓN: Estructura de menús e iconos
     const menuItems = [
         {
             id: 'dashboard',
@@ -77,11 +103,16 @@ export const Sidebar = ({ currentView, onSelect }: SidebarProps) => {
         { id: 'config', label: 'Configuración', icon: FaCogs },
     ];
 
+    /**
+     * Función recursiva para renderizar cada elemento del menú.
+     * Soporta anidamiento y resaltado automático de la vista activa.
+     */
     const renderMenuItem = (item: any, depth = 0) => {
         const Icon = item.icon;
         const hasChildren = item.children && item.children.length > 0;
         const isExpanded = expanded.includes(item.id);
         const isActive = currentView === item.id;
+        // Si un hijo está activo pero el menú está colapsado, mantenemos el padre con estilo activo
         const isChildActive = hasChildren && item.children.some((child: any) => child.id === currentView);
 
         return (
@@ -113,6 +144,7 @@ export const Sidebar = ({ currentView, onSelect }: SidebarProps) => {
                     )}
                 </div>
 
+                {/* RENDERIZADO DE SUBMENÚS */}
                 {hasChildren && isExpanded && (
                     <ul className="mt-1 space-y-1">
                         {item.children.map((child: any) => renderMenuItem(child, depth + 1))}
@@ -124,18 +156,23 @@ export const Sidebar = ({ currentView, onSelect }: SidebarProps) => {
 
     return (
         <aside className="fixed left-0 top-0 h-screen w-72 bg-gradient-to-br from-primary to-primary-dark text-white shadow-2xl z-50 overflow-y-auto">
+            {/* LOGO Y TÍTULO */}
             <div className="p-6 border-b border-white/10">
                 <h2 className="text-2xl font-bold tracking-tight">CEA Data</h2>
-                <p className="text-xs text-white/50 mt-1">Sistema de Gestión</p>
+                <p className="text-xs text-white/50 mt-1">Plataforma de Análisis Aeronáutico</p>
             </div>
 
+            {/* NAVEGACIÓN PRINCIPAL */}
             <nav className="p-4">
                 <ul className="space-y-2">
                     {menuItems.map(item => renderMenuItem(item, 0))}
                 </ul>
             </nav>
 
+            {/* SECCIÓN INFERIOR: ACCIONES DE MANTENIMIENTO */}
             <div className="absolute bottom-0 w-full bg-black/20">
+
+                {/* BOTÓN: RECARGA DE DATOS (INGESTIÓN) */}
                 <div
                     onClick={!isIngesting ? handleIngest : undefined}
                     className={clsx(
@@ -157,19 +194,21 @@ export const Sidebar = ({ currentView, onSelect }: SidebarProps) => {
                     <div>
                         <p className="text-sm font-medium text-white/90">Recargar Datos</p>
                         <p className={clsx("text-xs", isIngesting ? "text-amber-400" : "text-blue-400")}>
-                            {isIngesting ? 'Procesando...' : 'Volcado manual'}
+                            {isIngesting ? 'Procesando...' : 'Actualización masiva'}
                         </p>
                     </div>
                 </div>
 
+                {/* BOTÓN: LIMPIEZA TOTAL DE BASE DE DATOS */}
                 <div
                     onClick={async () => {
-                        if (confirm("ATENCIÓN: ¿Seguro que desea LIMPIAR toda la base de datos? Esto eliminará registros de vuelos y control de archivos.")) {
+                        if (confirm("PELIGRO: ¿Desea LIMPIAR COMPLETAMENTE la base de datos? Se eliminarán todos los vuelos procesados, históricos de ingestión y caches.")) {
                             try {
                                 await resetDatabase();
-                                alert("Base de datos reiniciada correctamente. (Tablas truncadas y recreadas)");
+                                alert("Base de datos reiniciada. Las tablas han sido recreadas.");
+                                window.location.reload(); // Recargar para limpiar estados de UI
                             } catch (e) {
-                                alert("Error al reiniciar BD.");
+                                alert("Error crítico al reiniciar BD.");
                                 console.error(e);
                             }
                         }
@@ -181,10 +220,11 @@ export const Sidebar = ({ currentView, onSelect }: SidebarProps) => {
                     </div>
                     <div>
                         <p className="text-sm font-medium text-white/90">Limpiar BD</p>
-                        <p className="text-xs text-red-400">Truncate & Recreate</p>
+                        <p className="text-xs text-red-400">Truncar y Recrear Tablas</p>
                     </div>
                 </div>
 
+                {/* INDICADOR DE ESTADO DEL SISTEMA (Consumo de RAM/CPU/DB) */}
                 <SystemStatus />
             </div>
         </aside>

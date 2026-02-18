@@ -4,10 +4,32 @@ import numpy as np
 from typing import Dict, Any, List
 
 class PredictPeakHours:
+    """
+    Analizador de congestión horaria y picos de demanda.
+    Procesa grandes volúmenes de datos históricos para identificar patrones térmicos 
+    de tráfico y alertar sobre posibles cuellos de botella operativos en slots específicos.
+    """
     def __init__(self, db_path: str = "data/metrics.duckdb"):
+        """
+        Inicializa el analizador.
+        """
         self.db_path = db_path
 
     def execute(self, sector_id: str = None, airport: str = None, route: str = None, min_level: int = None, max_level: int = None, start_date: str = None, end_date: str = None, aggregation: str = "avg") -> Dict[str, Any]:
+        """
+        Genera un mapa de calor (Heatmap) de la demanda horaria por día de la semana.
+        
+        Args:
+            sector_id (str): ID del sector ATC.
+            airport (str): Filtro por aeropuerto.
+            route (str): Filtro por ruta.
+            min_level/max_level: Filtros de altitud.
+            start_date/end_date: Rango para análisis estacional.
+            aggregation (str): Método de agregación (promedio por defecto).
+            
+        Returns:
+            Dict: Datos de mapa de calor, informe ejecutivo y métricas de intensidad.
+        """
         conn = duckdb.connect(self.db_path, read_only=True)
         try:
             # 1. Build Filter Conditions

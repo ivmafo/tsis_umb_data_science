@@ -43,8 +43,17 @@ plugins:
       handlers:
         python:
           paths: [.]
+          options:
+            show_source: true
+            show_category_heading: true
+            show_root_heading: true
 
 nav:
   - Inicio: index.md
-  - Arquitectura: architecture.md
-  - Referencia Técnica: reference.md
+  - 🏛️ Arquitectura:
+    - Conceptos Hexagonales: architecture.md
+    - Capa de Dominio: domain.md
+    - Capa de Aplicación: application.md
+    - Capa de Infraestructura: infrastructure.md
+  - 💻 Frontend: frontend.md
+  - 📚 Referencia Técnica: reference.md

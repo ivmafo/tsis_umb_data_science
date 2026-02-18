@@ -4,24 +4,53 @@ import { api } from '../api';
 import { FileText, FileSpreadsheet } from 'lucide-react';
 
 interface DestinationsTreemapProps {
+    /** Filtros globales (Contexto de tiempo, aeropuerto y empresa) */
     filters: any;
+    /** Habilita los controles de descarga de reportes */
     allowExport?: boolean;
 }
 
+/**
+ * Visualización por Destino: Mapa de Árbol Jerárquico.
+ * 
+ * Este componente analiza la terminalización de las rutas aéreas, permitiendo
+ * identificar los destinos con mayor flujo entrante. Complementa el análisis
+ * de origen para proporcionar una visión bidireccional de la red ATC.
+ * 
+ * Características:
+ * - Clasificación automática de Top 10 destinos preferentes.
+ * - Desglose de los 10 destinos con menor frecuencia operativa.
+ * - Animaciones suaves para transiciones de filtrado.
+ * 
+ * @param props - Filtros operativos y permisos.
+ */
 export const DestinationsTreemap = ({ filters, allowExport = true }: DestinationsTreemapProps) => {
+    // series: [{ data: [{ x: 'Destino', y: Cantidad }] }]
     const [series, setSeries] = useState<any[]>([]);
+
+    // topData: Ranking de los 10 destinos líderes
     const [topData, setTopData] = useState<any[]>([]);
+
+    // bottomData: Ranking de los 10 destinos con menor tráfico activo
     const [bottomData, setBottomData] = useState<any[]>([]);
+
+    // loading: Feedback visual durante la ejecución de la consulta DuckDB
     const [loading, setLoading] = useState(false);
+
     const [empty, setEmpty] = useState(false);
+
     const [exporting, setExporting] = useState(false);
 
+    /**
+     * Sincronizador de datos con el bus de filtros del Dashboard.
+     * Implementa un debounce técnico para optimizar la carga del servidor.
+     */
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             setEmpty(false);
             try {
-                // Construct Filters Payload
+                // Estandarización del payload para el endpoint de destinos
                 const payload = {
                     start_date: filters.startDate || null,
                     end_date: filters.endDate || null,
@@ -39,22 +68,17 @@ export const DestinationsTreemap = ({ filters, allowExport = true }: Destination
                 const response = await api.post('/stats/flights-by-destination', payload);
 
                 if (response.data && response.data.length > 0) {
-                    // Start formatting for ApexCharts
+                    // Mapeo específico para el esquema de datos de Treemap
                     const formattedData = response.data.map((item: any) => ({
                         x: item.name,
                         y: item.value
                     }));
 
-                    setSeries([{
-                        data: formattedData
-                    }]);
+                    setSeries([{ data: formattedData }]);
 
-                    // Extract Top 10
+                    // Segmentación de rankings para visualización tabular
                     setTopData(response.data.slice(0, 10));
-
-                    // Extract Bottom 10 (Last 10 items)
                     setBottomData(response.data.slice(-10));
-
                 } else {
                     setEmpty(true);
                     setSeries([]);
@@ -62,7 +86,7 @@ export const DestinationsTreemap = ({ filters, allowExport = true }: Destination
                     setBottomData([]);
                 }
             } catch (error) {
-                console.error("Error fetching destination stats:", error);
+                console.error("Fallo técnico en carga de destinos:", error);
                 setEmpty(true);
             } finally {
                 setLoading(false);
@@ -73,11 +97,14 @@ export const DestinationsTreemap = ({ filters, allowExport = true }: Destination
         return () => clearTimeout(t);
     }, [filters]);
 
+    /**
+     * Motor de reporte de destinos.
+     * @param type - Formato de documento solicitado.
+     */
     const handleExport = async (type: 'pdf' | 'excel') => {
         if (exporting) return;
         setExporting(true);
         try {
-            // Construct Filters Payload (Duplicate logic, ideally refactor)
             const payload = {
                 start_date: filters.startDate || null,
                 end_date: filters.endDate || null,
@@ -93,11 +120,9 @@ export const DestinationsTreemap = ({ filters, allowExport = true }: Destination
             };
 
             const endpoint = type === 'pdf' ? '/reports/destination/pdf' : '/reports/destination/excel';
-            const filename = type === 'pdf' ? 'reporte_destino.pdf' : 'reporte_destino.xlsx';
+            const filename = `rep_destino_${new Date().toISOString().slice(0, 10)}.${type === 'pdf' ? 'pdf' : 'xlsx'}`;
 
-            const response = await api.post(endpoint, payload, {
-                responseType: 'blob'
-            });
+            const response = await api.post(endpoint, payload, { responseType: 'blob' });
 
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
@@ -107,19 +132,13 @@ export const DestinationsTreemap = ({ filters, allowExport = true }: Destination
             link.click();
             link.parentNode?.removeChild(link);
         } catch (error: any) {
-            console.error(`Error exporting ${type}:`, error);
-            if (error.response) {
-                alert(`Error al exportar: Servidor respondió con ${error.response.status} - ${error.response.statusText}`);
-            } else if (error.request) {
-                alert("Error al exportar: No se recibió respuesta del servidor. Verifique su conexión.");
-            } else {
-                alert(`Error al exportar: ${error.message}`);
-            }
+            console.error("Fallo en generación de reporte de destino:", error);
         } finally {
             setExporting(false);
         }
     };
 
+    // CONFIGURACIÓN VISUAL DEL TREEMAP (ApexCharts)
     const options: any = {
         legend: {
             show: false
@@ -148,11 +167,12 @@ export const DestinationsTreemap = ({ filters, allowExport = true }: Destination
         title: {
             text: undefined
         },
+        // PALETA: Colores verdosos y cianes para diferenciar visualmente del treemap de origen
         colors: [
             '#10b981', '#34d399', '#f43f5e', '#f97316', '#eab308', '#8b5cf6',
             '#3b82f6', '#06b6d4', '#6366f1', '#d946ef', '#ef4444', '#14b8a6',
             '#64748b', '#a855f7', '#d946ef', '#f43f5e'
-        ], // Slightly different palette (more greens/teals) needed? Kept similar for now but started with green.
+        ],
         plotOptions: {
             treemap: {
                 distributed: true,
@@ -208,19 +228,19 @@ export const DestinationsTreemap = ({ filters, allowExport = true }: Destination
     if (loading) return (
         <div className="h-96 flex justify-center items-center text-slate-400 gap-2">
             <div className="w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-            Cargando...
+            Cargando estadísticas de destino...
         </div>
     );
 
     if (empty) return (
         <div className="h-96 flex justify-center items-center text-slate-400 bg-slate-50 rounded-xl border-dashed border-2 border-slate-200">
-            No hay vuelos que coincidan con los filtros.
+            No se encontraron vuelos para los filtros aplicadores.
         </div>
     );
 
     return (
         <div className="w-full bg-white p-2 rounded-xl">
-            {/* Header with Export Buttons */}
+            {/* BOTONES DE ACCIÓN: EXPORTAR */}
             {allowExport && (
                 <div className="flex justify-end gap-2 mb-2">
                     <button
@@ -243,7 +263,7 @@ export const DestinationsTreemap = ({ filters, allowExport = true }: Destination
                     </button>
                 </div>
             )}
-            {/* Chart Section */}
+            {/* ÁREA DEL GRÁFICO PRINCIPAL */}
             <div className="h-[520px] mb-6">
                 <Chart
                     options={options}
@@ -253,20 +273,23 @@ export const DestinationsTreemap = ({ filters, allowExport = true }: Destination
                 />
             </div>
 
-            {/* Tables Section - Grid Layout */}
+            {/* SECCIÓN INFERIOR: RANKINGS EN TABLAS */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                {/* Top 10 Table */}
+                {/* TABLA: TOP 10 DESTINOS */}
                 <div className="overflow-hidden rounded-lg border border-slate-200 shadow-sm">
                     <div className="bg-slate-50 px-4 py-3 border-b border-slate-200">
-                        <h3 className="text-sm font-semibold text-slate-700">Top 10 Destinos (Más frecuentes)</h3>
+                        <h3 className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            <span className="w-2 h-2 bg-emerald-500 rounded-full"></span>
+                            Top 10 Destinos (Más frecuentes)
+                        </h3>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="min-w-full divide-y divide-slate-200">
                             <thead className="bg-white">
                                 <tr>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider w-16">#</th>
-                                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Destino</th>
+                                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Aeropuerto</th>
                                     <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Vuelos</th>
                                 </tr>
                             </thead>
@@ -275,7 +298,7 @@ export const DestinationsTreemap = ({ filters, allowExport = true }: Destination
                                     <tr key={item.name + 'top'} className="hover:bg-slate-50 transition-colors">
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{index + 1}</td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">{item.name}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-mono font-semibold text-indigo-600">{item.value}</td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-mono font-semibold text-indigo-600">{item.value.toLocaleString()}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -283,27 +306,30 @@ export const DestinationsTreemap = ({ filters, allowExport = true }: Destination
                     </div>
                 </div>
 
-                {/* Bottom 10 Table */}
+                {/* TABLA: BOTTOM 10 DESTINOS */}
                 {bottomData.length > 0 && (
                     <div className="overflow-hidden rounded-lg border border-slate-200 shadow-sm">
                         <div className="bg-slate-50 px-4 py-3 border-b border-slate-200">
-                            <h3 className="text-sm font-semibold text-slate-700">Bottom 10 Destinos (Menos frecuentes)</h3>
+                            <h3 className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                                <span className="w-2 h-2 bg-rose-500 rounded-full"></span>
+                                Bottom 10 Destinos (Menos frecuentes)
+                            </h3>
                         </div>
                         <div className="overflow-x-auto">
                             <table className="min-w-full divide-y divide-slate-200">
                                 <thead className="bg-white">
                                     <tr>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider w-16">#</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Destino</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Aeropuerto</th>
                                         <th className="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Vuelos</th>
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-slate-200">
                                     {bottomData.map((item, index) => (
                                         <tr key={item.name + 'bottom'} className="hover:bg-slate-50 transition-colors">
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{index + 1}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">{series[0]?.data.length - 10 + index + 1}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">{item.name}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-mono font-semibold text-red-500">{item.value}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-right font-mono font-semibold text-rose-500">{item.value.toLocaleString()}</td>
                                         </tr>
                                     ))}
                                 </tbody>

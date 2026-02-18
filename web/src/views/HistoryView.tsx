@@ -11,24 +11,50 @@ interface HistoryItem {
     error_message: string | null;
 }
 
+/**
+ * Vista de Auditoría: Historial de Procesamiento ETL.
+ * 
+ * Este componente proporciona visibilidad sobre el ciclo de vida de los datos
+ * ingestados. Permite a los administradores rastrear el origen (archivos),
+ * el volumen (row_count) y el resultado técnico (status/errors) de cada carga.
+ * 
+ * Atributos Técnicos:
+ * - Polling de Estado: Implementa un intervalo de refresco automático de 5s 
+ *   para monitorear procesos en ejecución (PROCESSING).
+ * - Trazabilidad: Vincula cada registro a un archivo físico y una estampa temporal.
+ * - Manejo de Errores: Visualiza mensajes de excepción crudos del servidor
+ *   para diagnóstico rápido de fallos en el esquema CSV/XLS.
+ */
 export const HistoryView = () => {
+    // history: Registro cronológico de transacciones ETL
     const [history, setHistory] = useState<HistoryItem[]>([]);
+
+    // loading: Estado de carga inicial para el primer fetch
     const [loading, setLoading] = useState(true);
 
+    /**
+     * Sincronizador de Historial.
+     * Consulta el endpoint /etl/history para obtener la lista actualizada de tareas.
+     */
     const fetchHistory = async () => {
         try {
+            // Petición al registro de control de procesamiento
             const res = await api.get('/etl/history');
             setHistory(res.data);
         } catch (error) {
-            console.error(error);
+            console.error("Fallo al recuperar bitácora ETL:", error);
         } finally {
             setLoading(false);
         }
     };
 
+    /**
+     * Ciclo de Vida: Monitorización Activa.
+     * Configura el heartbeat de actualización para reflejar cambios de estado en tiempo real.
+     */
     useEffect(() => {
         fetchHistory();
-        const interval = setInterval(fetchHistory, 5000); // Poll every 5s
+        const interval = setInterval(fetchHistory, 5000); // Heartbeat de 5 segundos
         return () => clearInterval(interval);
     }, []);
 

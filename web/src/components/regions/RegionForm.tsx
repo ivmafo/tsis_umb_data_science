@@ -1,39 +1,85 @@
 import { useState, useEffect } from 'react';
 import type { Region } from '../../api';
-import { Loader2, Save, X } from 'lucide-react';
+import { Save, X } from 'lucide-react';
 
 interface RegionFormProps {
+    /** Datos de la región en caso de edición; null para creación de nueva entidad */
     initialData?: Region | null;
+    /** Control de visibilidad del modal */
     isOpen: boolean;
+    /** Callback de cierre y cleanup del modal */
     onClose: () => void;
+    /** Promesa de persistencia que interactúa con el API de regiones */
     onSubmit: (data: Region) => Promise<void>;
 }
 
-export const RegionForm = ({ initialData, isOpen, onClose, onSubmit }: RegionFormProps) => {
-    const [formData, setFormData] = useState<Region>({
-        name: '',
-        code: '',
-        description: '',
-        nivel_min: 0,
-    });
+/**
+ * Componente de Entrada: Formulario Maestros de Regiones.
+ * 
+ * Este componente orquestal permite la definición estructural de regiones
+ * aeronáuticas, capturando metadatos críticos para la segmentación del 
+ * análisis de capacidad y tráfico.
+ * 
+ * Atributos Técnicos:
+ * - Sincronización de Efecto: Reinicia el estado interno al alternar 'initialData'.
+ * - Casting de Tipos: Normaliza el nivel de vuelo (FL) a entero para DuckDB.
+ * - Validación de Integridad: Previene el envío de campos clave nulos (Name/Code).
+ * 
+ * @param props - Configuración y gestores de evento.
+ */
+export const RegionForm = ({ isOpen, onClose, onSubmit, initialData }: RegionFormProps) => {
+    // ESTADOS: Control granular de los atributos de la entidad Region
+    const [name, setName] = useState('');
+    const [code, setCode] = useState('');
+    const [minLevel, setMinLevel] = useState('');
+    const [description, setDescription] = useState('');
+
+    // loading: Bloqueo de concurrencia durante la transacción de red
     const [loading, setLoading] = useState(false);
 
+    /**
+     * Reacciona a cambios en los datos de entrada para poblar el formulario.
+     */
     useEffect(() => {
         if (initialData) {
-            setFormData(initialData);
+            // Mapeo de datos para modo Edición
+            setName(initialData.name || '');
+            setCode(initialData.code || '');
+            setMinLevel(initialData.nivel_min?.toString() || '');
+            setDescription(initialData.description || '');
         } else {
-            setFormData({ name: '', code: '', description: '', nivel_min: 0 });
+            // Limpieza para modo Creación
+            setName('');
+            setCode('');
+            setMinLevel('');
+            setDescription('');
         }
     }, [initialData, isOpen]);
 
+    /**
+     * Orquestador de persistencia.
+     */
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        // Reglas de Negocio: Campos obligatorios mínimos
+        if (!name || !code) {
+            alert("Atención: El Nombre y Código son requeridos para la indexación geográfica.");
+            return;
+        }
+
         setLoading(true);
         try {
-            await onSubmit(formData);
-            onClose();
+            await onSubmit({
+                name,
+                code,
+                nivel_min: minLevel ? parseInt(minLevel) : 0,
+                description
+            });
+            onClose(); // Cleanup tras éxito
         } catch (error) {
-            console.error("Error submitting form", error);
+            console.error("Fallo crítico en guardado de región:", error);
+            alert("Error: Verifique la unicidad del código u otros parámetros técnicos.");
         } finally {
             setLoading(false);
         }
@@ -42,78 +88,81 @@ export const RegionForm = ({ initialData, isOpen, onClose, onSubmit }: RegionFor
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
-            <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 animate-scale-in">
-                <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-bold text-slate-800">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-300">
+                {/* CABECERA DEL MODAL */}
+                <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                    <h3 className="text-xl font-bold text-slate-800">
                         {initialData ? 'Editar Región' : 'Nueva Región'}
-                    </h2>
-                    <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-full text-slate-500">
-                        <X size={20} />
+                    </h3>
+                    <button onClick={onClose} className="p-2 hover:bg-slate-200 rounded-full transition-colors">
+                        <X className="w-5 h-5 text-slate-500" />
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+                {/* CUERPO DEL FORMULARIO */}
+                <form onSubmit={handleSubmit} className="p-6 space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">Nombre</label>
+                        <label className="block text-sm font-semibold text-slate-700 mb-1">Nombre de la Región *</label>
                         <input
                             type="text"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                            placeholder="Ej. Región Andina"
                             required
-                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
-                            value={formData.name}
-                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            placeholder="Ej. FIR Barranquilla"
                         />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Código</label>
-                            <input
-                                type="text"
-                                required
-                                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
-                                value={formData.code}
-                                onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                                placeholder="Ej. SKBQ"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Nivel Mín.</label>
-                            <input
-                                type="number"
-                                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
-                                value={formData.nivel_min}
-                                onChange={(e) => setFormData({ ...formData, nivel_min: Number(e.target.value) })}
-                            />
-                        </div>
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">Descripción</label>
-                        <textarea
-                            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all h-24 resize-none"
-                            value={formData.description}
-                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                            placeholder="Descripción opcional..."
+                        <label className="block text-sm font-semibold text-slate-700 mb-1">Código OACI/Identificador *</label>
+                        <input
+                            type="text"
+                            value={code}
+                            onChange={(e) => setCode(e.target.value)}
+                            className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                            placeholder="Ej. SKNV"
+                            required
                         />
                     </div>
 
-                    <div className="flex gap-3 mt-6 pt-2">
+                    <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-1">Nivel de Vuelo Mínimo (FL)</label>
+                        <input
+                            type="number"
+                            value={minLevel}
+                            onChange={(e) => setMinLevel(e.target.value)}
+                            className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all"
+                            placeholder="Ej. 190"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-1">Descripción / Notas</label>
+                        <textarea
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all min-h-[100px]"
+                            placeholder="Información adicional sobre la cobertura geográfica..."
+                        />
+                    </div>
+
+                    {/* ACCIONES DEL FORMULARIO */}
+                    <div className="flex gap-3 pt-4 border-t border-slate-100">
                         <button
                             type="button"
                             onClick={onClose}
-                            className="flex-1 py-2 px-4 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-medium transition-colors"
+                            className="flex-1 px-4 py-2.5 bg-slate-100 text-slate-600 font-semibold rounded-xl hover:bg-slate-200 transition-colors"
                         >
                             Cancelar
                         </button>
                         <button
                             type="submit"
                             disabled={loading}
-                            className="flex-1 py-2 px-4 bg-primary hover:bg-primary-light text-white rounded-lg font-medium shadow-md hover:shadow-lg disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all"
+                            className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-white font-semibold rounded-xl hover:bg-primary-dark transition-all disabled:opacity-50 shadow-lg shadow-primary/20"
                         >
-                            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                            Guardar
+                            <Save className="w-4 h-4" />
+                            {loading ? 'Guardando...' : 'Guardar'}
                         </button>
                     </div>
                 </form>

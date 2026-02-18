@@ -6,34 +6,59 @@ import { MethodologySection } from './MethodologySection';
 import { DataTable } from './DataTable';
 
 interface Props {
+    /** Filtros multidimensionales (Sector, Aeropuerto, Fechas) */
     filters?: PredictiveFilters;
 }
 
+/**
+ * Visualización Proyectiva del Crecimiento de Aerolíneas.
+ * 
+ * Este componente analiza la inercia del mercado aéreo mediante regresión lineal.
+ * Permite identificar qué operadores están liderando la expansión del tráfico
+ * en un sector o ruta específica.
+ * 
+ * @param props - Filtros operativos para el análisis de crecimiento.
+ */
 const AirlineGrowthChart: React.FC<Props> = ({ filters = {} }) => {
+    // series: Almacena la tasa de crecimiento (vuelos/tiempo) para cada aerolínea
     const [series, setSeries] = useState<any[]>([]);
+
+    // options: Configuración de ApexCharts con colores condicionales (Escala Semafórica)
     const [options, setOptions] = useState<ApexOptions>({});
+
+    // history: Registros crudos unificados para alimentar la tabla de datos inferior
     const [history, setHistory] = useState<any[]>([]);
+
+    // metrics: KIs de negocio (Top growth, growing/declining counts)
     const [metrics, setMetrics] = useState<any>(null);
+
+    // loading: Control de carga mientras el motor de IA calcula las pendientes
     const [loading, setLoading] = useState(true);
+
     const [error, setError] = useState<string | null>(null);
 
+    // Actualiza el análisis cuando el usuario cambia el contexto operativo
     useEffect(() => {
         fetchData();
     }, [filters]);
 
+    /**
+     * Consume el endpoint predictivo de crecimiento de aerolíneas.
+     * Proyecta la tendencia a 12 meses vista basándose en la ventana de datos actual.
+     */
     const fetchData = async () => {
         try {
             setLoading(true);
+            // Llama a /predictive/airline-growth con horizonte de 12 meses
             const data = await getAirlineGrowthForecast(12, filters);
 
-            // Consolidate metrics
             const newMetrics = data.metrics || {};
             if (data.executive_report) newMetrics.executive_report = data.executive_report;
             if (data.description) newMetrics.description = data.description;
 
             setMetrics(newMetrics);
 
-            // Handle new response structure (wrapper object)
+            // Validación de integridad de la respuesta
             let airlinesData: any[] = [];
             let desc = "Datos mensuales del último año";
             let isSeas = false;
@@ -43,102 +68,100 @@ const AirlineGrowthChart: React.FC<Props> = ({ filters = {} }) => {
                 desc = data.description || desc;
                 isSeas = data.seasonal || false;
             } else if (Array.isArray(data)) {
-                // Fallback for old API if any
                 airlinesData = data;
             } else {
-                setError('Invalid data format.');
+                setError('Error Interno: El formato de datos de crecimiento es incompatible.');
                 setLoading(false);
                 return;
             }
 
             if (airlinesData.length === 0) {
-                setError('No data found for the selected criteria.');
+                setError('No se detectaron tendencias para los filtros actuales.');
                 setLoading(false);
                 return;
             }
 
-            // Flatten history from all airlines for the table
+            // Normalización del historial multibanda para la tabla
             const allHistory = airlinesData.flatMap((item: any) =>
                 (item.history || []).map((h: any) => ({
                     Aerolínea: item.airline,
-                    Periodo: h.label, // Use generic label (Month or Year)
+                    Periodo: h.label,
                     Vuelos: h.value
                 }))
             );
             setHistory(allHistory);
 
-            // Prepare Data for Bar Chart
             const categories = airlinesData.map((item: any) => item.airline);
             const growthRates = airlinesData.map((item: any) => item.growth_rate);
 
             setSeries([{
-                name: isSeas ? 'Tasa de Crecimiento Anual (Vuelos/Año)' : 'Tasa de Crecimiento Mensual (Vuelos/Mes)',
+                name: isSeas ? 'Pendiente Anual (Vuelos/Año)' : 'Pendiente Mensual (Vuelos/Mes)',
                 data: growthRates
             }]);
 
+            // Configuración estética avanzada para reporte técnico
             setOptions({
                 chart: {
                     type: 'bar',
                     height: 350,
-                    fontFamily: 'Inter, sans-serif'
+                    fontFamily: 'Inter, sans-serif',
+                    toolbar: { show: true }
                 },
                 plotOptions: {
                     bar: {
+                        borderRadius: 4,
                         colors: {
                             ranges: [{
-                                from: -1000,
-                                to: 0,
-                                color: '#FF4560'
+                                from: -1000, to: 0,
+                                color: '#fca5a5' // Rojo pastel para decrecimiento
                             }, {
-                                from: 0,
-                                to: 1000,
-                                color: '#00E396'
+                                from: 0.1, to: 1000,
+                                color: '#86efac' // Verde pastel para crecimiento
                             }]
                         },
-                        columnWidth: '50%',
+                        columnWidth: '55%',
                     }
                 },
-                dataLabels: {
-                    enabled: false,
-                },
+                dataLabels: { enabled: false },
                 yaxis: {
-                    title: {
-                        text: isSeas ? 'Crecimiento (Vuelos/Año)' : 'Crecimiento (Vuelos/Mes)',
-                    },
+                    title: { text: isSeas ? 'Delta Vuelos/Año' : 'Delta Vuelos/Mes', style: { color: '#64748b' } },
+                    labels: { formatter: (v) => v.toFixed(1) }
                 },
                 xaxis: {
                     categories: categories,
                     labels: {
-                        rotate: -45
+                        rotate: -45,
+                        style: { colors: '#64748b' }
                     }
                 },
                 title: {
-                    text: isSeas ? 'Tendencia Crecimiento Estacional (Interanual)' : 'Tendencias de Crecimiento de Aerolíneas (Último Año)',
+                    text: isSeas ? `Dinámica Interanual por Operador` : `Dinámica Mensual por Operador`,
                     align: 'left',
-                    style: { fontSize: '16px', fontWeight: 'bold' }
+                    style: { fontSize: '18px', color: '#1e293b' }
                 },
                 tooltip: {
+                    theme: 'light',
                     y: {
-                        formatter: (val) => val.toFixed(2) + (isSeas ? ' vuelos/año' : ' vuelos/mes')
+                        formatter: (val) => val.toFixed(2) + (isSeas ? ' vuelos/idp' : ' vuelos/mes')
                     }
                 }
             });
 
             setLoading(false);
         } catch (err: any) {
-            console.error(err);
-            setError(`Failed to load: ${err.message || 'Unknown error'}`);
+            setError(`Fallo en el motor de tendencias: ${err.message}`);
             setLoading(false);
         }
     };
 
-    if (loading) return <div className="p-4 text-center">Analizando Crecimiento...</div>;
+    if (loading) return <div className="p-4 text-center">Analizando Tendencias de Crecimiento...</div>;
     if (error) return <div className="p-4 text-center text-red-500">{error}</div>;
 
     return (
         <div className="bg-white p-4 rounded shadow mb-4">
             <ReactApexChart options={options} series={series} type="bar" height={350} />
 
+            {/* Tarjetas informativas con hallazgos clave del mercado */}
             {metrics && (
                 <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                     <div className="bg-emerald-50 p-4 rounded-lg border border-emerald-100 text-center">
@@ -147,17 +170,18 @@ const AirlineGrowthChart: React.FC<Props> = ({ filters = {} }) => {
                         <p className="text-xs text-emerald-600">+{metrics.top_growth_rate} vuelos/mes</p>
                     </div>
                     <div className="bg-blue-50 p-4 rounded-lg border border-blue-100 text-center">
-                        <p className="text-xs text-blue-800 font-bold uppercase">Mercado</p>
-                        <p className="text-lg font-bold text-slate-800">{metrics.growing_count} aerolíneas en crecimiento</p>
+                        <p className="text-xs text-blue-800 font-bold uppercase">Dinámica de Mercado</p>
+                        <p className="text-lg font-bold text-slate-800">{metrics.growing_count} aerolíneas creciendo</p>
                         <p className="text-xs text-blue-600">vs {metrics.declining_count} en declive</p>
                     </div>
                     <div className="bg-slate-50 p-4 rounded-lg border border-slate-100 text-center">
-                        <p className="text-xs text-slate-500 font-bold uppercase">Muestra</p>
+                        <p className="text-xs text-slate-500 font-bold uppercase">Historial Analizado</p>
                         <p className="text-lg font-bold text-slate-800">{metrics.total_data_points}</p>
-                        <p className="text-xs text-slate-500">Puntos de datos analizados</p>
+                        <p className="text-xs text-slate-500">Muestras de volumen registradas</p>
                     </div>
                 </div>
             )}
+            ...
 
             {metrics?.executive_report && (
                 <div className="mt-8 bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">

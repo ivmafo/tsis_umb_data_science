@@ -5,23 +5,49 @@ import { api } from '../api';
 import { FileText, FileSpreadsheet } from 'lucide-react';
 
 interface FlightsTimeChartProps {
+    /** Filtros globales (Temporalidad y Segmentación) */
     filters: any;
+    /** Habilita los botones de descarga de series temporales */
     allowExport?: boolean;
 }
 
+/**
+ * Visualización Evolutiva: Conteo Mensual de Operaciones.
+ * 
+ * Este componente renderiza una serie de tiempo de alta densidad que permite
+ * visualizar la evolución del tráfico mes a mes. Es la herramienta principal
+ * para detectar estacionalidad histórica y picos de demanda cíclicos.
+ * 
+ * Atributos Técnicos:
+ * - Cálculo de ancho dinámico basado en el volumen de periodos (Scroll Horizontal).
+ * - Agregación forzada por 'month' en el payload de exportación.
+ * - Tooltips enriquecidos con métricas de volumen bruto.
+ * 
+ * @param props - Filtros operativos y permisos de exportación.
+ */
 export const FlightsTimeChart = ({ filters, allowExport = true }: FlightsTimeChartProps) => {
+    // data: Colección de puntos temporales [{ name: 'YYYY-MM', value: N }]
     const [data, setData] = useState<any[]>([]);
+
+    // loading: Feedback de sincronización con DuckDB
     const [loading, setLoading] = useState(false);
+
     const [empty, setEmpty] = useState(false);
+
     const [exporting, setExporting] = useState(false);
 
+    /**
+     * Motor de exportación de series temporales.
+     * @param type - Formato de documento ('pdf' | 'excel').
+     */
     const handleExport = async (type: 'pdf' | 'excel') => {
         if (exporting) return;
         setExporting(true);
         try {
             const endpoint = type === 'pdf' ? '/reports/time/pdf' : '/reports/time/excel';
-            const filename = `reporte_tiempo_mensual.${type === 'pdf' ? 'pdf' : 'xlsx'}`;
-            // groupBy='month' is default in backend but passing it explicit is safer
+            const filename = `rep_tiempo_mensual.${type === 'pdf' ? 'pdf' : 'xlsx'}`;
+
+            // Inyectamos explícitamente la granularidad mensual para el motor de reportes
             const payload = { ...filters, groupBy: 'month' };
 
             const response = await api.post(endpoint, payload, { responseType: 'blob' });
@@ -34,36 +60,37 @@ export const FlightsTimeChart = ({ filters, allowExport = true }: FlightsTimeCha
             link.click();
             link.parentNode?.removeChild(link);
         } catch (error) {
-            console.error(error);
-            alert("Error al exportar.");
+            console.error("Fallo crítico en exportación temporal:", error);
         } finally {
             setExporting(false);
         }
     };
 
+    /**
+     * Sincronizador de serie de tiempo con el bus de filtros.
+     */
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             setEmpty(false);
             try {
+                // El endpoint /stats/flights-over-time retorna agregación mensual por defecto
                 const response = await api.post('/stats/flights-over-time', filters);
 
                 if (response.data && response.data.length > 0) {
-                    // Adapt data for Recharts: [{ name: '2023-01', value: 120 }, ...]
                     setData(response.data);
                 } else {
                     setEmpty(true);
                     setData([]);
                 }
             } catch (error) {
-                console.error("Error fetching time stats:", error);
+                console.error("Fallo en recuperación de serie temporal:", error);
                 setEmpty(true);
             } finally {
                 setLoading(false);
             }
         };
 
-        // Debounce slightly
         const t = setTimeout(fetchData, 500);
         return () => clearTimeout(t);
     }, [filters]);

@@ -6,10 +6,32 @@ from typing import Dict, Any, List
 from datetime import datetime
 
 class PredictAirlineGrowth:
+    """
+    Monitor de evolución de mercado y crecimiento de aerolíneas.
+    Calcula la tasa de crecimiento mensual/anual de los operadores principales
+    utilizando regresión lineal para identificar tendencias de expansión o contracción.
+    """
     def __init__(self, db_path: str = "data/metrics.duckdb"):
+        """
+        Inicializa el monitor.
+        """
         self.db_path = db_path
 
     def execute(self, months_history: int = 12, sector_id: str = None, airport: str = None, route: str = None, min_level: int = None, max_level: int = None, start_date: str = None, end_date: str = None) -> Dict[str, Any]:
+        """
+        Calcula las métricas de crecimiento para las 10 aerolíneas líderes.
+        
+        Args:
+            months_history (int): Cantidad de meses hacia atrás para el análisis.
+            sector_id (str): Filtro espacial por sector.
+            airport (str): Filtro por aeropuerto clave.
+            route (str): Filtro por ruta comercial.
+            min_level/max_level: Filtros de niveles de vuelo.
+            start_date/end_date: Modo estacional si se proveen.
+            
+        Returns:
+            Dict: Ranking de crecimiento, reporte ejecutivo y series temporales por operador.
+        """
         conn = duckdb.connect(self.db_path, read_only=True)
         try:
             # 1. Build Base Filter

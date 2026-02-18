@@ -2,20 +2,43 @@ import { useState, useEffect, useRef } from 'react';
 import { X, Search, Check, Loader2 } from 'lucide-react';
 
 interface Option {
+    /** Identificador único para reconciliación de React (Key) */
     id: number | string;
+    /** Texto descriptivo (Label) visible en la UI */
     label: string;
+    /** Valor subyacente (Cualquier tipo de dato de negocio) */
     value: any;
 }
 
 interface MultiSelectLookupProps {
+    /** Etiqueta superior del campo de búsqueda */
     label: string;
+    /** Texto de ayuda interno del input */
     placeholder: string;
+    /** Colección de opciones actualmente seleccionadas (Estado controlado) */
     value: Option[];
+    /** Callback de sincronización hacia el componente padre */
     onChange: (value: Option[]) => void;
+    /** Inyector de dependencia para búsqueda asíncrona (API Call) */
     fetchOptions: (query: string) => Promise<Option[]>;
+    /** Permite personalizar el renderizado de cada fila de resultados */
     renderOption?: (option: Option) => React.ReactNode;
 }
 
+/**
+ * Componente de Infraestructura: Buscador Multinivel con Autocompletado.
+ * 
+ * Este componente es el motor de filtrado del Dashboard, permitiendo
+ * seleccionar múltiples entidades (Aeropuertos, Aerolíneas, etc.) mediante
+ * una interfaz de búsqueda asíncrona con tags.
+ * 
+ * Atributos Técnicos:
+ * - Debounce nativo (300ms) para control de flujo de peticiones.
+ * - Gestión de foco y cierre por click-outside mediante Refs.
+ * - Prevención de duplicados en la colección de salida.
+ * 
+ * @param props - Configuración de búsqueda y estado.
+ */
 export const MultiSelectLookup = ({
     label,
     placeholder,
@@ -24,13 +47,21 @@ export const MultiSelectLookup = ({
     fetchOptions,
     renderOption
 }: MultiSelectLookupProps) => {
+    // query: Término de búsqueda crudo ingresado por el operador
     const [query, setQuery] = useState('');
+
+    // options: Pool de resultados sugeridos por el servidor para la consulta actual
     const [options, setOptions] = useState<Option[]>([]);
+
+    // loading: Feedback visual de espera durante la resolución de la promesa de búsqueda
     const [loading, setLoading] = useState(false);
+
+    // isOpen: Control de visibilidad del Dropdown de sugerencias
     const [isOpen, setIsOpen] = useState(false);
+
     const wrapperRef = useRef<HTMLDivElement>(null);
 
-    // Click outside to close
+    // Mecanismo de gestión de cierre heurístico (Click fuera del área interactiva)
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
@@ -41,28 +72,33 @@ export const MultiSelectLookup = ({
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    // Debounced search
+    // Motor de Búsqueda Predictiva con Debounce
     useEffect(() => {
         const timeoutId = setTimeout(async () => {
+            // Umbral de activación: Mínimo 2 caracteres para reducir ruido en el API
             if (query.trim().length >= 2) {
                 setLoading(true);
                 try {
                     const results = await fetchOptions(query);
                     setOptions(results);
                 } catch (error) {
-                    console.error("Error fetching options:", error);
+                    console.error("Fallo técnico en recuperación de opciones:", error);
                     setOptions([]);
                 } finally {
                     setLoading(false);
                 }
             } else if (query.trim().length === 0) {
-                setOptions([]);
+                setOptions([]); // Limpieza de pool al vaciar el input
             }
         }, 300);
 
         return () => clearTimeout(timeoutId);
     }, [query, fetchOptions]);
 
+    /**
+     * Agrega un nuevo elemento al pool de selección si no existe previamente.
+     * @param option - Elemento seleccionado desde el dropdown.
+     */
     const handleSelect = (option: Option) => {
         if (!value.find(v => v.id === option.id)) {
             onChange([...value, option]);
@@ -71,6 +107,10 @@ export const MultiSelectLookup = ({
         setIsOpen(false);
     };
 
+    /**
+     * Elimina un tag específico del pool de selección.
+     * @param id - Identificador del elemento a purgar.
+     */
     const handleRemove = (id: number | string) => {
         onChange(value.filter(v => v.id !== id));
     };

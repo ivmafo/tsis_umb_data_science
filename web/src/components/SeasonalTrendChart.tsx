@@ -5,26 +5,54 @@ import type { ApexOptions } from 'apexcharts';
 import { MethodologySection } from './MethodologySection';
 
 interface Props {
+    /** 
+     * Filtros de predicción opcionales. 
+     * Requiere start_date y end_date para disparar el cálculo de Fourier.
+     */
     filters?: PredictiveFilters;
 }
 
+/**
+ * Componente de visualización de Tendencia Estacional de Largo Plazo.
+ * 
+ * Utiliza una descomposición de series temporales basada en:
+ * 1. Tendencia Secular: Crecimiento o decrecimiento estructural del tráfico.
+ * 2. Estacionalidad Anual: Ciclos recurrentes por meses/estaciones.
+ * 3. Estacionalidad Semanal: Patrones por día de la semana.
+ * 
+ * Emplea un gráfico de tipo 'rangeArea' de ApexCharts para mostrar bandas de confianza.
+ * 
+ * @param props - Filtros aplicados para el análisis estacional.
+ */
 const SeasonalTrendChart: React.FC<Props> = ({ filters = {} }) => {
+    // series: Contiene la línea histórica, la predicción y el área de confianza
     const [series, setSeries] = useState<any[]>([]);
+
+    // metrics: Objeto con estadísticas de bondad de ajuste (R2, RMSE) e historia
     const [metrics, setMetrics] = useState<any>(null);
-    const [loading, setLoading] = useState(false); // Only load when dates are present
+
+    // loading: Estado de espera mientras el backend procesa las transformadas de Fourier
+    const [loading, setLoading] = useState(false);
+
     const [error, setError] = useState<string | null>(null);
 
+    // Reacciona exclusivamente a cambios en el rango de fechas de análisis
     useEffect(() => {
         if (filters.start_date && filters.end_date) {
             fetchData();
         }
     }, [filters]);
 
+    /**
+     * Obtiene y procesa la proyección estacional.
+     * Transforma las fechas ISO string a Timestamps (getTime()) para compatibilidad con ejes datetime.
+     */
     const fetchData = async () => {
         try {
             setLoading(true);
             setError(null);
 
+            // Fetch desde el endpoint /predictive/seasonal-trend
             const data = await getSeasonalTrendForecast(filters);
 
             if (data.error) {
@@ -33,7 +61,7 @@ const SeasonalTrendChart: React.FC<Props> = ({ filters = {} }) => {
                 return;
             }
 
-            // Consolidate metrics
+            // Metadatos explicativos sobre el funcionamiento del modelo híbrido
             const newMetrics = data.metrics || {};
             if (data.description) newMetrics.description = data.description;
             if (data.explanation_steps) newMetrics.explanation_steps = data.explanation_steps;
@@ -41,21 +69,18 @@ const SeasonalTrendChart: React.FC<Props> = ({ filters = {} }) => {
 
             setMetrics(newMetrics);
 
-            // Process Data for ApexCharts
-            // 1. History (Solid Line)
+            // Estructuración de series para ApexCharts
             const historyData = data.history.map((d: any) => ({
                 x: new Date(d.date).getTime(),
                 y: d.value
             }));
 
-            // 2. Forecast (Dashed Line)
             const forecastData = data.forecast.map((d: any) => ({
                 x: new Date(d.date).getTime(),
                 y: d.value
             }));
 
-            // 3. Confidence Interval (Range Area)
-            // ApexCharts RangeArea expects [x, y1, y2] ?? No, it expects {x, y: [lower, upper]}
+            // La serie de área requiere un array [mínimo, máximo] para el valor Y
             const confidenceData = data.forecast.map((d: any) => ({
                 x: new Date(d.date).getTime(),
                 y: [d.lower, d.upper]
@@ -81,29 +106,29 @@ const SeasonalTrendChart: React.FC<Props> = ({ filters = {} }) => {
 
             setLoading(false);
         } catch (err: any) {
-            console.error(err);
-            setError(`Error al cargar la predicción estacional: ${err.message || 'Error desconocido'}`);
+            setError(`Fallo técnico en la descomposición: ${err.message}`);
             setLoading(false);
         }
     };
 
+    // Configuración visual del gráfico ApexCharts
     const options: ApexOptions = {
         chart: {
             height: 400,
-            type: 'line', // Hybrid 
+            type: 'line',
             toolbar: { show: true },
             zoom: { enabled: true },
             fontFamily: 'Inter, sans-serif'
         },
         stroke: {
             curve: 'smooth',
-            width: [2, 3, 0], // History, Forecast, CI (0 width for range)
-            dashArray: [0, 5, 0] // Solid, Dashed, Solid(Area)
+            width: [2, 3, 0], // Diferentes grosores para historia, predicción y área
+            dashArray: [0, 5, 0] // Estilo punteado para la predicción
         },
-        colors: ['#64748b', '#4f46e5', '#a5b4fc'], // Slate, Indigo, Light Indigo
+        colors: ['#64748b', '#4f46e5', '#a5b4fc'],
         fill: {
             type: ['solid', 'solid', 'solid'],
-            opacity: [1, 1, 0.4] // High opacity for lines, low for confidence band
+            opacity: [1, 1, 0.4] // Opacidad reducida para la banda de confianza
         },
         dataLabels: { enabled: false },
         title: {

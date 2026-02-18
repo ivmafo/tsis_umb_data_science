@@ -3,50 +3,80 @@ import type { FileInfo } from '../api';
 import { getFiles, deleteFile, ingestData } from '../api';
 import { FileText, CheckCircle, XCircle, Trash2 } from 'lucide-react';
 
+/**
+ * Componente de Gestión: Lista de Control de Archivos.
+ * 
+ * Este componente es el núcleo administrativo del pipeline de datos. 
+ * Permite visualizar el inventario de archivos en el servidor, monitorear 
+ * su estado de validación estructural y disparar procesos de ingesta ETL.
+ * 
+ * Atributos Técnicos:
+ * - Polling dinámico (5s) para reflejar estados de procesamiento en tiempo real.
+ * - Integración con el motor de borrado físico y lógico.
+ * - Feedback binario (Válido/Error) basado en validación de esquema CSV/XLS.
+ */
 export const FileList = () => {
+    // files: Inventario de archivos con metadatos de estado (DB_STATUS, VALIDATION)
     const [files, setFiles] = useState<FileInfo[]>([]);
+
+    // loading: Estado inicial de sincronización con la API de archivos
     const [loading, setLoading] = useState(true);
+
+    // processingFile: Bloqueo UI para el archivo que se encuentra actualmente en el bus de ingesta
     const [processingFile, setProcessingFile] = useState<string | null>(null);
 
+    /**
+     * Sincroniza el estado local con el sistema de archivos del servidor backend.
+     */
     const fetchFiles = async () => {
         try {
             const data = await getFiles();
             setFiles(data);
         } catch (error) {
-            console.error(error);
+            console.error("Fallo al listar archivos del repositorio:", error);
         } finally {
             setLoading(false);
         }
     };
 
+    /**
+     * Dispara el Use Case de Ingesta para un archivo específico.
+     * Este proceso es asíncrono y bloquea el botón de acción para prevenir doble indexación.
+     * @param filename - Identificador del archivo en el servidor.
+     */
     const handleProcess = async (filename: string) => {
         setProcessingFile(filename);
         try {
+            // Lógica ETL: Truncado de buffers e inserción en DuckDB
             await ingestData(false, filename);
-            alert(`Procesamiento iniciado para: ${filename}`);
-            fetchFiles(); // Refresh to see updated status
+            alert(`Proceso de indexación iniciado para: ${filename}. El estado cambiará a COMPLETED automáticamente.`);
+            fetchFiles();
         } catch (error) {
-            console.error("Error starting processing:", error);
-            alert("Error al iniciar el procesamiento.");
+            console.error("Fallo crítico en el inicio de ingesta:", error);
+            alert("Error al intentar procesar el archivo. Verifique logs del servidor.");
         } finally {
             setTimeout(() => setProcessingFile(null), 2000);
         }
     };
 
+    /**
+     * Elimina el archivo del disco y purga todas sus referencias en las tablas de métricas.
+     * @param filename - Archivo a eliminar.
+     */
     const handleDelete = async (filename: string) => {
-        if (!confirm(`¿Estás seguro de eliminar el archivo ${filename} y todos sus datos cargados? Esta acción no se puede deshacer.`)) return;
+        if (!confirm(`ADVERTENCIA: ¿Desea eliminar permanentemente '${filename}' y todas sus métricas asociadas? Esta acción es irreversible.`)) return;
 
         try {
             await deleteFile(filename);
-            fetchFiles(); // Refresh list
+            fetchFiles(); // Refresco inmediato del inventario
         } catch (error) {
-            console.error("Error deleting file:", error);
-            alert("Error al eliminar el archivo. Ver consola.");
+            console.error("Fallo en la purga de archivos:", error);
         }
     };
 
     useEffect(() => {
         fetchFiles();
+        // Mecanismo de Heartbeat para monitorear procesos ETL de larga duración
         const interval = setInterval(fetchFiles, 5000);
         return () => clearInterval(interval);
     }, []);

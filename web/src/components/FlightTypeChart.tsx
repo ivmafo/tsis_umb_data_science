@@ -5,17 +5,43 @@ import { api } from '../api';
 import { FileText, FileSpreadsheet } from 'lucide-react';
 
 interface FlightTypeChartProps {
+    /** Filtros reactivos desde la barra lateral (Fechas, Orígenes, etc.) */
     filters: any;
+    /** Habilita la funcionalidad de descarga de reportes categorizados */
     allowExport?: boolean;
 }
 
+/**
+ * Visualización de Segmentación: Distribución por Tipo de Vuelo.
+ * 
+ * Componente que muestra un gráfico radial (Donut) con las proporciones
+ * de vuelos según su naturaleza operativa (Regular, No Regular, Carga, etc.).
+ * 
+ * Funcionalidades:
+ * - Desglose porcentual automático en Tooltips.
+ * - Leyenda interactiva con sumatoria de unidades.
+ * - Contador 'Total' centralizado en el centro del gráfico.
+ * 
+ * @param props - Propiedades de control y filtrado.
+ */
 export const FlightTypeChart = ({ filters, allowExport = true }: FlightTypeChartProps) => {
+    // series: Array numérico con los conteos absolutos
     const [series, setSeries] = useState<number[]>([]);
+
+    // labels: Etiquetas textuales correspondientes a cada segmento
     const [labels, setLabels] = useState<string[]>([]);
+
+    // loading: Feedback de procesamiento asíncrono
     const [loading, setLoading] = useState(false);
+
     const [empty, setEmpty] = useState(false);
+
     const [exporting, setExporting] = useState(false);
 
+    /**
+     * Interfaz de exportación para reportes de categorización.
+     * @param type - Formato de salida ('pdf' | 'excel').
+     */
     const handleExport = async (type: 'pdf' | 'excel') => {
         if (exporting) return;
         setExporting(true);
@@ -32,19 +58,19 @@ export const FlightTypeChart = ({ filters, allowExport = true }: FlightTypeChart
             link.click();
             link.parentNode?.removeChild(link);
         } catch (error) {
-            console.error(error);
-            alert("Error al exportar.");
+            console.error("Fallo en exportación de tipos:", error);
         } finally {
             setExporting(false);
         }
     };
 
+    // Actualiza la visualización ante cambios en el payload de filtros
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             setEmpty(false);
             try {
-                // Construct Filters Payload (Same as Treemaps)
+                // Reconstrucción del payload para asegurar tipos consistentes en backend DuckDB
                 const payload = {
                     start_date: filters.startDate || null,
                     end_date: filters.endDate || null,
@@ -62,7 +88,6 @@ export const FlightTypeChart = ({ filters, allowExport = true }: FlightTypeChart
                 const response = await api.post('/stats/flights-by-type', payload);
 
                 if (response.data && response.data.length > 0) {
-                    // Start formatting for ApexCharts Donut
                     const newSeries = response.data.map((item: any) => item.value);
                     const newLabels = response.data.map((item: any) => item.name);
 
@@ -74,7 +99,7 @@ export const FlightTypeChart = ({ filters, allowExport = true }: FlightTypeChart
                     setLabels([]);
                 }
             } catch (error) {
-                console.error("Error fetching flight type stats:", error);
+                console.error("Error en estadísticas de tipo de vuelo:", error);
                 setEmpty(true);
             } finally {
                 setLoading(false);
@@ -85,6 +110,10 @@ export const FlightTypeChart = ({ filters, allowExport = true }: FlightTypeChart
         return () => clearTimeout(t);
     }, [filters]);
 
+    /**
+     * Definición de apariencia para ApexCharts Donut.
+     * Incluye labels de suma total y formateadores de leyenda.
+     */
     const options: any = {
         chart: {
             type: 'donut',
@@ -98,64 +127,39 @@ export const FlightTypeChart = ({ filters, allowExport = true }: FlightTypeChart
                     size: '65%',
                     labels: {
                         show: true,
-                        name: {
-                            show: true,
-                            fontSize: '14px',
-                            fontFamily: 'Inter, sans-serif',
-                            offsetY: -4
-                        },
+                        name: { show: true, fontSize: '14px', offsetY: -4 },
                         value: {
                             show: true,
                             fontSize: '24px',
-                            fontFamily: 'Inter, sans-serif',
                             fontWeight: 600,
                             offsetY: 8,
-                            formatter: function (val: any) {
-                                return val;
-                            }
+                            formatter: (val: any) => val
                         },
                         total: {
                             show: true,
                             showAlways: true,
-                            label: 'Total',
+                            label: 'Total General',
                             fontSize: '14px',
-                            fontFamily: 'Inter, sans-serif',
                             color: '#64748b',
-                            formatter: function (w: any) {
-                                return w.globals.seriesTotals.reduce((a: any, b: any) => a + b, 0);
-                            }
+                            formatter: (w: any) => w.globals.seriesTotals.reduce((a: any, b: any) => a + b, 0)
                         }
                     }
                 }
             }
         },
-        dataLabels: {
-            enabled: false
-        },
+        dataLabels: { enabled: false },
         legend: {
             position: 'right',
             offsetY: 0,
             height: 230,
             fontFamily: 'Inter, sans-serif',
-            itemMargin: {
-                horizontal: 0,
-                vertical: 5
-            },
-            formatter: function (seriesName: string, opts: any) {
-                return seriesName + ":  " + opts.w.globals.series[opts.seriesIndex]
-            }
+            itemMargin: { horizontal: 0, vertical: 5 },
+            formatter: (seriesName: string, opts: any) => `${seriesName}: ${opts.w.globals.series[opts.seriesIndex]}`
         },
-        stroke: {
-            show: true,
-            colors: ['transparent']
-        },
+        stroke: { show: true, colors: ['transparent'] },
         tooltip: {
             enabled: true,
-            y: {
-                formatter: function (val: any) {
-                    return val + " Vuelos";
-                }
-            }
+            y: { formatter: (val: any) => `${val} Vuelos` }
         }
     };
 

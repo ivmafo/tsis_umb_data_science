@@ -8,26 +8,61 @@ import { DataTable } from './DataTable';
 import { type PredictiveFilters } from '../api';
 
 interface Props {
+    /**
+     * Filtros multidimensionales provenientes del panel lateral.
+     * Incluye sector_id, fechas, niveles de vuelo y rutas.
+     */
     filters: PredictiveFilters;
 }
 
+/**
+ * Componente de visualización avanzada de Saturación de Sector ATC.
+ * 
+ * Este componente integra el modelo matemático de la Circular 006 (Capacidad)
+ * con el motor de IA (Demanda Proyectada) para estimar el riesgo operativo.
+ * 
+ * Funcionalidades clave:
+ * - Gráfico Line-Column de ApexCharts con ejes Y duales.
+ * - Anotaciones visuales para límites de Alerta (80%) y Crítico (100%).
+ * - Desglose técnico de la fórmula CH_Adjusted = CH_Theoretical * R.
+ * - Reporte ejecutivo narrativo generado por el backend.
+ * 
+ * @param props - Propiedades del componente con filtros de predicción.
+ */
 const SectorSaturationChart: React.FC<Props> = ({ filters }) => {
+    // series: Almacena los sets de datos para volumen (barras) e índice (línea)
     const [series, setSeries] = useState<any[]>([]);
+
+    // options: Configuración estética y técnica de ApexCharts
     const [options, setOptions] = useState<ApexOptions>({});
+
+    // history: Registros históricos para alimentar la tabla de datos inferior
     const [history, setHistory] = useState<any[]>([]);
+
+    // loading: Control de estado de carga asíncrona
     const [loading, setLoading] = useState(true);
+
+    // error: Mensajes de fallo en la comunicación con la API
     const [error, setError] = useState<string | null>(null);
+
+    // metrics: Objeto detallado con resultados de capacidad (TFC, T_Transfer, CH)
     const [metrics, setMetrics] = useState<any>(null);
 
+    // Re-ejecuta la consulta cada vez que el usuario cambia un filtro en la UI
     useEffect(() => {
         if (filters.sector_id) {
             fetchData();
         }
     }, [filters]);
 
+    /**
+     * Coordina la obtención de datos desde el controlador predictivo.
+     * Realiza el mapeo y transformación del JSON de respuesta a estructuras de visualización.
+     */
     const fetchData = async () => {
         try {
             setLoading(true);
+            // Consulta el endpoint /predictive/sector-saturation/{id}
             const data = await getSectorSaturationForecast(filters, 30);
 
             if (data.error) {
@@ -36,18 +71,19 @@ const SectorSaturationChart: React.FC<Props> = ({ filters }) => {
                 return;
             }
 
-            // Consolidate metrics
+            // Mapeo exhaustivo de métricas de capacidad técnica
             const newMetrics = data.metrics || data.capacity_metrics || {};
             if (data.description) newMetrics.description = data.description;
             if (data.calculation_steps) newMetrics.calculation_steps = data.calculation_steps;
             if (data.executive_report) newMetrics.executive_report = data.executive_report;
 
             setMetrics(newMetrics);
+
+            // Preparación del historial para la DataTable
             let historyData = data.history || [];
-            // If seasonal, history is array of series. Flatten for table?
             if (data.seasonal && Array.isArray(historyData) && historyData.length > 0 && historyData[0].name) {
                 historyData = historyData.flatMap((h: any) => h.data.map((d: any) => ({
-                    Fecha: `${h.name}-${d.x}`, // Approx date for table
+                    Fecha: `${h.name}-${d.x}`,
                     Vuelos: d.y
                 })));
             } else {
@@ -58,6 +94,7 @@ const SectorSaturationChart: React.FC<Props> = ({ filters }) => {
             }
             setHistory(historyData);
 
+            // Segmentación de ejes para gráfico dual
             const dates = data.forecast.map((item: any) => item.date);
             const dailyFlights = data.forecast.map((item: any) => item.predicted_daily_flights);
             const saturation = data.forecast.map((item: any) => item.saturation_index);
@@ -80,80 +117,46 @@ const SectorSaturationChart: React.FC<Props> = ({ filters }) => {
                     height: 350,
                     type: 'line',
                     stacked: false,
-                    fontFamily: 'Inter, sans-serif'
+                    fontFamily: 'Inter, sans-serif',
+                    toolbar: { show: true }
                 },
-                dataLabels: {
-                    enabled: false
-                },
-                stroke: {
-                    width: [1, 4]
-                },
+                dataLabels: { enabled: false },
+                stroke: { width: [1, 4], curve: 'smooth' },
                 title: {
-                    text: data.seasonal ? `Saturación Estacional: ${data.sector_name}` : `Predicción de Saturación: ${data.sector_name}`,
+                    text: data.seasonal ? `Análisis Estacional: ${data.sector_name}` : `Proyección de Riesgo: ${data.sector_name}`,
                     align: 'left',
-                    style: { fontSize: '16px', fontWeight: 'bold' }
+                    style: { fontSize: '18px', color: '#1e293b' }
                 },
                 xaxis: {
-                    categories: dates
+                    categories: dates,
+                    labels: { style: { colors: '#64748b' } }
                 },
                 yaxis: [
                     {
-                        axisTicks: { show: true },
-                        axisBorder: { show: true, color: '#008FFB' },
-                        labels: { style: { colors: '#008FFB' } },
-                        title: {
-                            text: "Vuelos Diarios",
-                            style: { color: '#008FFB' }
-                        },
-                        tooltip: { enabled: true }
+                        title: { text: "Flujo de Vuelos", style: { color: '#008FFB' } },
+                        labels: { style: { colors: '#008FFB' } }
                     },
                     {
-                        seriesName: 'Índice Saturación (%)',
                         opposite: true,
-                        axisTicks: { show: true },
-                        axisBorder: { show: true, color: '#FEB019' },
+                        title: { text: "Saturación (%)", style: { color: '#FEB019' } },
                         labels: { style: { colors: '#FEB019' } },
-                        title: {
-                            text: "Saturación (%)",
-                            style: { color: '#FEB019' }
-                        },
                         min: 0,
-                        max: 120,
+                        max: 120
                     }
                 ],
-                tooltip: {
-                    fixed: {
-                        enabled: true,
-                        position: 'topLeft',
-                        offsetY: 30,
-                        offsetX: 60
-                    },
-                },
-                legend: {
-                    horizontalAlign: 'left',
-                    offsetX: 40
-                },
+                tooltip: { shared: true, intersect: false },
+                legend: { position: 'top', horizontalAlign: 'right' },
                 annotations: {
                     yaxis: [
                         {
-                            y: 80,
-                            yAxisIndex: 1,
+                            y: 80, yAxisIndex: 1,
                             borderColor: '#FEB019',
-                            label: {
-                                borderColor: '#FEB019',
-                                style: { color: '#fff', background: '#FEB019' },
-                                text: 'Alerta (80%)',
-                            }
+                            label: { text: 'Umbral Alerta' }
                         },
                         {
-                            y: 100,
-                            yAxisIndex: 1,
-                            borderColor: '#FF0000',
-                            label: {
-                                borderColor: '#FF0000',
-                                style: { color: '#fff', background: '#FF0000' },
-                                text: 'Crítico (100%)',
-                            }
+                            y: 100, yAxisIndex: 1,
+                            borderColor: '#ef4444',
+                            label: { text: 'Saturación Total', style: { background: '#ef4444' } }
                         }
                     ]
                 }
@@ -161,8 +164,7 @@ const SectorSaturationChart: React.FC<Props> = ({ filters }) => {
 
             setLoading(false);
         } catch (err: any) {
-            console.error(err);
-            setError(`Failed to load: ${err.message || 'Unknown error'}`);
+            setError(`Fallo técnico en el cálculo: ${err.message}`);
             setLoading(false);
         }
     };
@@ -174,6 +176,7 @@ const SectorSaturationChart: React.FC<Props> = ({ filters }) => {
         <div className="bg-white p-4 rounded shadow mb-4">
             <ReactApexChart options={options} series={series} type="line" height={350} />
 
+            {/* Panel de métricas operacionales del sector */}
             {metrics && (
                 <div className="mt-4 grid grid-cols-4 gap-4 text-center border-t pt-2 bg-gray-50 rounded p-2">
                     <div>
@@ -194,6 +197,7 @@ const SectorSaturationChart: React.FC<Props> = ({ filters }) => {
                     </div>
                 </div>
             )}
+            ...
 
             {metrics?.calculation_steps && (
                 <div className="mt-6 bg-slate-50 p-4 rounded-lg border border-slate-200">

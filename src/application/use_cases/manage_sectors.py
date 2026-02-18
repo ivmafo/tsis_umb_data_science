@@ -5,10 +5,28 @@ import json
 from typing import List, Dict, Any, Optional
 
 class ManageSectors:
+    """
+    Controlador de persistencia para la configuración de Sectores ATC.
+    Gestiona el ciclo de vida (CRUD) de las definiciones de sectores y sus
+    parámetros técnicos en la base de datos DuckDB.
+    """
     def __init__(self, db_path: str = "data/metrics.duckdb"):
+        """
+        Inicializa el gestor con la ruta a la base de datos.
+        
+        Args:
+            db_path (str): Ruta al archivo .duckdb de métricas.
+        """
         self.db_path = db_path
 
     def get_all(self) -> List[Dict[str, Any]]:
+        """
+        Recupera todos los sectores configurados en el sistema.
+        
+        Returns:
+            List[Dict]: Lista de diccionarios, cada uno representando un sector 
+                       con su definición (JSON) y parámetros de capacidad.
+        """
         conn = duckdb.connect(self.db_path, read_only=True)
         try:
             # simple select
@@ -31,6 +49,15 @@ class ManageSectors:
             conn.close()
 
     def get_by_id(self, sector_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Busca un sector específico por su identificador único (UUID).
+        
+        Args:
+            sector_id (str): El UUID del sector.
+            
+        Returns:
+            Optional[Dict]: Diccionario del sector si existe, else None.
+        """
         conn = duckdb.connect(self.db_path, read_only=True)
         try:
             result = conn.execute("SELECT * FROM sectors WHERE id = ?", [sector_id]).fetchone()
@@ -51,6 +78,16 @@ class ManageSectors:
             conn.close()
 
     def create(self, data: Dict[str, Any]) -> str:
+        """
+        Registra un nuevo sector en la base de datos.
+        
+        Args:
+            data (Dict): Datos del sector incluyendo 'name', 'definition' (orígenes/destinos),
+                        y parámetros de tiempo (t_transfer, etc.).
+                        
+        Returns:
+            str: El UUID asignado al nuevo sector.
+        """
         conn = duckdb.connect(self.db_path)
         try:
             sector_id = str(uuid.uuid4())
@@ -75,6 +112,16 @@ class ManageSectors:
             conn.close()
 
     def update(self, sector_id: str, data: Dict[str, Any]) -> bool:
+        """
+        Actualiza los parámetros de un sector existente.
+        
+        Args:
+            sector_id (str): UUID del sector a modificar.
+            data (Dict): Campos a actualizar (soporta actualizaciones parciales mediante COALESCE).
+            
+        Returns:
+            bool: True si la actualización fue exitosa, False en caso contrario.
+        """
         # Fetch existing definition if not provided
         # Do this BEFORE opening the write connection to avoid "different configuration" error
         current_sector = self.get_by_id(sector_id)
@@ -118,6 +165,16 @@ class ManageSectors:
             conn.close()
             
     def delete(self, sector_id: str) -> bool:
+        """
+        Elimina un sector de la base de datos de forma permanente.
+        No se puede deshacer esta operación.
+        
+        Args:
+            sector_id (str): UUID del sector a eliminar.
+            
+        Returns:
+            bool: True si la operación se ejecutó (independiente de si el registro existía).
+        """
         conn = duckdb.connect(self.db_path)
         try:
             conn.execute("DELETE FROM sectors WHERE id = ?", [sector_id])

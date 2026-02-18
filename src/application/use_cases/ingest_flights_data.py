@@ -13,6 +13,12 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 class IngestFlightsDataUseCase:
+    """
+    Motor de Ingesta y Procesamiento ETL (Extract, Transform, Load).
+    Se encarga de la lectura masiva de archivos aeronáuticos (Excel/CSV),
+    validación de esquemas, normalización de datos y persistencia en DuckDB.
+    Implementa el patrón Singleton para evitar colisiones de procesamiento.
+    """
     _instance = None
     
     def __new__(cls, *args, **kwargs):
@@ -21,6 +27,13 @@ class IngestFlightsDataUseCase:
         return cls._instance
 
     def __init__(self, db_path: str = "data/metrics.duckdb", data_dir: str = "data"):
+        """
+        Inicializa el motor ETL con mapeos de columnas y configuraciones de directorios.
+        
+        Args:
+            db_path (str): Ruta a la base de datos de destino.
+            data_dir (str): Directorio donde se depositan los archivos fuente.
+        """
         # Prevent re-initialization if singleton wrapper logic isn't perfect, though __new__ handles creation
         if not hasattr(self, 'initialized'):
             self.db_path = db_path
@@ -72,20 +85,16 @@ class IngestFlightsDataUseCase:
             self.initialized = True
 
     def _init_db(self, conn):
-        """Initialize database tables and sequences."""
+        """
+        Inicializa las tablas y secuencias necesarias para la persistencia de vuelos y control de archivos.
         
-        # 1. Tracking Table (Must exist before Flights for FK)
-        conn.execute("CREATE SEQUENCE IF NOT EXISTS tracking_id_seq")
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS file_processing_control (
-                id BIGINT DEFAULT nextval('tracking_id_seq') PRIMARY KEY,
-                file_name VARCHAR,
-                processed_at TIMESTAMP,
-                status VARCHAR, 
-                row_count BIGINT,
-                error_message VARCHAR
-            )
-        """)
+        Fases:
+        1. file_processing_control: Almacena el historial de ingestas (id, nombre_archivo, estado).
+        2. flights: Tabla principal de hechos con llave foránea al control de archivos.
+        
+        Args:
+            conn (duckdb.Connection): Conexión activa a la base de datos de métricas.
+        """
 
         # 2. Main Flights Table
         conn.execute("""
@@ -160,15 +169,33 @@ class IngestFlightsDataUseCase:
 
     @staticmethod
     def _clean_int(val):
-        """Clean integer strings with commas."""
-        if val is None: return None
-        s = str(val).replace(',', '').split('.')[0]
-        try:
-            return int(s)
-        except:
-            return None
+        """
+        Limpia y normaliza valores numéricos provenientes de Excel (maneja comas, puntos y nulos).
+        
+        Args:
+            val (Any): Valor crudo del dataframe (ej: "1,200.0", 500, None).
+            
+        Returns:
+            Optional[int]: Entero limpio o None si el valor no es convertible.
+        """
 
     def execute(self, force_reload: bool = False, specific_file: str = None) -> dict:
+        """
+        Ejecuta el proceso de ingesta para archivos nuevos o todos los archivos.
+        
+        Realiza las siguientes fases:
+        1. Identificación de archivos en el directorio data/.
+        2. Verificación de estado de procesamiento (para evitar duplicados).
+        3. Transformación de tipos (Fechas, Horas, Enteros) usando DateParser.
+        4. Carga masiva (Bulk Insert) mediante Polars y DuckDB.
+        
+        Args:
+            force_reload (bool): Si es True, limpia la BD y recarga todo.
+            specific_file (str): Nombre de un archivo específico para procesar solitario.
+            
+        Returns:
+            dict: Resumen del proceso (archivos procesados, filas insertadas, errores).
+        """
         start_time = time.time()
         
         if specific_file:
@@ -329,7 +356,16 @@ class IngestFlightsDataUseCase:
             conn.close()
 
     def reset_database(self, conn=None):
-        """Drop and recreate tables."""
+        """
+        Limpia completamente el esquema de datos, eliminando tablas de vuelos e historial.
+        Útil para procesos de recarga forzada (Force Reload).
+        
+        Args:
+            conn (Optional[duckdb.Connection]): Conexión existente. Si es None, abre una nueva.
+            
+        Returns:
+            bool: True si el reset fue exitoso.
+        """
         should_close = False
         if conn is None:
             conn = duckdb.connect(self.db_path)
@@ -341,7 +377,7 @@ class IngestFlightsDataUseCase:
             conn.execute("DROP TABLE IF EXISTS file_processing_control")
             conn.execute("DROP SEQUENCE IF EXISTS tracking_id_seq")
             
-            # Re-init immediately
+            # Re-init inmediatamente
             self._init_db(conn)
             logger.info("Tables recreated.")
             return True
@@ -354,12 +390,12 @@ class IngestFlightsDataUseCase:
 
 
     def get_progress(self):
-        """Returns current processing status."""
-        return {
-            "current_file": self.current_file,
-            "status": "running" if self.current_file else "idle",
-            "progress": f"{self.processed_count}/{self.total_files}" if self.total_files > 0 else "0/0"
-        }
+        """
+        Consulta el estado actual del proceso de procesamiento en segundo plano.
+        
+        Returns:
+            dict: Objeto con el archivo actual, estado ('running'/'idle') y fracción de progreso.
+        """
 
     def get_history(self):
         """Returns processing history."""

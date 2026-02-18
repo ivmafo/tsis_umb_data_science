@@ -2,21 +2,42 @@ import { useState, useEffect } from 'react';
 import { api } from '../../api';
 import { FaCheckCircle, FaSpinner } from 'react-icons/fa';
 
+/**
+ * Componente SystemStatus.
+ * Monitorea y muestra en tiempo real el estado del proceso de ingestión de datos (ETL).
+ * Se comunica con el backend cada 3 segundos para obtener el progreso.
+ */
+/**
+ * Componente de Monitorización: Estado del Pipeline ETL.
+ * 
+ * Este componente proporciona visibilidad en tiempo real sobre los procesos
+ * de fondo del servidor backend, específicamente la ingesta de archivos.
+ * 
+ * Atributos Técnicos:
+ * - Heartbeat de Red: Consulta el endpoint /etl/status cada 3 segundos.
+ * - Feedback Visual: Transición entre estados de 'Operativo' y 'Procesando'.
+ * - Detección de Archivos: Muestra el nombre del volumen que se está indexando.
+ */
 export const SystemStatus = () => {
+    // status: Datos de ejecución { is_running: boolean; current_file?: string }
     const [status, setStatus] = useState<{ is_running: boolean; current_file?: string }>({ is_running: false });
 
+    /**
+     * Sincroniza el estado del motor ETL con la interfaz de usuario.
+     */
     useEffect(() => {
         const checkStatus = async () => {
             try {
+                // El backend reporta si hay un thread de procesamiento activo
                 const res = await api.get('/etl/status');
                 setStatus(res.data);
             } catch (e) {
-                console.error("Status check failed", e);
+                console.error("Fallo técnico en monitoreo de pulso (SystemStatus):", e);
             }
         };
 
         checkStatus();
-        const interval = setInterval(checkStatus, 3000);
+        const interval = setInterval(checkStatus, 3000); // Polling moderado
         return () => clearInterval(interval);
     }, []);
 

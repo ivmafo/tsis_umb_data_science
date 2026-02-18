@@ -12,20 +12,34 @@ import CapacityReportView from './views/CapacityReportView';
 import PredictiveView from './views/PredictiveView';
 import { LayoutDashboard } from 'lucide-react';
 
+/**
+ * Componente Principal de la Aplicación (App).
+ * Gestiona el enrutamiento interno de vistas, el estado de navegación global 
+ * y la persistencia de datos mediante el refresco de componentes.
+ */
 function App() {
+  // ESTADO: Almacena la vista activa (slug) para el renderizado condicional
   const [currentView, setCurrentView] = useState('dashboard');
+  // ESTADO: Clave para forzar el refresco de vistas que dependen de datos frescos
   const [refreshKey, setRefreshKey] = useState(0);
 
+  /**
+   * Cambia la vista actual según la selección del usuario en la Sidebar.
+   */
   const handleNavigate = (view: string) => {
     setCurrentView(view);
   };
 
+  /**
+   * Se dispara tras una carga exitosa de archivos para notificar a los componentes de lista.
+   */
   const handleUploadSuccess = () => {
     setRefreshKey(prev => prev + 1);
-    // Optional: Redirect to list after upload
-    // setCurrentView('files'); 
   };
 
+  /**
+   * Función de enrutamiento: Retorna el componente asociado a la vista seleccionada.
+   */
   const renderContent = () => {
     switch (currentView) {
       case 'dashboard':

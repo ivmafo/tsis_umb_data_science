@@ -26,19 +26,56 @@ interface CapacityResult {
     formula_used: string;
 }
 
+/**
+ * Vista de Reporte de Capacidad ATC.
+ * Implementa la metodología de cálculo de capacidad basada en la Circular 006 (SCV / DORATASK).
+ * Permite seleccionar un sector y un rango de fechas para calcular métricas como TPS, TFC, SCV y CH.
+ */
+/**
+ * Vista de Reporte de Capacidad ATC.
+ * 
+ * Este componente implementa la lógica de negocio para la determinación de la 
+ * Capacidad de Sectores Aeronáuticos siguiendo la metodología técnica de la 
+ * Circular 006 (SCV / DORATASK).
+ * 
+ * Atributos Técnicos:
+ * - Análisis Estadístico: Calcula el TPS (Tiempo Promedio en Sector) mediante
+ *   agregación de trayectorias históricas en DuckDB.
+ * - Integración de TFC: Combina tiempos de trabajo manuales (Transferencia, 
+ *   Comunicaciones, etc.) con datos automáticos.
+ * - Modelado Matemático: Calcula la Capacidad Simultánea (SCV) y deriva la 
+ *   Capacidad Horaria (CH) teórica y ajustada por factor de carga R.
+ */
 const CapacityReportView: React.FC = () => {
+    // ESTADOS: Diccionario de sectores y puntero de selección activa
     const [sectors, setSectors] = useState<Sector[]>([]);
     const [selectedSector, setSelectedSector] = useState<string>('');
+
+    // DIMENSIONES: Acotamiento temporal para la muestra de vuelos a analizar
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+
+    // RESULTADOS: Objeto de métricas calculado por el motor de inferencia del backend
     const [result, setResult] = useState<CapacityResult | null>(null);
+
+    // CONTROL: Semáforos de proceso y feedback de errores
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    /**
+     * Sincroniza el catálogo de sectores maestros al inicio.
+     */
     useEffect(() => {
-        api.get('/sectors/').then(res => setSectors(res.data)).catch(console.error);
+        api.get('/sectors/')
+            .then(res => setSectors(res.data))
+            .catch(err => console.error("Fallo al recuperar catálogo de sectores:", err));
     }, []);
 
+    /**
+     * Motor de Cálculo de Capacidad.
+     * Invoca el procedimiento almacenado/servicio de cálculo en el backend,
+     * enviando el ID del sector y el rango de fechas para el procesamiento de trayectorias.
+     */
     const handleCalculate = async () => {
         if (!selectedSector) return;
         setLoading(true);
@@ -46,14 +83,15 @@ const CapacityReportView: React.FC = () => {
         setResult(null);
 
         try {
+            // Transacción: Cálculo de indicadores basados en Circular 006
             const res = await api.post(`/sectors/${selectedSector}/calculate`, {
                 start_date: startDate,
                 end_date: endDate
             });
             setResult(res.data);
         } catch (err: any) {
-            console.error("Calculation error", err);
-            setError(err.response?.data?.detail || "Error al calcular la capacidad. Verifique los datos del sector.");
+            console.error("Fallo técnico en motor de capacidad:", err);
+            setError(err.response?.data?.detail || "Error en el cálculo. Verifique la existencia de vuelos en el rango seleccionado.");
         } finally {
             setLoading(false);
         }
@@ -61,11 +99,13 @@ const CapacityReportView: React.FC = () => {
 
     return (
         <div className="p-6 bg-slate-50 min-h-screen">
+            {/* ENCABEZADO DE LA VISTA */}
             <h1 className="text-3xl font-bold text-slate-900 mb-2">Calculadora de Capacidad ATC</h1>
             <p className="text-slate-500 mb-8">Metodología Circular 006 (SCV / DORATASK)</p>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Controls */}
+
+                {/* PANEL DE CONTROL: PARÁMETROS DE CÁLCULO */}
                 <div className="lg:col-span-1 bg-white p-6 rounded-xl shadow-sm border border-slate-200 h-fit">
                     <h2 className="font-bold text-lg text-slate-800 mb-4 flex items-center gap-2">
                         <Calculator className="w-5 h-5 text-indigo-600" />
@@ -73,6 +113,7 @@ const CapacityReportView: React.FC = () => {
                     </h2>
 
                     <div className="space-y-4">
+                        {/* Selección del Sector Aeronáutico */}
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-1">Seleccionar Sector</label>
                             <select
@@ -87,6 +128,7 @@ const CapacityReportView: React.FC = () => {
                             </select>
                         </div>
 
+                        {/* Rango de Fechas para la muestra estadística */}
                         <div className="grid grid-cols-2 gap-2">
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-1">Fecha Inicio</label>
@@ -108,6 +150,7 @@ const CapacityReportView: React.FC = () => {
                             </div>
                         </div>
 
+                        {/* Botón de Acción Principal */}
                         <button
                             onClick={handleCalculate}
                             disabled={!selectedSector || loading}
@@ -118,6 +161,7 @@ const CapacityReportView: React.FC = () => {
                             {loading ? 'Calculando...' : 'Calcular Capacidad'}
                         </button>
 
+                        {/* Manejo de Errores en UI */}
                         {error && (
                             <div className="p-3 bg-red-50 text-red-700 text-sm rounded-lg border border-red-100 flex items-start gap-2">
                                 <AlertTriangle className="w-5 h-5 shrink-0" />
@@ -127,8 +171,9 @@ const CapacityReportView: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Results */}
+                {/* PANEL DE RESULTADOS Y ANÁLISIS DETALLADO */}
                 <div className="lg:col-span-2 space-y-6">
+                    {/* Placeholder cuando no hay resultados cargados */}
                     {!result && !loading && (
                         <div className="bg-white p-12 rounded-xl shadow-sm border border-slate-200 text-center text-slate-400 flex flex-col items-center">
                             <ClipboardCheck className="w-16 h-16 mb-4 text-slate-300" />
@@ -136,10 +181,12 @@ const CapacityReportView: React.FC = () => {
                         </div>
                     )}
 
+                    {/* Visualización de Resultados */}
                     {result && (
                         <>
-                            {/* Main KPIs */}
+                            {/* KPIs PRINCIPALES: CH y SCV */}
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {/* Capacidad Horaria Ajustada */}
                                 <div className="bg-indigo-600 p-6 rounded-xl shadow-lg text-white relative overflow-hidden">
                                     <div className="absolute top-0 right-0 p-4 opacity-10">
                                         <Calculator className="w-24 h-24" />
@@ -154,6 +201,7 @@ const CapacityReportView: React.FC = () => {
                                     </p>
                                 </div>
 
+                                {/* Capacidad Simultánea */}
                                 <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-center">
                                     <h3 className="text-slate-500 text-sm font-bold uppercase tracking-wider">Capacidad Simultánea (SCV)</h3>
                                     <div className="flex items-baseline gap-2 mt-1">
@@ -166,13 +214,14 @@ const CapacityReportView: React.FC = () => {
                                 </div>
                             </div>
 
-                            {/* Details Breakdown */}
+                            {/* DESGLOSE DETALLADO DEL CÁLCULO */}
                             <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                                 <div className="px-6 py-4 border-b border-slate-100 bg-slate-50">
                                     <h3 className="font-bold text-slate-800">Desglose de Cálculo (Metodología Circular 006)</h3>
                                 </div>
                                 <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    {/* Automatic Data */}
+
+                                    {/* Componente: Datos Automáticos (Análisis Estadístico) */}
                                     <div>
                                         <h4 className="text-sm font-bold text-indigo-600 mb-3 border-b border-indigo-100 pb-1">Automático (Datos Históricos)</h4>
                                         <div className="space-y-4">
@@ -191,14 +240,14 @@ const CapacityReportView: React.FC = () => {
                                                 {result.total_flights_analyzed < 30 && (
                                                     <div className="mt-2 text-xs text-amber-600 font-medium flex items-center gap-1">
                                                         <AlertTriangle className="w-3 h-3" />
-                                                        Muestra pequeña ({'<'}30), baja confianza estadistica.
+                                                        Muestra pequeña ({'<'}30), baja confianza estadística.
                                                     </div>
                                                 )}
                                             </div>
                                         </div>
                                     </div>
 
-                                    {/* Manual Data */}
+                                    {/* Componente: TFC (Tiempo de Trabajo del Controlador) */}
                                     <div>
                                         <h4 className="text-sm font-bold text-emerald-600 mb-3 border-b border-emerald-100 pb-1">Manual (Parámetros TFC)</h4>
                                         <div className="space-y-2">
@@ -225,7 +274,7 @@ const CapacityReportView: React.FC = () => {
                                 </div>
                             </div>
 
-                            {/* Detailed Calculation Info */}
+                            {/* SECCIÓN EDUCATIVA: EXPLICACIÓN DE FÓRMULAS */}
                             <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mt-6">
                                 <div className="px-6 py-4 border-b border-slate-100 bg-slate-50 flex items-center gap-2">
                                     <ClipboardCheck className="w-5 h-5 text-indigo-600" />
@@ -233,7 +282,7 @@ const CapacityReportView: React.FC = () => {
                                 </div>
                                 <div className="p-6 space-y-6">
 
-                                    {/* CH Explanation */}
+                                    {/* Explicación CH */}
                                     <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start border-b border-slate-100 pb-6">
                                         <div className="md:col-span-4">
                                             <h4 className="font-bold text-indigo-700 text-sm uppercase tracking-wider mb-1">Capacidad Horaria (CH)</h4>
@@ -250,17 +299,17 @@ const CapacityReportView: React.FC = () => {
                                                     <span>(3600 * {result.SCV}) / {result.TPS.toFixed(1)} = <strong>{result.CH_Theoretical}</strong></span>
                                                 </div>
                                                 <div className="mt-1 text-slate-500 italic">
-                                                    * Se ajusta posteriormente por el Factor R ({result.R_Factor}) para obtener el valor final: {result.CH_Theoretical} * {result.R_Factor} = <strong>{result.CH_Adjusted}</strong>
+                                                    * Ajuste por Factor R ({result.R_Factor}): {result.CH_Theoretical} * {result.R_Factor} = <strong>{result.CH_Adjusted}</strong>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
-                                    {/* SCV Explanation */}
+                                    {/* Explicación SCV */}
                                     <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start border-b border-slate-100 pb-6">
                                         <div className="md:col-span-4">
                                             <h4 className="font-bold text-slate-700 text-sm uppercase tracking-wider mb-1">Capacidad Simultánea (SCV)</h4>
-                                            <p className="text-xs text-slate-500">Número máximo de aeronaves que se pueden gestionar simultáneamente bajo condiciones seguras.</p>
+                                            <p className="text-xs text-slate-500">Número máximo de aeronaves que se pueden gestionar simultáneamente de forma segura.</p>
                                         </div>
                                         <div className="md:col-span-8 bg-slate-50 p-4 rounded-lg font-mono text-xs text-slate-700">
                                             <div className="flex flex-col gap-2">
@@ -273,24 +322,24 @@ const CapacityReportView: React.FC = () => {
                                                     <span>{result.TPS.toFixed(1)} / ({result.TFC_Total.toFixed(1)} * 1.3) = <strong>{result.SCV}</strong></span>
                                                 </div>
                                                 <div className="mt-1 text-slate-500 italic">
-                                                    * 1.3 es el factor de buffer de seguridad estándar.
+                                                    * El valor 1.3 corresponde al factor de buffer de seguridad estándar.
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
-                                    {/* Automatic Data Explanation */}
+                                    {/* Explicación de Datos Automáticos */}
                                     <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
                                         <div className="md:col-span-4">
                                             <h4 className="font-bold text-slate-700 text-sm uppercase tracking-wider mb-1">Automático (Datos Históricos)</h4>
-                                            <p className="text-xs text-slate-500">Datos extraídos automáticamente del análisis de vuelos históricos.</p>
+                                            <p className="text-xs text-slate-500">Datos extraídos automáticamente del análisis de vuelos procesados.</p>
                                         </div>
                                         <div className="md:col-span-8 bg-slate-50 p-4 rounded-lg font-mono text-xs text-slate-700">
                                             <div className="flex flex-col gap-2">
                                                 <div>
                                                     <span className="font-bold block mb-1">TPS (Tiempo Promedio en Sector):</span>
-                                                    <p className="text-slate-600 mb-1">Promedio de duración de vuelo dentro del sector para los <strong>{result.total_flights_analyzed}</strong> vuelos analizados.</p>
-                                                    <code className="bg-white px-2 py-1 rounded border border-slate-200 block w-fit">AVG(duracion_vuelo)</code>
+                                                    <p className="text-slate-600 mb-1">Media aritmética de la duración de vuelo dentro de los límites del sector para los <strong>{result.total_flights_analyzed}</strong> vuelos procesados.</p>
+                                                    <code className="bg-white px-2 py-1 rounded border border-slate-200 block w-fit">AVG(duración_vuelo_en_polígono)</code>
                                                 </div>
                                             </div>
                                         </div>

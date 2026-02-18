@@ -8,38 +8,79 @@ import { DataTable } from './DataTable';
 import { FileText, FileSpreadsheet } from 'lucide-react';
 
 interface PeakHoursHeatmapProps {
+    /** Filtros operativos (fechas, niveles, aeropuertos) */
     filters: any;
+    /** Columna temporal a analizar (ej: hora_salida, hora_llegada) */
     timeColumn?: string;
+    /** Habilitar botones de generación de PDF/Excel */
     allowExport?: boolean;
+    /** Color base para la escala térmica */
     color?: string;
+    /** Define si usa el endpoint predictivo (IA) o el histórico (Estadístico) */
     isPredictive?: boolean;
+    /** Método de consolidación: promedio ('avg') o suma ('sum') */
     aggregation?: 'avg' | 'sum';
 }
 
 interface Metrics {
+    /** Volumen bruto de vuelos en la muestra */
     total_flights?: number;
+    /** Días efectivos considerados en el cálculo */
     days_analyzed?: number;
+    /** Carga media por jornada */
     avg_daily_flights?: number;
+    /** Información detallada sobre la celda de máxima intensidad */
     peak_info?: {
         day: string;
         hour: string;
         volume: number;
         intensity: string;
     };
+    /** Texto explicativo generado por el motor de IA */
     description?: string;
+    /** Reporte narrativo para nivel ejecutivo */
     executive_report?: any;
 }
 
+/**
+ * Visualización de Densidad de Tráfico (Heatmap).
+ * 
+ * Permite identificar los 'picos de carga' horaria distribuidos por los días de la semana.
+ * Utiliza una escala cromática dinámica para resaltar zonas de saturación (rojo) y
+ * periodos de baja actividad (azul).
+ * 
+ * @param props - Configuración del heatmap y filtros aplicados.
+ */
 export const PeakHoursHeatmap = ({ filters, timeColumn = 'hora_salida', allowExport = true, color, isPredictive = false }: PeakHoursHeatmapProps) => {
+    // series: Matriz de 7 filas (días) x 24 columnas (horas)
     const [series, setSeries] = useState<any[]>([]);
+
+    // loading: Bloqueo de UI durante la consulta a la BD DuckDB o modelos RF
     const [loading, setLoading] = useState(false);
+
+    // empty: Flag para indicar ausencia de registros en el rango seleccionado
     const [empty, setEmpty] = useState(false);
+
+    // exporting: Estado para evitar colisiones en la generación de archivos
     const [exporting, setExporting] = useState(false);
+
+    // metrics: Resultados agregados y diagnóstico ejecutivo
     const [metrics, setMetrics] = useState<Metrics | null>(null);
+
+    // history: Set de datos crudos para la tabla de soporte
     const [history, setHistory] = useState<any[]>([]);
+
+    // description: Narrativa técnica sobre el comportamiento del tráfico
     const [description, setDescription] = useState<string>("");
+
     const [error, setError] = useState<string | null>(null);
 
+    /**
+     * Dispara la generación de reportes en el lado del servidor.
+     * Recibe un stream binario (blob) y fuerza la descarga en el navegador.
+     * 
+     * @param type - Extensión del archivo objetivo ('pdf' | 'excel').
+     */
     const handleExport = async (type: 'pdf' | 'excel') => {
         if (exporting) return;
         setExporting(true);
@@ -59,12 +100,16 @@ export const PeakHoursHeatmap = ({ filters, timeColumn = 'hora_salida', allowExp
             link.parentNode?.removeChild(link);
         } catch (error) {
             console.error(error);
-            alert("Error al exportar.");
+            alert("Error al exportar el reporte.");
         } finally {
             setExporting(false);
         }
     };
 
+    /**
+     * Opciones técnicas de ApexCharts.
+     * El heatmap requiere un escalonamiento de colores (colorScale) para ser legible.
+     */
     const [chartOptions, setChartOptions] = useState<any>({
         chart: {
             type: 'heatmap',
@@ -79,7 +124,7 @@ export const PeakHoursHeatmap = ({ filters, timeColumn = 'hora_salida', allowExp
         xaxis: {
             categories: Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, '0')),
             tooltip: { enabled: false },
-            labels: { style: { fontSize: '12px' } }
+            labels: { style: { fontSize: '12px', color: '#64748b' } }
         },
         plotOptions: {
             heatmap: {
@@ -87,7 +132,7 @@ export const PeakHoursHeatmap = ({ filters, timeColumn = 'hora_salida', allowExp
                 radius: 2,
                 useFillColorAsStroke: false,
                 colorScale: {
-                    ranges: [] // Will be populated dynamically
+                    ranges: [] // Se computa en processHeatmapData
                 }
             }
         },
@@ -98,6 +143,7 @@ export const PeakHoursHeatmap = ({ filters, timeColumn = 'hora_salida', allowExp
         }
     });
 
+    // Orquesta el flujo de datos: Filtros -> API -> Procesamiento -> Visualización
     useEffect(() => {
         const fetchData = async () => {
             if (loading) return;
@@ -106,7 +152,7 @@ export const PeakHoursHeatmap = ({ filters, timeColumn = 'hora_salida', allowExp
             setError(null);
             try {
                 if (isPredictive) {
-                    // PREDICTIVE MODE (Original Logic)
+                    // Pipeline de Predicción de IA
                     const mappedFilters: PredictiveFilters = {
                         start_date: filters.start_date || filters.startDate,
                         end_date: filters.end_date || filters.endDate,
@@ -123,12 +169,9 @@ export const PeakHoursHeatmap = ({ filters, timeColumn = 'hora_salida', allowExp
                         const rawData = data.heatmap;
                         setHistory(data.history || []);
 
-                        // Consolidate metrics (Predictive specific)
                         const newMetrics = data.metrics || {};
                         if (data.description) newMetrics.description = data.description;
-                        if (data.executive_report) {
-                            newMetrics.executive_report = data.executive_report;
-                        }
+                        if (data.executive_report) newMetrics.executive_report = data.executive_report;
 
                         setMetrics(newMetrics);
                         setDescription(data.description || "");
@@ -138,14 +181,13 @@ export const PeakHoursHeatmap = ({ filters, timeColumn = 'hora_salida', allowExp
                         setSeries([]);
                     }
                 } else {
-                    // HISTORICAL MODE (Flight Distribution Logic - Uses Stats Endpoint)
-                    // Construct Payload matching GetPeakHourStats requirements (clean keys)
+                    // Pipeline Histórico (DuckDB)
                     const payload = {
                         start_date: filters.startDate || null,
                         end_date: filters.endDate || null,
                         min_level: filters.minLevel || null,
                         max_level: filters.maxLevel || null,
-                        timeColumn: timeColumn, // Passed to backend to select hora_salida/llegada
+                        timeColumn: timeColumn,
                         origins: filters.selectedOrigins?.map((o: any) => o.value?.icao_code || o.value) || [],
                         destinations: filters.selectedDestinations?.map((d: any) => d.value?.icao_code || d.value) || [],
                         matriculas: filters.selectedMetricula?.map((m: any) => m.value) || [],
@@ -158,10 +200,6 @@ export const PeakHoursHeatmap = ({ filters, timeColumn = 'hora_salida', allowExp
                     const response = await api.post('/stats/flights-peak-hours', payload);
 
                     if (response.data && response.data.length > 0) {
-                        // Backend returns [{day: 1, hour: 0, value: 10}, ...]
-                        // We need to map this to the format expected by processHeatmapData or just call it if compatible
-                        // The format is compatible! [{day, hour, value}] matches what we used before (dow -> day)
-                        // Wait, previous logic used 'dow', 'hour', 'value'. Backend returns 'day', 'hour', 'value'.
                         const rawData = response.data.map((r: any) => ({
                             dow: r.day,
                             hour: r.hour,
@@ -170,18 +208,15 @@ export const PeakHoursHeatmap = ({ filters, timeColumn = 'hora_salida', allowExp
 
                         processHeatmapData(rawData);
 
-                        // Calculate simple description for historical
                         const total = rawData.reduce((acc: number, curr: any) => acc + curr.value, 0);
                         setDescription(`Total de vuelos analizados: ${total}`);
                         setMetrics({ total_flights: total });
-
                     } else {
                         setEmpty(true);
                         setSeries([]);
                     }
                 }
             } catch (error: any) {
-                console.error("Error fetching heatmap data:", error);
                 setError(error.message || "Error desconocido");
                 setEmpty(true);
             } finally {
@@ -189,10 +224,13 @@ export const PeakHoursHeatmap = ({ filters, timeColumn = 'hora_salida', allowExp
             }
         };
 
+        /**
+         * Transforma la lista plana de frecuencias en la estructura matricial de ApexCharts.
+         * Calcula dinámicamente los umbrales de color para evitar saturación visual.
+         */
         const processHeatmapData = (rawData: any[]) => {
-            // Determine Max Value for Dynamic Scaling
             const values = rawData.map((d: any) => d.value);
-            const maxVal = Math.max(...values, 10); // Minimum 10 avoid div/0
+            const maxVal = Math.max(...values, 10);
             const step = maxVal / 5;
             const r1 = Math.ceil(step * 1);
             const r2 = Math.ceil(step * 2);
@@ -200,12 +238,12 @@ export const PeakHoursHeatmap = ({ filters, timeColumn = 'hora_salida', allowExp
             const r4 = Math.ceil(step * 4);
 
             const safeRanges = [
-                { from: 0, to: 0, color: '#f8fafc', name: '0' },
-                { from: 1, to: r1, color: '#3b82f6', name: `1 - ${r1}` },
-                { from: r1 + 1, to: r2, color: '#06b6d4', name: `${r1 + 1} - ${r2}` },
-                { from: r2 + 1, to: r3, color: '#10b981', name: `${r2 + 1} - ${r3}` },
-                { from: r3 + 1, to: r4, color: '#f59e0b', name: `${r3 + 1} - ${r4}` },
-                { from: r4 + 1, to: 100000, color: '#ef4444', name: `> ${r4}` }
+                { from: 0, to: 0, color: '#f8fafc', name: 'Nula' },
+                { from: 1, to: r1, color: '#3b82f6', name: 'Baja' },
+                { from: r1 + 1, to: r2, color: '#06b6d4', name: 'Moderada' },
+                { from: r2 + 1, to: r3, color: '#10b981', name: 'Media' },
+                { from: r3 + 1, to: r4, color: '#f59e0b', name: 'Alta' },
+                { from: r4 + 1, to: 100000, color: '#ef4444', name: 'Saturada' }
             ];
 
             setChartOptions((prev: any) => ({
@@ -219,16 +257,11 @@ export const PeakHoursHeatmap = ({ filters, timeColumn = 'hora_salida', allowExp
                 }
             }));
 
-            // Process Data for ApexCharts
-            // Days ordered for display (Monday top to Sunday bottom or vice versa)
-            // But usually rawData is 1=Mon...7=Sun.
-            // We want standard ordering.
-
-            // Re-map days to standard 1-7
             const standardDays = [
-                { id: 1, name: 'Lun' }, { id: 2, name: 'Mar' }, { id: 3, name: 'Mié' },
-                { id: 4, name: 'Jue' }, { id: 5, name: 'Vie' }, { id: 6, name: 'Sáb' }, { id: 7, name: 'Dom' }
+                { id: 1, name: 'Lunes' }, { id: 2, name: 'Martes' }, { id: 3, name: 'Miércoles' },
+                { id: 4, name: 'Jueves' }, { id: 5, name: 'Viernes' }, { id: 6, name: 'Sábado' }, { id: 7, name: 'Domingo' }
             ];
+
             const finalSeries = standardDays.map(day => {
                 const hourData = Array.from({ length: 24 }, (_, i) => {
                     const match = rawData.find((r: any) => r.dow === day.id && r.hour === i);
@@ -244,22 +277,23 @@ export const PeakHoursHeatmap = ({ filters, timeColumn = 'hora_salida', allowExp
         return () => clearTimeout(t);
     }, [filters, color, isPredictive, timeColumn]);
 
-    // Render loading/empty remains the same
+    // Renderizado condicional de estados
     if (loading) return (
         <div className="h-[350px] flex justify-center items-center text-slate-400 gap-2">
             <div className="w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-            Cargando...
+            Cargando Datos...
         </div>
     );
 
     if (empty) return (
         <div className="h-[350px] flex justify-center items-center text-slate-400 bg-slate-50 rounded-xl border-dashed border-2 border-slate-200">
-            {error ? error : "No hay datos suficientes para el mapa de calor."}
+            {error ? error : "No hay datos suficientes para generar el mapa de calor."}
         </div>
     );
 
     return (
         <div className="w-full bg-white p-4 rounded-xl">
+            {/* Controles de Exportación */}
             {allowExport && (
                 <div className="flex justify-end gap-2 mb-2">
                     <button onClick={() => handleExport('pdf')} disabled={exporting} className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-white bg-rose-500 rounded hover:bg-rose-600 disabled:opacity-50">
@@ -270,6 +304,7 @@ export const PeakHoursHeatmap = ({ filters, timeColumn = 'hora_salida', allowExp
                     </button>
                 </div>
             )}
+
             <ReactApexChart
                 options={chartOptions}
                 series={series}
@@ -277,7 +312,7 @@ export const PeakHoursHeatmap = ({ filters, timeColumn = 'hora_salida', allowExp
                 height={350}
             />
 
-            {/* Predictive Only: Peak Info Analysis */}
+            {/* Análisis Predictivo: Información de Picos */}
             {isPredictive && metrics?.peak_info && (
                 <div className="mt-4 p-4 bg-orange-50 border border-orange-100 rounded-lg flex items-center justify-between">
                     <div>
@@ -297,7 +332,7 @@ export const PeakHoursHeatmap = ({ filters, timeColumn = 'hora_salida', allowExp
                 </div>
             )}
 
-            {/* Predictive Only: Executive Report */}
+            {/* Reporte Ejecutivo Predictivo */}
             {isPredictive && metrics?.executive_report && (
                 <div className="mt-8 bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
                     <div className="bg-slate-800 p-4 border-b border-slate-700">
@@ -315,7 +350,7 @@ export const PeakHoursHeatmap = ({ filters, timeColumn = 'hora_salida', allowExp
                             </div>
                         </div>
                         <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 h-fit">
-                            <h4 className="text-xs font-bold text-slate-500 uppercase mb-4 tracking-wider">Puntos Clave</h4>
+                            <h4 className="text-xs font-bold text-slate-500 uppercase mb-4 tracking-wider">Principales Hallazgos</h4>
                             <div className="space-y-4">
                                 {metrics.executive_report.key_highlights.map((h: any, idx: number) => (
                                     <div key={idx}>
@@ -330,21 +365,21 @@ export const PeakHoursHeatmap = ({ filters, timeColumn = 'hora_salida', allowExp
                 </div>
             )}
 
-            {/* Methodology: Only show full detail if predictive, otherwise simplify */}
             <MethodologySection
                 title={isPredictive
-                    ? (filters.start_date ? "Análisis de Picos (Estacional)" : "Picos de Hora y Mapa de Calor")
-                    : "Distribución Horaria (Conteo de Vuelos)"}
-                algorithm={isPredictive ? "Agregación de Frecuencia con Promedio Ponderado" : "Conteo Agregado"}
+                    ? (filters.start_date ? "Análisis de Picos Estacionales" : "Proyección de Mapa de Calor")
+                    : "Distribución Histórica de Frecuencias"}
+                algorithm={isPredictive ? "Agregación con Promedio Ponderado" : "Conteo de Frecuencias Agregado"}
                 variables={['Día de la semana', 'Hora del día', 'Volumen de vuelos']}
-                filters="Sector, Aeropuerto, Ruta, Nivel"
-                dataVolume={description || "Datos históricos"}
-                explanation={error || (metrics?.description || "Calculando...")}
-                visible={isPredictive} // Optional: hide completely if not predictive using a new prop in MethodologySection if available, or just keeping it simple
+                filters="Sector, Aeropuerto, Ruta, Nivel de Vuelo"
+                dataVolume={description || "Historial completo de vuelos"}
+                explanation={error || (metrics?.description || "Generando explicación técnica...")}
+                visible={isPredictive}
             />
 
-            {/* Show sampling data only if predictive or explicitly requested (default hidden for historical/distribution view per user request) */}
-            {isPredictive && <DataTable data={history} title="Datos de Muestreo (Vuelos por Hora)" />}
+            {isPredictive && <DataTable data={history} title="Muestra de Datos (Vuelos por Hora/Día)" />}
         </div>
     );
 };
+
+export default PeakHoursHeatmap;

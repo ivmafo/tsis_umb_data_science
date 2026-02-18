@@ -5,16 +5,42 @@ import { api } from '../api';
 import { FileText, FileSpreadsheet } from 'lucide-react';
 
 interface FlightsYearChartProps {
+    /** Filtros globales del dashboard (fechas, aeropuertos, empresas) */
     filters: any;
+    /** Habilita la exportación a formatos PDF/Excel */
     allowExport?: boolean;
 }
 
+/**
+ * Visualización Histórica: Evolución Anual de Vuelos.
+ * 
+ * Componente que renderiza un gráfico de barras comparativo para visualizar 
+ * el volumen total de vuelos procesados agrupado por año calendario.
+ * 
+ * Aspectos técnicos:
+ * - Utiliza Recharts para el renderizado SVG.
+ * - Soporta scroll horizontal dinámico si hay demasiados años en la serie.
+ * - Implementa exportación delegada a endpoints de infraestructura.
+ * 
+ * @param props - Configuración de filtros y permisos de exportación.
+ */
 export const FlightsYearChart = ({ filters, allowExport = true }: FlightsYearChartProps) => {
+    // data: Array de objetos { name: string (Año), value: number (Vuelos) }
     const [data, setData] = useState<any[]>([]);
+
+    // loading: Control de feedback visual durante la carga (Spinner)
     const [loading, setLoading] = useState(false);
+
+    // empty: Flag para renderizado alternativo si no hay resultados
     const [empty, setEmpty] = useState(false);
+
+    // exporting: Bloqueo de botones durante la generación de reportes binarios
     const [exporting, setExporting] = useState(false);
 
+    /**
+     * Gestiona la solicitud de reportes anuales.
+     * Envía los filtros actuales y fuerza la descarga del archivo generado.
+     */
     const handleExport = async (type: 'pdf' | 'excel') => {
         if (exporting) return;
         setExporting(true);
@@ -33,19 +59,20 @@ export const FlightsYearChart = ({ filters, allowExport = true }: FlightsYearCha
             link.click();
             link.parentNode?.removeChild(link);
         } catch (error) {
-            console.error(error);
-            alert("Error al exportar.");
+            console.error("Fallo en exportación anual:", error);
+            alert("Error al generar el documento.");
         } finally {
             setExporting(false);
         }
     };
 
+    // Efecto para sincronizar el gráfico con los filtros cada 500ms (Debounce)
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
             setEmpty(false);
             try {
-                // Add groupBy: 'year' to filters
+                // Inyecta 'year' como parámetro de agrupación para el backend DuckDB
                 const response = await api.post('/stats/flights-over-time', { ...filters, groupBy: 'year' });
 
                 if (response.data && response.data.length > 0) {
@@ -55,7 +82,7 @@ export const FlightsYearChart = ({ filters, allowExport = true }: FlightsYearCha
                     setData([]);
                 }
             } catch (error) {
-                console.error("Error fetching year stats:", error);
+                console.error("Error al obtener estadísticas anuales:", error);
                 setEmpty(true);
             } finally {
                 setLoading(false);
