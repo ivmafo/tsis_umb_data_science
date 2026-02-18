@@ -1,89 +1,112 @@
-# Capa de Dominio (Domain Layer)
+# Capa de Dominio: El Corazón del Negocio (Deep Dive)
 
-La capa de dominio es el núcleo de la **Arquitectura Hexagonal**. Contiene las reglas de negocio, entidades y definiciones de interfaces (puertos) que son independientes de cualquier tecnología externa (base de datos, UI, frameworks).
-
-## 🧩 Entidades (Entities)
-
-Las entidades representan los conceptos fundamentales del espacio aéreo y la operación.
-
-### Airport
-[`Airport`](file:///c:/Users/LENOVO/Documents/tesis/src/domain/entities/airport.py)
-Representa una instalación aeroportuaria con sus atributos técnicos y geográficos.
-- **Atributos Clave**: `icao_code`, `latitude`, `longitude`, `timezone`.
-- **Uso**: Fundamental para el trazado de trayectorias y normalización de tiempos UTC.
-
-### Region
-[`Region`](file:///c:/Users/LENOVO/Documents/tesis/src/domain/entities/region.py)
-Define una zona geográfica o administrativa aeronáutica.
-- **Atributos Clave**: `code`, `nivel_min`.
-- **Uso**: Agrupación lógica de aeropuertos y sectores para reportes regionales.
-
-### Sector
-*(Documentación pendiente de validación de archivo)*
-Representa un sector de control de tráfico aéreo con sus capacidades teóricas y configuraciones de Circular 006.
+La capa de dominio es el núcleo de nuestro sistema, diseñada bajo los principios de **Domain-Driven Design (DDD)**. Aquí residen las reglas de negocio más puras, aisladas de cualquier preocupación técnica periférica.
 
 ---
 
-## ⚓ Puertos (Ports / Interfaces)
+## 🏛️ 1. Fundamentos Teóricos: Domain-Driven Design (DDD)
 
-Los puertos definen el "contrato" que la infraestructura debe cumplir. Utilizamos el patrón **Repository** para abstraer la persistencia.
+A diferencia de las arquitecturas tradicionales centradas en los datos (Data-Centric), este sistema se centra en el **Modelo de Dominio**. Según **Eric Evans (2003)**, el dominio es el área de conocimiento y actividad alrededor de la cual gira el software.
 
-### IAirportRepository
-Definido en [`airport_repository.py`](file:///c:/Users/LENOVO/Documents/tesis/src/domain/ports/airport_repository.py).
-Interfaz para la gestión de datos maestros de aeropuertos.
-
-### IRegionRepository
-Interfaz para el CRUD de regiones y zonas de control.
-
-### IFileRepository
-Interfaz para el seguimiento del estado de procesamiento de archivos (ETL).
+### 🧩 Elementos del Bloque de Construcción del Dominio:
+1.  **Entidades (Entities)**: Objetos que poseen una identidad única que trasciende sus atributos (ej: un Aeropuerto sigue siendo el mismo aunque cambie su nombre, mientras conserve su código OACI).
+2.  **Objetos de Valor (Value Objects)**: Objetos descriptivos sin identidad intrínseca. Son inmutables.
+3.  **Puertos (Ports)**: Definiciones abstractas de interfaces que permiten al dominio comunicarse con el exterior sin conocer los detalles de implementación.
 
 ---
 
-## 🔄 3.6.3 Diagrama de Estados (Ciclo de Vida del Vuelo)
+## 🧩 2. Entidades de Espacio Aéreo (Entities)
 
-El siguiente diagrama describe los estados por los que transita la información de un vuelo dentro del motor analítico de la tesis.
+Ubicación: [`src/domain/entities/`](file:///c:/Users/LENOVO/Documents/tesis/src/domain/entities/)
 
-```mermaid
-stateDiagram-v2
-    [*] --> Recibido: Carga de Archivo (SRS)
-    Recibido --> Validado: Esquema Correcto
-    Recibido --> ErrorFormat: Esquema Inválido
-    
-    Validado --> EnProceso: Normalización (DateParser)
-    EnProceso --> Persistido: Insert en DuckDB
-    
-    Persistido --> Analizado: Cálculo de Capacidad
-    Analizado --> Proyectado: Entrada a Modelo ML
-    Proyectado --> [*]
-    
-    ErrorFormat --> [*]: Notificación al Usuario
-```
+### ✈️ 2.1 Airport
+La entidad [`Airport`](file:///c:/Users/LENOVO/Documents/tesis/src/domain/entities/airport.py) es la piedra angular del sistema. 
+
+- **Atributos Técnicos**: 
+    - `icao_code`: Identificador único de 4 caracteres según el estándar de la Organización de Aviación Civil Internacional (OACI).
+    - `latitude/longitude`: Coordenadas en formato decimal para cálculos de geofencing y trayectorias.
+- **Teoría de Identidad**: Su identidad está ligada al `icao_code`. El sistema utiliza este código para normalizar datos provenientes de diferentes fuentes (OurAirports vs SRS).
+
+### 🗺️ 2.2 Region
+La entidad [`Region`](file:///c:/Users/LENOVO/Documents/tesis/src/domain/entities/region.py) representa una unidad administrativa aeronáutica (ej: un FIR - Flight Information Region).
+
+- **Lógica de Agregación**: Permite agrupar aeropuertos para el cálculo de métricas agregadas por zona de control.
+- **Atributo `nivel_min`**: Define el piso operacional para el análisis de vuelos dentro de su jurisdicción, filtrando datos de baja altitud no relevantes para el control de área.
 
 ---
 
-## 📊 3.6.2 Diagrama de Dominio
+## 💎 3. Objetos de Valor (Value Objects)
+
+Ubicación: [`src/domain/value_objects/`](file:///c:/Users/LENOVO/Documents/tesis/src/domain/value_objects/)
+
+### 📅 3.1 DateRange
+[`DateRange`](file:///c:/Users/LENOVO/Documents/tesis/src/domain/value_objects/date_range.py) es un objeto de valor inmutable que garantiza la integridad de cualquier consulta temporal.
+
+- **Invariante Matemática**: `start_date <= end_date`. El constructor lanza un `ValueError` si esta condición se viola, asegurando que ningún caso de uso opere con rangos inválidos.
+- **Inmutabilidad**: Al ser un dataclass con `frozen=True`, garantizamos que una vez creado, su estado no cambie, evitando efectos colaterales en hilos paralelos de procesamiento.
+
+---
+
+## � 4. Diagrama de Estructura de Dominio (Extendido)
 
 ```mermaid
 classDiagram
-    direction LR
+    direction TB
     class Airport {
         +String icao_code
+        +String name
         +Float latitude
         +Float longitude
-        +getTime()
+        +timezone float
     }
     class Region {
+        +String name
         +String code
         +Int nivel_min
     }
     class Sector {
-        +Float capacity_ch
-        +Float tfc_seconds
+        +String name
+        +Definition config
+        +calculate_capacity()
     }
-    Region "1" -- "*" Airport : contiene
-    Region "1" -- "*" Sector : incluye
+    class DateRange {
+        <<Value Object>>
+        +datetime start
+        +datetime end
+        +contains(date)
+    }
+    class FileInfo {
+        +String filename
+        +Boolean status
+    }
+
+    Region "1" *-- "*" Airport : agrupa
+    Region "1" *-- "*" Sector : gestiona
+    Sector ..> DateRange : usa para TPS
+    FileInfo -- "*" Airport : provee datos de
 ```
 
-> [!IMPORTANT]
-> Ningún archivo en esta capa importa módulos de `application` o `infrastructure`. Esto garantiza que las reglas de negocio sean puras y fáciles de testear.
+---
+
+## ⚓ 5. Puertos: La Definición del Contrato
+
+Ubicación: [`src/domain/ports/`](file:///c:/Users/LENOVO/Documents/tesis/src/domain/ports/)
+
+Los puertos definen **qué** necesita el dominio para funcionar, sin importar **cómo** se implemente.
+
+- **`AirportRepository`**: Define métodos como `get_by_icao()` y `get_paginated()`. Esto permite que el sistema use DuckDB hoy, pero pueda migrar a una API REST externa mañana sin cambiar el código de dominio.
+- **`MetricRepository`**: Centraliza el acceso a los datos de vuelos para cálculos de capacidad.
+
+---
+
+## 📚 6. Fundamentación Técnica y Bibliografía
+
+1.  **Evans, E. (2003)**. *Domain-Driven Design: Tackling Complexity in the Heart of Software*. Addison-Wesley. [Texto fundamental sobre la segregación de lógica de dominio].
+2.  **Fowler, M. (2002)**. *Patterns of Enterprise Application Architecture*. Addison-Wesley. [Base para el patrón Repository y el uso de Value Objects].
+3.  **OACI (ICAO)**. *Anexo 15: Servicios de Información Aeronáutica*. [Referencia para la estructura de códigos OACI y metadatos de aeropuertos].
+4.  **Aerocivil Colombia**. *Manual de Reglamentos Aeronáuticos de Colombia (RAC)*. [Base para la definición de regiones FIR y niveles mínimos de vuelo].
+
+---
+
+> [!CAUTION]
+> **Pureza del Dominio**: Esta capa tiene **CERO** dependencias externas. No debe importar `fastapi`, `duckdb`, `pandas` ni ninguna librería que no sea estándar de Python (salvo Pydantic para validación de tipos).
