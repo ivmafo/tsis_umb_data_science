@@ -324,36 +324,36 @@ sequenceDiagram
 Muestra cómo se organiza el código en módulos físicos y sus dependencias.
 
 ```mermaid
-componentDiagram
-    package "Client Side" {
-        [React App] as UI
-        [Axios Lib] as HTTP
-        UI ..> HTTP : uses
-    }
+graph TD
+    subgraph Client_Side [Client Side]
+        UI[React App]
+        HTTP[Axios Lib]
+        UI ..> HTTP
+    end
 
-    package "Server Side" {
-        [FastAPI App] as API
-        [Uvicorn Server] as SRV
+    subgraph Server_Side [Server Side]
+        API[FastAPI App]
+        SRV[Uvicorn Server]
         
-        package "Core Logic" {
-            [Use Cases] as UC
-            [Entities] as DOM
-        }
+        subgraph Core_Logic [Core Logic]
+            UC[Use Cases]
+            DOM[Entities]
+        end
 
-        package "Data Access" {
-            [DuckDB Driver] as DUCK
-            [Polars Lib] as POL
-        }
-    }
+        subgraph Data_Access [Data Access]
+            DUCK[DuckDB Driver]
+            POL[Polars Lib]
+        end
+    end
 
-    HTTP --(0-- API : JSON/REST
-    API --> UC : orchestrates
-    UC --> DOM : manipulates
-    UC ..> DUCK : reads/writes
-    UC ..> POL : scans
+    HTTP -- JSON/REST --> API
+    API --> UC
+    UC --> DOM
+    UC ..> DUCK
+    UC ..> POL
     
-    file "metrics.duckdb" as FILE
-    DUCK --> FILE : SQL
+    FILE[metrics.duckdb]
+    DUCK -->|SQL| FILE
 ```
 
 #### 🔍 Análisis Detallado: Componentes
@@ -368,29 +368,31 @@ componentDiagram
 Muestra los nodos de hardware/software donde corre el sistema.
 
 ```mermaid
-deploymentDiagram
-    node "User Workstation" {
-        artifact "Web Browser" {
-            component "Single Page App (React)"
-        }
-    }
+graph TD
+    subgraph User_Workstation [User Workstation]
+        subgraph Web_Browser [Web Browser]
+            SPA[Single Page App React]
+        end
+    end
 
-    node "Application Server (Windows/Linux)" {
-        artifact "Python Process (3.10+)" {
-            component "FastAPI"
-            component "ML Models (Scikit)"
-            component "Ingestion Engine (Polars)"
-        }
+    subgraph App_Server [Application Server Windows/Linux]
+        subgraph Python_Process [Python Process 3.10+]
+            FAST[FastAPI]
+            ML[ML Models Scikit]
+            ING[Ingestion Engine Polars]
+        end
         
-        database "Local Storage" {
-            file "metrics.duckdb"
-            file "polygons.json"
-            folder "usage_logs/"
-        }
-    }
+        subgraph Local_Storage [Local Storage]
+            DB_FILE[metrics.duckdb]
+            POLY_FILE[polygons.json]
+            LOGS[usage_logs/]
+        end
+    end
 
-    "Web Browser" -- "HTTP/1.1 (Port 8000)" -- "Python Process (3.10+)"
-    "Python Process (3.10+)" -- "File I/O" -- "Local Storage"
+    SPA -- HTTP/1.1 Port 8000 --> FAST
+    FAST -- File I/O --> DB_FILE
+    ML -- File I/O --> DB_FILE
+    ING -- File I/O --> DB_FILE
 ```
 
 #### 🔍 Análisis Detallado: Despliegue
