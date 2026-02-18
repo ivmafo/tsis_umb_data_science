@@ -1,0 +1,53 @@
+# Ignore Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environment
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment variables
+.env
+
+# Database
+*.duckdb
+*.db
+*.duckdb.*
+
+# Data files
+data/*.csv
+data/*.parquet
+data/*.xlsx
+data/*.xls
+!data/.gitkeep
+
+# Test coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Type checking
+.mypy_cache/
+.dmypy.json
+
+# Ruff
+.ruff_cache/
+
+# Distribution
+dist/
+build/
+*.egg-info/
+*.exe
+
+# Backups and Large Files
+*.zip
+src_backup_*/

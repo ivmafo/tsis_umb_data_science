@@ -1,0 +1,2459 @@
+--- PAGE 1 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 1 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+1. PROPOSITO 
+ 
+La presente Circular tiene como finalidad proporcionar al personal responsable de la medición y 
+cálculo de capacidad de sector ATC (Experto ATFCM), los conocimientos y procedimientos 
+detallados acerca de la metodología a desarrollar durante el proceso base para la determinación y 
+declaración de la capacidad ATC de los sectores de control (APP – ACC) en los que se preste 
+servicio de Control Radar. 
+ 
+Nota: Los criterios y parámetros establecidos en este documento no serán aplicados a los 
+espacios aéreos que utilicen el sistema CPDLC (Controller Pilot Data Link Communications) 
+y control convencional (NO RADAR). 
+ 
+Los valores de capacidad de sector que se obtengan como resultado de la aplicación de las 
+metodologías descritas en el presente documento, se rán expuestos en un informe denominado 
+“INFORME CAPACIDAD DE SECTOR ATC”  a la Dirección de Servicios a la Navegación Aérea 
+(DSNA), que a su vez será la responsable de la declaración oficial de los valores de capacidad de 
+los sectores de control, a fin de ser utilizados para los fines correspondientes a la prestación de 
+servicio ATC, y como medida de referencia para la aplicación de medidas ATFCM por parte de la 
+FMU Colombia con el ánimo de proteger de sobrecargas a los sectores de control manteniendo la 
+más alta eficiencia operacional en el Sistema Nacional del Espacio Aéreo – SINEA. 
+ 
+Esta Circular presenta la metodología a ser utilizada por COLOMBIA en su espacio aéreo y con el 
+objeto de determinar la capacidad de un sector de Control Radar, aplica a la FI R SKED Y SKEC; 
+la responsabilidad directa de su aplicación corresponde a la Unidad de Gestión de Flujo y 
+Capacidad establecida por el RAC - Parte Sexta. Como quiera que esta Circular sea un 
+documento vivo y de crecimiento, será la Unidad de Flujo por inter medio de la Dirección de 
+Servicios a la Navegación Aérea la responsable de las actualizaciones pertinentes de este 
+documento manteniéndolo a tono con las circunstancias cambiantes de un sistema en evolución. 
+  
+2. APLICABILIDAD 
+ 
+Esta Circular presenta la metodología a ser utilizada por COLOMBIA en su espacio aéreo y con el 
+objeto de determinar la capacidad de un sector de Control Radar, aplica a la FIR SKED Y SKEC; 
+la responsabilidad directa de su aplicación corresponde a la Unidad de Gestión de Flujo y 
+Capacidad establecida por el RAC - Parte Sexta. Como quiera que esta Circular sea un 
+documento vivo y de crecimiento, será la Unidad de Flujo por intermedio de la Dirección de 
+Servicios a la Navegación Aérea la responsable de las actualizaciones pertinentes de es te 
+documento manteniéndolo a tono con las circunstancias cambiantes de un sistema en evolución. 
+ 
+3. DEFINICIONES Y ABREVIATURAS 
+ 
+ATC   Control de Tránsito Aéreo. 
+ATCO   Controlador de Tránsito Aéreo. 
+ATFCM  Gestión de la Afluencia y Capacidad del Tránsito Aéreo. 
+CNS   Comunicación, Navegación y Vigilancia. 
+CPDLC  Comunicaciones Controlador / Piloto por Enlace de Datos. 
+
+--- PAGE 2 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 2 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+DECEA Departamento de Control del Espacio Aéreo Brasilero. 
+DSNA   Dirección de Servicios a la Navegación Aérea. 
+FAA  Administración Federal de Aviación. 
+FMU  Unidad de Gestión de Afluencia de Tránsito Aéreo. 
+SCV  Valor de la Capacidad del Sector (Sector Capacity Value) 
+SECAP  Sistema de evaluación de capacidad. 
+SENEAM Servicios a la Navegación en el Espacio Mexicano. 
+SLOT’S  Intervalo de tiempo para la operación de un determinado vuelo. 
+SSO  Secretaria de Sistemas Operacionales 
+ 
+4. ANTECEDENTES 
+ 
+El Anexo 11 al Convenio de Chicago de la Organización de Aviación Civil Internacional - OACI en 
+el punto 3.7.5.1, establece que se implantará la gestión de afluencia del tránsito aéreo (ATFM) en 
+el espacio aéreo, en el que la demanda de tránsito aéreo excede a veces, o se espera que 
+exceda, de la capacidad declarada de los servicios de control de tránsito aéreo de que se trate, 
+definición que fuera transferida a nuestros  Reglamentos, en particular la Parte Sexta, que define a 
+la Gestión de afluencia del tránsito aéreo (ATFM )  como el servicio establecido con el objetivo 
+de contribuir a una circulación segura, ordenada y expedita del tránsito aéreo, asegurando  que se 
+utiliza al máximo posible la capacidad ATC y que el volumen de tránsito es compatible con las 
+capacidades declaradas por la autoridad ATS competente. 
+ 
+De igual manera, el Anexo 11 define a la capacidad declarada como la medida de la capacidad 
+del sistema ATC o cualquiera de sus subsistemas o puestos de trabajo para proporcionar servicio 
+a las aeronaves durante el desarrollo de las actividades normales. Se expresa como el número de 
+aeronaves que entran a una porción concreta del espacio aéreo en un p eríodo determinado, 
+teniendo debidamente en cuenta las condiciones meteorológicas, la configuración de la 
+dependencia ATC, su personal y equipo disponible y cualquier otro factor que pueda afectar el 
+volumen de trabajo del controlador responsable del espacio aéreo.  
+ 
+Por otro lado, los RAC en su Parte Sexta - Capitulo IX, indican que se implanta la gestión de 
+afluencia del tránsito aéreo (ATFM) en el espacio aéreo colombiano con el objeto de equilibrar el 
+hecho de que la demanda de tránsito aéreo excede a v eces, o se espera que exceda, de la 
+capacidad declarada de los servicios de control de tránsito aéreo de que se trate, en un momento 
+determinado 
+ 
+El Documento 4444 ATM, Procedimientos para los Servicios de Navegación Aérea en el Capítulo 
+3 numeral 3.1.4.1, establece que la autoridad ATS competente deberá examinar periódicamente la 
+capacidad del ATS en relación con la demanda del tránsito; y deberá prever el uso flexible del 
+espacio aéreo para mejorar la eficiencia de las operaciones y aumentar la capacidad. 
+ 
+El Documento 4444 ATM, Capitulo 3 numeral 3.1.4.2, indica que en caso de que la demanda de 
+tránsito exceda regularmente de la capacidad del ATC, con el resultado de demoras continuas y 
+frecuentes del tránsito, o cuando resulte evidente que el pronóstico de demanda de tránsito 
+excederá de los valores de la capacidad, la autoridad ATS competente debería, en la medida de lo 
+posible poner en práctica medidas destinadas a utilizar al máximo la capacidad existente del 
+
+--- PAGE 3 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 3 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+sistema; y preparar planes para aumentar la  capacidad a fin de satisfacer la demanda actual o 
+pronosticada. 
+ 
+Esta Circular presenta las dos metodologías de medición y cálculo para la determinación de 
+capacidad de sectores ATC desarrolladas por la ATFCM de la FMU COLOMBIA, describiendo los 
+pasos para determinar la capacidad de un sector ATC  en un Centro de Control Radar (ACC), una 
+Sala Radar u otra dependencia ATC donde se preste el servicio de control Radar, con el fin de 
+medir y calcular la capacidad de los sectores ATC y por medio de su gestión, optimizar el uso del 
+sistema de espacio aéreo Colombiano para satisfacer la creciente demanda de tráfico aéreo. Lo 
+anterior descrito se  implanta por medio de esta circular con el aval de la Dirección de Servicios a 
+la Navegación Aérea (DSNA). 
+ 
+NOTA: Se ha  considerado para el desarrollo de la metodología expuesta en este 
+documento, la utilización del programa SECAP (SISTEMA DE EVALUACION DE 
+CAPACIDAD) desarrollado por la misma, como herramienta de toma de datos. 
+  
+5. REGULACIONES RELACIONADAS: 
+ 
+REGLAMENTO AERONAUTICO COLOMBIANO PARTE SEXTA 
+ 
+ 
+6. OTRAS REFERENCIAS: 
+ 
+DOCUMENTO 4444 DE LA OACI 
+ANEXO 11 DE LA OACI 
+ 
+7. MATERIA 
+  
+Es necesario resaltar algunas consideraciones de carácter general que están enmarcadas dentro 
+del propósito de esta Circular y que actúan como guí a a los prestadores de servicios ATS, 
+contribuyendo con el propósito del ATFM. 
+ 
+El concepto ATFCM se aplica a toda actividad relacionada con la Gestión de la Afluencia y 
+Capacidad del Tránsito, de forma que no solamente se asegure que todas las aeronaves efectúen 
+vuelos de forma segura, ordenada y expedita, sino también que la totalidad del tránsito controlado 
+en un determinado punto o en un área determinada sea compatible con la capacidad declarada 
+del sistema de control del tránsito aéreo. 
+ 
+La finalidad del Servicio de Gestión de la Afluencia de Tránsito aéreo y Capacidad (ATFCM) es la 
+de lograr balancear la demanda solicitada con la capacidad declarada a fin de evitar sobrecargas 
+en el sistema de tránsito aéreo, logrando de esta manera una mejora en la op timización del 
+espacio aéreo y aeropuertos; obteniendo así que las aeronaves cumplan con sus horarios de 
+partida, llegada, vuelen sin desperdicio de combustible y puedan utilizar al máximo la capacidad 
+de la infraestructura aeronáutica disponible con un me jor aprovechamiento del espacio aéreo, 
+dentro de los patrones internacionales de seguridad de vuelo. De igual manera el servicio ATFCM 
+
+--- PAGE 4 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 4 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+tiene como misión detectar puntos focales susceptibles de ser analizados como objeto de mejora 
+para la gestión de capacidad correspondiente a las necesidades de la demanda de tránsito aéreo. 
+ 
+Para poder gestionar este equilibrio entre la demanda y la capacidad es necesario además de 
+conocer la demanda actual y la demanda pronosticada esperada, establecer una línea  de 
+capacidad en base a un cálculo analítico, analizar las consecuencias que la demanda esperada 
+tendrá sobre la capacidad actual, identificar las limitaciones del sistema actual y las posibles 
+mejoras previo análisis costo beneficio de las mismas, identificar  prio ridades y desarrollar un plan 
+de mejoramiento de la capacidad. 
+ 
+7.1 CAPACIDAD DEL ESPACIO AÉREO 
+ 
+La capacidad del espacio aéreo no es ilimitada, pero sin duda puede ser optimizada dependiendo 
+de muchos factores tales como el diseño del espacio aéreo, la flexibilidad del mismo, la capacidad 
+del sistema ATC, números de sectores y su complejidad, espacio aéreo segregado, los recursos 
+humanos disponibles, entrenamiento y capacidad de respuesta, infraestructura CNS disponible, 
+grado de automatización e incluso el equipamiento y tipo de aeronaves de la flota entre otros. 
+ 
+El término capacidad del ATC se aplica a la posibilidad del sistema ATC, o de cualquiera de sus 
+subsistemas o puestos de operación, de proporcionar servicio a las aeronaves en condiciones 
+normales de actividad y se expresa en función del número de aeronaves que entran, sobrevuelan 
+y salen en una parte especificada del espacio aéreo en un determinado periodo de tiempo y que 
+puedan ser manejados de forma segura, ordenada y expedita. 
+ 
+La capacidad máxima que puede lograrse durante periodos cortos o instantes  podría ser bastante 
+mayor que los valores de la capacidad sostenible, esto es debido a que la predicción de la 
+capacidad del sistema parte de la premisa del conocimiento de la capacidad disponibl e en 
+condiciones operacionales óptimas (equipos, meteorológicas, de recurso humano etc.) 
+ 
+Se deben realizar evaluaciones de capacidad aplicando métodos que produzcan resultados 
+realistas, los cuales es conveniente expresar en términos que hagan posible com parar los valores 
+de capacidad. Estos valores deberían expresarse de preferencia en función del número de 
+aeronaves que podrían ingresar a un determinado volumen del espacio aéreo en un determinado 
+periodo de tiempo. Igualmente la carga de trabajo del cont rolador se evaluará mediante la 
+sumatoria de los tiempos empleados en cada tarea observable, a fin de conocer la capacidad de 
+los sectores de tránsito aéreo y de los puestos de control. 
+ 
+Cuando se cubren adecuadamente todos los requisitos de disponibilidad, la capacidad de servicio 
+es considerada del 100%, esta se reduce cuando dichos requisitos se encuentran limitados en su 
+operación. A mayor restricción de recursos corresponde una menor capacidad de servicio, pero 
+también puede suceder que se tome en consideración la declaración de un porcentaje menor de la 
+capacidad real para prever la gestión de algunas situaciones de contingencia u otro tipo de 
+operaciones imprevistas y eliminar la necesidad de considerar degradaciones de capacidad 
+adicionales a nivel táctico de operación. 
+ 
+7.2 GESTIÓN DE AFLUENCIA DE TRÁNSITO AÉREO Y CAPACIDAD 
+ 
+
+--- PAGE 5 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 5 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+El ATFCM apoya al ATC para que éste pueda lograr sus principales objetivos que consisten en 
+prevenir colisiones entre aeronaves, acelerar y mantener ordenadamente el movimiento d el 
+tránsito aéreo y lograr una utilización más eficiente del espacio aéreo disponible y de la capacidad 
+de los aeropuertos.  
+ 
+Para que sea eficaz, un servicio ATFCM debe contar con una continua cooperación y coordinación 
+con las dependencias ATC participan tes y con los diversos usuarios del espacio aéreo. En su 
+planificación y organización del espacio aéreo, el Estado Colombiano deberá tratar de promover la 
+seguridad de los vuelos, brindar suficiente capacidad para satisfacer la demanda del tránsito 
+normal, asegurar la máxima utilización del espacio aéreo, así como la compatibilidad con los 
+cambios que surjan a nivel internacional, y establecer un equilibrio entre los requisitos legítimos, 
+pero a veces adversos de todos los usuarios. 
+ 
+La afluencia del tránsi to se ve afectada negativamente algunas veces a causa de obstrucciones 
+en el sistema. Una restricción en cualquier parte del sistema contribuirá a que surjan limitaciones 
+en la capacidad (equipos, meteorológicas, recurso humano, factores humanos, etc.), po r esta 
+razón ni el sistema aeroportuario ni el sistema de navegación aérea deberán considerarse por 
+separado en la planificación de mejoras del sistema total. Estas deficiencias pueden tener como 
+resultado retrasos por re encaminamientos del tránsito y/o d emoras en aeropuertos que afectan 
+negativamente la regularidad y la economía de los vuelos. A efectos de ajustarse al crecimiento 
+del tránsito aéreo, debe establecerse un plan apropiado para la organización del tránsito aéreo 
+(ATM), dirigido a optimizar la  utilización del espacio aéreo, así como a mantener una afluencia 
+segura, ordenada y rápida del tránsito aéreo. 
+ 
+Uno de los objetivos del ATM, consiste en permitir que los explotadores de las aeronaves puedan 
+cumplir con las horas previstas de salida y de llegada y mantener sus perfiles de vuelo preferidos 
+con una mínima de limitaciones sin salirse de los niveles convenidos de seguridad. Pero no 
+siempre es posible lograr una afluencia óptima del tránsito aéreo debido a varios factores 
+restrictivos, como lo son los requisitos opuestos de los usuarios, las limitaciones del sistema de 
+navegación aérea y las condiciones meteorológicas imprevistas. A este respecto, deberá 
+considerarse la aplicación de medidas atenuantes tales como el control de la afluencia del t ránsito 
+aéreo, en particular cuando el sistema ATC no puede continuar haciendo frente al volumen del 
+tránsito aéreo. Con frecuencia, la aplicación de estas medidas tiene como resultado demoras de 
+los vuelos antes de la salida, esperas en vuelo, utilización  de niveles de vuelo no económicos, re 
+encaminamiento y desvíos, interrupciones de los programas de vuelo, mayores gastos en 
+términos de dinero y combustible para los explotadores de aeronaves, congestión en los 
+aeródromos o en los edificios terminales e insatisfacción en los pasajeros. 
+ 
+7.3 PLANIFICACIÓN ATFCM   
+ 
+Para la planificación a largo plazo o aplicación de la fase estratégica de planificación ATFCM, es 
+necesario anticipar adecuadamente cualquier disminución de la capacidad futura, según lo 
+indiquen las previsiones de tránsito, las cuales son desarrolladas mediante la implantación de un 
+programa de asignación de SLOT anticipados. 
+ 
+En caso de haberse detectado una disminución de la capacidad (restricción en pista, 
+infraestructura CNS, etc.) que requie re la aplicación de medidas de gestión de la afluencia de 
+
+--- PAGE 6 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 6 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+tránsito aéreo, es necesario conocerla para poder limitar el tránsito sin sobrecargar el sistema ni 
+perjudicar excesivamente a los operadores aéreos. 
+ 
+7.4 MEDICIÓN Y CÁLCULO DE CAPACIDAD. 
+ 
+Para el a nálisis de capacidad del espacio aéreo, es necesario focalizar este en la capacidad del 
+sistema ATC puntualizando algunos conceptos que son fundamentales a tener en cuenta como 
+indicadores para el cálculo de la Capacidad en los Sectores ATC, como lo son la  carga de trabajo 
+y la importancia de las tareas observables y no observables que realiza el controlador aéreo.  
+ 
+Existen actualmente algunos modelos utilizados para la medición y evaluación de los parámetros 
+considerados para determinar la capacidad, con miras a satisfacer la demanda de tránsito aéreo, 
+uno de ellos es el SCV -Capacidad de Sector (SCV: Sector Capacity Value), entendido como el 
+número de aeronaves que pueden ser controladas de manera segura y eficiente por un periodo 
+especifico de tiempo; otr o modelo es el DORATASK y los modelos metodológicos de cálculo de 
+capacidad expuestos en este documento. 
+ 
+7.5 EL CONCEPTO CARGA DE TRABAJO. 
+ 
+Es necesario analizar la incidencia de la “carga de trabajo” del controlador en la medición de la 
+capacidad ATC de un sector determinado del espacio aéreo, así como determinar las técnicas 
+necesarias para estimar la gestión del tráfico en un sistema automatizado por medio de modelos. 
+La medición de la carga de trabajo se realiza a través de la valoración de las diferen tes tareas 
+(Taskload) que realiza el controlador. 
+ 
+Complementariamente, no pueden dejarse de lado los extensivos estudios y aproximaciones 
+sobre la carga de trabajo que consideran los factores humanos donde la conciencia situacional, la 
+detección de errore s y monitoreo del sistema, el trabajo en equipo, la confianza, el adecuado 
+entrenamiento, el error humano etc., constituyen entre otros, elementos y aspectos fundamentales 
+a tener en cuenta y son precisamente estos los que deben ser trabajados con el objeto de mejorar 
+en la eficiencia y en la capacidad de realizar las tareas determinadas.  
+ 
+La naturaleza de las tareas que constituyen la carga de trabajo es importante a la hora de evaluar 
+la capacidad puesto que hay tareas que pueden ser observables y posibl es de cuantificar y otras 
+que no son observables y por lo tanto no son tan fáciles de cuantificar. Sin embargo, se pueden 
+establecer algunas constantes para estas tareas no cuantificables como producto de los análisis 
+estadísticos y así reflejar un número en la metodología aplicada por algunos modelos. 
+ 
+7.6 MODELO SCV 
+ 
+Este modelo de medición o método consiste en dividir el tiempo promedio de vuelo en el sector, 
+entre el total del tiempo empleado para desempeñar las funciones de control necesarias para 
+manejar el tránsito al cual se le agrega un factor constante que contempla el tiempo que un 
+Controlador invierte en la planeación, organización del tránsito y vigilancia radar en un sector.  El 
+resultado obtenido en la formula representa la capacidad de Sector  por el tiempo promedio de 
+permanencia en el mismo. La capacidad del sector se calcula usando la siguiente fórmula: 
+ 
+
+--- PAGE 7 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 7 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+    SCV=TPS/(TFC X 1.3) 
+Donde: 
+SCV = Capacidad de Sector. 
+ 
+TPS = Tiempo promedio de vuelo en el Sector. 
+ 
+TFC = Tiempo promedio empleado en desempeñar funciones de control (aceptación/transferencia 
+de control, comunicaciones, separación, coordinaciones). 
+ 
+1.3 = Valor constante que representa el tiempo promedio (30%) que un Controlador debiera 
+invertir en la planeación. Organización del tránsito y Vigilancia radar. 
+ 
+El uso de este método requiere que se determine el tiempo empleado para desempeñar funciones 
+de control y el tiempo promedio de vuelo en el sector. 
+ 
+El tiempo promedio empleado para desempeñar las funciones de control se debe obtener  
+midiendo los tiempos utilizados por diferentes controladores en el trabajo, durante 10 días. El valor 
+que se obtiene con la formula representa el régimen de flujo que se podrá manejar durante el 
+tiempo promedio de vuelo en el sector. 
+ 
+7.6.1 CONSIDERACIONES PARA LA MEDICIÓN DE LOS TIEMPOS DE 
+ACEPTACIÓN/TRANSFERENCIA, COMUNICACIONES, SEPARACIONES Y 
+COORDINACIONES. 
+7.6.1.1. FUNCIONES DE CONTROL (TFC): 
+Se definen como Funciones de Control (TFC) las siguientes: 
+ 
+a) Aceptación/Transferencia de tránsito 
+b) Comunicaciones A/G 
+c) Separaciones 
+d) Comunicaciones P/P (Coordinaciones) 
+ 
+Estas funciones de Control determinarán las condiciones de los tiempos que se contabilizaran con 
+el objeto de obtener las cargas de trabajo 
+ 
+7.6.1.2. CONDICIONES DE LAS MEDICIONES 
+El muestreo se efectuará bajo las siguientes condiciones: 
+ 
+a) Los muestreos se efectuarán durante periodos con cargas de trabajo de mediana a 
+ocupada y se registraran como muestra las operaciones durante 10 días por Sector.  
+ 
+b) Se medirán las operaciones de un Sector exclusivamente durante un mismo horario.  
+ 
+
+--- PAGE 8 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 8 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+c) Se deberá obtener una muestra de 50 operaciones por Sector por día, de las cuales, se 
+considerará hasta un 10% de operaciones de aeronaves de bajo performance o de las que 
+se registren durante ese día. 
+ 
+d) Si el tiempo promedio de permanencia en un Sector excede de 20 minutos, la 
+operación de dicho Sector se limitará a un número máximo de 40  operaciones por 
+hora. El concepto anterior obedece a que, en base a la experiencia, la vigilancia radar 
+simultanea en espacios extensos conl leva situaciones que exceden las consideraciones 
+contempladas en el procedimiento de medición. Así mismo, y conforme a la formula, a 
+mayor permanencia de una aeronave en un Sector se obtendrán números de capacidad 
+mayores que podrían no reflejar su capacidad real. 
+ 
+e) A todos los valores promedio del TFC (aceptación/transferencia, comunicaciones, 
+separaciones y coordinaciones) se les agregará una constante del 30% (multiplicar por 
+1.3). Esta constante se ha considerado como el valor que representa el tiempo pr omedio 
+que un Controlador invierte en la planeación, organización del tránsito y vigilancia radar 
+que no es posible contabilizar en este muestreo. Así mismo, existen factores tales como 
+espacios aéreos de uso especial,  áreas militares, estructura de aerov ías, número de 
+Sectores o Unidades ATS adyacentes, tipos de operación (ascenso. descenso. 
+sobrevuelo). Orografía, etc. que no sería posible cuantificar. Sin embargo; estos factores 
+afectan el resultado de estas mediciones. 
+ 
+7.6.1.3. MEDICIÓN DE TEMPO PARA ACEPTACIÓN/TRANSFERENCIA DE TRÁNSITO: 
+Con el objeto de definir claramente este proceso, se considerará como Tiempo Promedio de 
+transferencia el tiempo que se consume a partir del momento que inicia la transferencia hasta la 
+aceptación o se efectúe la terminación.   
+ 
+a) Se establece como tiempo promedio de aceptación de Transito un intervalo constante de 
+60 segundos cuando el transito se coordina entre Centros de Control. Lo anterior, obedece 
+a los diferentes escenarios y parámetros de coordinación en los que s e da cada uno de 
+estos eventos. 
+ 
+b) Cuando la transferencia ocurra entre Sectores del mismo Centro de Control, se 
+contabilizará el tiempo real que dure el proceso de transferencia/aceptación. Lo anterior 
+aplicará también para la transferencia/aceptación entre  un Centro de Control y cualquier 
+otra Unidad de Control (Torres o APP Radar). 
+ 
+c) Para efectos de contabilidad de tiempo de transferencia se iniciará la medición desde el 
+momento en el que se selecciona la traza hasta el momento de la aceptación. 
+ 
+d) Para efectos de contabilidad de tiempo de transferencia se iniciará la medición desde el 
+momento en que la traza radar parpadea y hasta el momento de la aceptación 
+ 
+7.1.6.4 MEDICIÓN DE TIEMPO PARA COMUNICACIONES A/G: 
+
+--- PAGE 9 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 9 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+a) Se contabilizará el tiempo que se consume desde q ue se inicia la transmisión desde/hacia 
+una aeronave hasta que termine la comunicación exitosa incluyendo el tiempo que invierte 
+el Controlador en cambiar de transmisor/receptor. 
+ 
+b) Se contará el tiempo que se lleva la transmisión de las llamadas que se haga n a una 
+aeronave que se esté midiendo y que no se obtenga respuesta. 
+ 
+7.6.1.5. MEDICIÓN DE TIEMPO DE SEPARACIONES: 
+a) Para aplicar la separación horizontal por medio de vectoreo, se contabilizará el tiempo a 
+partir del momento en que la aeronave cruza el fijo /punto/radioayuda a partir del que deba 
+cambiar de dirección; o de instruye el cambio de dirección si ese cambio debe hacerse 
+inmediatamente; y terminará hasta el momento en que se observa que la aeronave inicia el 
+cambio de dirección. 
+ 
+b) Para aplicar separa ción horizontal por medio de técnica Mach. Se contabilizará el tiempo 
+desde el momento que se instruye el ajuste de velocidad hasta el momento en que el piloto 
+termina de colacionar la instrucción. 
+ 
+c) Para aplicar separación vertical, se contabilizará el tie mpo desde el momento en que se 
+instruye el ascenso/descenso “hasta nuevo aviso” y el momento en que el piloto termina de 
+transmitir la colación de la restricción 
+ 
+Nota: Los tiempos que se obtengan en comunicaciones que involucren la aplicación de 
+separaciones de lo planteado en los incisos b y c del presente numeral se anotaran en la columna 
+de comunicaciones y se repetirán en la columna de medición de separaciones. 
+ 
+7.6.1.6. MEDICIÓN DE TIEMPO DE COMUNICACIONES P/P: 
+a) Se contará el tiempo que el Controlador Radar invierte en efectuar coordinaciones, con 
+otras unidades ATS, relativas a una de las aeronaves que se me midiendo. 
+ 
+En el caso de que los valores de capacidad horaria se vean excedidos de manera constante, se 
+deberá efectuar el análisis correspondient e para determinar si es necesaria la reorganización del 
+espacio aéreo de dichos Sectores. 
+ 
+7.7 MODELO DORATASK 
+ 
+Un modelo muy usado para la valoración de las tareas para analizar la carga de trabajo es el 
+modelo DORATASK. Éste es un modelo analítico que se  apoya en simulación de tiempo 
+acelerado, que brinda ejemplos claros y cálculos lógicos y que inicialmente fue empleado por la 
+Dirección de Investigación y Análisis Operacional del Reino Unido para calcular la capacidad de 
+sectores ATC (DORA Interim Report 8818, para sectores del área Terminal (DORA Interim Report 
+8916) y la calibración de un modelo simulado para dos sectores de ruta en el ACC de Londres 
+(DORA Report 8927). 
+ 
+
+--- PAGE 10 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 10 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+En este modelo la carga de trabajo es calculada por la suma del tiempo empleado por  el 
+controlador para llevar a cabo todas las tareas necesarias asociadas con el flujo de tráfico en su 
+sector y puesto de trabajo, tanto las tareas observables como las tareas no observables. La 
+capacidad del sector entonces, se determina por la carga tota l de las tareas más un parámetro 
+que indica la cantidad de tiempo necesario para la recuperación del controlador. 
+ 
+Las tareas observables son las tareas rutinarias. Son aquellas que se aplican a todas las 
+aeronaves por igual, independientemente de cuantas aeronaves tenga bajo su control (Ej.: 
+comunicaciones estándares) y aquellas tareas orientadas a la resolución de conflictos si alguna 
+aeronave está en una situación real o potencial de conflicto.  
+ 
+Las tareas no observables son las tareas de planificación llevadas a cabo por el controlador y las 
+tareas mentales empleadas en detectar o predecir conflictos. Aquí es necesario efectuar una 
+consideración importante a tener en cuenta: Algunas tareas no son observables en sistemas 
+procedimentales sin embargo, si l o son y se pueden cuantificar en sistemas automatizados (Ej.: 
+planificación, predicción de conflictos). Si bien el trabajo de planificación es una tarea no 
+observable, con las salvedades que hemos señalado, el Modelo DORATASK incluye algoritmos 
+que estiman la carga de trabajo que representa el tiempo que el controlador emplea en tareas de 
+planificación. Estas estimaciones y ejemplos están basadas en datos estadísticos que 
+proporcionan constantes para ser utilizados en los ajustes de las fórmulas analíticas.  
+ 
+En el caso de las estimaciones de capacidad de área Terminal el Modelo DORATASK determina 
+dos tareas no-observables que son el procesamiento inicial y el monitoreo radar, estas tareas son 
+modeladas por el número de visualizaciones de la pantalla radar y  la combinación de pares de 
+aeronaves que deben ser chequeadas y como por definición estas tareas son lineales y 
+cuadráticas al número de aeronaves cada una de estas medidas son multiplicadas por un número 
+desconocido (constante) que es estimado por cada a nalista luego de efectuar una comparación 
+contra sectores de capacidad conocida.  
+ 
+El Modelo DORATASK ha sido usado como base de muchas otras aplicaciones y modelos de 
+cálculo de capacidad tomando en cuenta la carga de trabajo del controlador, sin embargo no es el 
+único modelo a tener en cuenta ya que como hemos visto tiene algunas limitaciones, aunque para 
+estudios de capacidad de sectores ATC es muy adecuado y perfectamente ajustable con las 
+modificaciones del caso a sistemas automatizados. 
+ 
+7.8 METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA DETERMINACION DE CAPACIDAD 
+DE LOS SECTORES ATC 
+ 
+7.8.1. INTRODUCCIÓN 
+ 
+Este análisis está basado en conceptos y estudios elaborados y adoptados por: 
+ 
+ La Organización de Aviación Civil Internacional (OACI). 
+ La Administración Federal de Aviación (FAA). 
+ The European Organization for The Safety of Air Navigation (EUROCONTROL). 
+ Dirección de Tránsito Aéreo de Servicios a la Navegación en el Espacio Aéreo Mexicano 
+(SENEAM).  
+
+--- PAGE 11 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 11 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+ Departamento de Control del Espacio Aéreo (DECEA), Ministerio de la Aeronáutica (BRASIL). 
+ 
+Estos conceptos fueron recopilados y analizados por el grupo ATFCM de la FMU COLOMBIA de 
+la Dirección de Servicios a la Navegación Aérea de la UAE de Aeronáutica Civil para ser 
+adecuados y utilizados en la metodología desarr ollada para la determinación de capacidad de 
+sectores de control. 
+ 
+7.8.2 GENERALIDADES 
+ 
+El método descrito a continuación se centra en la evaluación de la carga de trabajo del controlador 
+radar, sumando, por una parte, el tiempo insumido en tareas ordinari as o (tareas observables) y 
+de la resolución de conflictos (observables) y, por la otra, el tiempo insumido en tareas de 
+planificación (no observables). Además de estos dos elementos interrelacionados de las tareas de 
+controlador, existe un tercer elemento  llamado tiempo de "recuperación", es decir, una mínima 
+proporción del tiempo no asignado a tareas especificas (observables o no observables) pero que 
+se considera fundamental para la operación segura del sector. Esta proporción aumentaría 
+probablemente en  función del tiempo que se prevé continúe la condición de afluencia a plena 
+capacidad. Esta metodología define la carga de trabajo de un controlador y por ende la capacidad 
+de un sector en un tiempo equivalente (por ejemplo, 15 minutos). 
+ 
+Por consiguiente, el tiempo medido sobre las tareas del controlador se divide en: 
+ 
+ Tareas observables; 
+ Tareas no observables y, 
+ Período o tiempo de recuperación.  
+ 
+Aunque la carga de trabajo se determinará mediante la sumatoria del tiempo insumido en tareas 
+observables y no observables, la capacidad se considera como el nivel de la carga de trabajo que 
+deja al controlador un margen seguro para la recuperación. 
+ 
+Así pues, el número de aeronaves a las que se proporcione servicio ATC no excederá del que se 
+pueda tramitar en co ndiciones de seguridad por parte de la dependencia ATC interesada. Para 
+determinar el número máximo de vuelos a los que pueda darse cabida en condiciones de 
+seguridad, la autoridad ATS Competente deberá evaluar y declarar la capacidad del ATC respecto 
+a ár eas de control, sectores de control dentro del área de control basada en el informe 
+correspondiente sobre los resultados de ésta evaluación. 
+ 
+Finalmente, esta metodología consiste en la obtención de un valor calculado a través de fórmula 
+matemática, cuyos datos básicos son extraídos a través de investigación realizada por el grupo de 
+trabajo designado por el grupo ATFCM en la dependencia ATC, considerando un momento de 
+elevado movimiento donde son observadas, cronometradas y registradas las acciones del 
+controlador (utilizando SECAP) y su disponibilidad para controlar los tránsitos del sector de control 
+en aquel instante obteniendo así una muestra de datos a ser utilizados en el cálculo de la 
+capacidad de los sectores ATC. 
+ 
+Esta metodología tiene en cuenta l a carga soportada por el ATCO durante la ejecución de sus 
+tareas y está basado en la evaluación de tareas ejecutadas por el controlador en los momentos de 
+
+--- PAGE 12 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 12 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+gran volumen de tránsito como hemos visto en el modelo DORATASK. Adicionalmente, para el 
+desarrollo del método se inicia con la cuantificación preliminar de la carga de trabajo del puesto de 
+controlador radar analizando lo siguiente: 
+ 
+ Categorización de todas las actividades observadas; 
+ Consideración de la capacidad del espacio aéreo la cual depende del ri esgo de conflictos 
+dentro del sector y, por consiguiente, de la estructura del sector y las características del 
+tránsito. 
+ El uso de equipos alternos de comunicación (por fallas en los principales); 
+ La coordinación de los enlaces en fonía directos. 
+ 
+7.8.3. OBJETIVO GENERAL 
+ 
+Definir la metodología para determinar la Capacidad de los sectores de control con el fin de 
+planificar su desarrollo y presentar conclusiones que lleven a la optimización de los mismos, lo 
+cuales estarán enmarcados en procedimientos defi nidos para una correcta GESTIÓN DE LA 
+SEGURIDAD OPERACIONAL EN EL ATC. 
+ 
+7.8.4 OBJETIVOS ESPECIFICOS 
+ 
+ Efectuar el cálculo de capacidad de los sectores. 
+ Validar los sectores de control existentes. 
+ Identificar los sectores que requieren mayor atención en sus procedimientos y así proponer 
+soluciones para los aspectos críticos. 
+ Proponer la creación e implementación de nuevos sectores de control. 
+ Establecer criterios y procedimientos normalizados para el desarrollo de las operaciones 
+aéreas en los diferentes sectores de control. 
+ Evaluar el servicio de control de cada uno de los sectores que están bajo vigilancia radar 
+de un Centro de Control. 
+ Proponer modificaciones en las funciones realizadas por los ATCO en las diferentes 
+posiciones de control, a fin de reducir las cargas de trabajo de los controladores y a la vez 
+mejorar la eficiencia en la prestación de los servicios ATS en los diferentes sectores. 
+ 
+7.8.5 CONSIDERACIONES PRELIMINARES 
+ 
+Durante el registro de toma de datos de las diferentes tareas no observables en las posiciones de 
+control, se observa que en gran medida la Tasa de Ocupación de los controladores se ve afectada 
+por Factores Humanos y otros Factores limitantes. Para lograr un mejor entendimiento del valor de 
+estas afectaciones a continuación se realiza una breve explicación de cada una de ellas: 
+  
+7.8.6 FACTOR HUMANO 
+ 
+El elemento más importante de los factores humanos respecto a la interfaz entre el ser humano y 
+la tecnología consiste en la capacidad del operador para mantener una conciencia de la si tuación 
+en el entorno de un sistema de control. Los factores que  se incluyen en la conciencia de la 
+situación presentan cambios en diferentes proporciones que ocurren sin previo aviso, los cuales 
+pueden influir en el rendimiento mental y físico del trabaj o del controlador en determinado 
+
+--- PAGE 13 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 13 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+momento sin que el mismo lo advierta, trayendo como consecuencia una reducción en su 
+capacidad de actuación durante un determinado espacio de tiempo. La Adecuada formación del 
+CEA y su recurrencia re fortalecen dicha capacidad. 
+ 
+7.8.6.1. Conciencia de la situación: La definición de conciencia de la situación que la comunidad 
+científica aeronáutica ha aceptado presta más apoyo a la interpretación más amplia de la 
+expresión “conciencia de la situación es la percepción de los elementos en el entorno dentro de un 
+determinado volumen del tiempo y del espacio, la comprensión de su significado y la proyección 
+de su situación al futuro próximo”. 
+ 
+7.8.6.2. Factores personales: La condición física y mental de una persona determinará en  gran 
+parte su forma de actuar en relación con otras personas e influirá también en el desempeño de 
+algunas tareas por parte de esa persona. De modo sencillo, alguien que no se siente bien en su 
+ambiente de trabajo desempeñara probablemente sus tareas de forma inferior a la óptima. 
+ 
+En un entorno ATC ordinario, entre los factores de bienestar físico que influyen en el rendimiento 
+personal se incluyen la temperatura ambiente, la iluminación, el nivel de ruido en el trabajo etc. 
+ 
+Otro factor personal importan te es ser consiente de un nivel de stress personal. Un controlador 
+con una elevada conciencia de la situación se dará cuenta del momento en que el estrés 
+(habitualmente causado por factores externos) influye en su actuación.  
+ 
+El último factor que se analiza es la fatiga, reconocerla no es fácil, pero reconocer las condiciones 
+que puede llevar a la fatiga aumenta la conciencia de la situación. Debe preverse que se sentirá la 
+fatiga después de trabajar un número elevado de turnos diarios consecutivos, despué s de un 
+periodo de actividad física intensa durante horas fuera de servicio o al terminar un turno de noche.  
+ 
+7.8.6.3. Diferencias individuales: Se confía en que la actuación del controlador sea conforme a 
+las normas mínimas. Los controladores deben desem peñar su labor de conformidad con estas 
+aunque hay diferencias individuales en cuanto al grado de actuar por encima de las normas 
+mínimas. Los seres humanos, a diferencias de las maquinas, no trabajan exactamente lo mismo 
+una y otra vez, el reconocimiento de esta variación en el nivel de actuación de las personas es un 
+componente importante de la conciencia de la situación. 
+ 
+7.8.7. FACTORES LIMITANTES 
+ 
+7.8.7.1. Condiciones meteorológicas: La conciencia de la situación se intensifica si se saben las 
+condiciones meteorológicas reinantes y el pronóstico de tendencias, por lo menos mientras dura el 
+turno del controlador. Por ejemplo, los cambios de la dirección del viento pueden implicar cambios 
+de pista. Cuanto más denso sea el tránsito más importante será prog ramar a tiempo el cambio de 
+pistas. Un controlador planificará estrategias de cambio con una perturbación mínima de la 
+afluencia del tránsito. Para los controladores en ruta, el conocimiento de las zonas del tiempo 
+significativo ayudará a prever solicitudes de cambio de ruta o circunnavegación. 
+ 
+7.8.7.2. Congestión de las comunicaciones : Debido a que las posiciones relativas de las 
+aeronaves cambian rápidamente, la aplicación de la separación radar implica que un controlador 
+radar debería estar en condicion es de comunicar rápidamente con cualquier aeronave que se 
+
+--- PAGE 14 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 14 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+encuentre bajo su control. Si la congestión de comunicaciones lo impide, el controlador radar 
+debería aplicar mínimas de separación radar más elevadas o, si ello no es factible, poner fin al 
+control radar. A este respecto debería observarse que de todos los factores que influyen en la 
+seguridad de aplicación de la separación radar la congestión de comunicaciones es 
+probablemente el más importante, y respecto al cual puede depender muy poco la volunta d del 
+controlador radar. Puede resultar también difícil prever la congestión de las comunicaciones ya 
+que, debido a la rápida modificación de la situación de tránsito, la carga de comunicaciones puede 
+llegar a la saturación en pocos minutos. 
+ 
+7.8.7.3. Infraestructura aeroportuaria : La conciencia permanente de la situación de 
+disponibilidad de las pistas en los aeropuertos bajo jurisdicción de un controlador, permite dar una 
+respuesta adecuada a emergencias que requieran una desviación inmediata. Para los 
+controladores de un aeródromo, la conciencia de la situación de obras en marcha no se limita a 
+las pistas sino también a las calles de rodaje y plataformas, así como consideraciones especiales 
+tales como obstáculos temporales en relación con la visibilidad d esde la torre, por razón de obras 
+de construcción u objetos permanentes. 
+ 
+7.8.7.4. Tránsito: La toma de conciencia de la situación real del tránsito es un elemento muy 
+importante de la conciencia de la situación del controlador. Además de “tener un cuadro” de donde 
+están todas las aeronaves bajo jurisdicción del controlador y cuál será la próxima, es igualmente 
+importante ser consciente del desarrollo de la situación del tránsito. La conciencia de un 
+controlador acerca de las configuraciones normales de tra nsito le ayudará a determinar las 
+opciones para resolver los conflictos, otro factor que puede influir en la conciencia de la situación 
+del controlador es el de estar al tanto de la circulación del tránsito objeto de gestión. Si se espera 
+un considerable volumen de transito que vaya a moverse en un sector en diferentes direcciones, 
+las soluciones serán distintas y más lentas de aquellas cuando el transito se mueva en una misma 
+o sola dirección. 
+ 
+7.8.7.5. Performance de la aeronave: Un factor determinante es el modo por el que las diversas 
+compañías aéreas explotan habitualmente una aeronave. Las velocidades de ascenso, los 
+regímenes o ángulos de ascenso pueden ser distintos aunque el tipo de aeronave sea el mismo. 
+La familiaridad con tales diferencias puede ser un algo añadido a la conciencia de situación del 
+controlador. 
+ 
+7.8.7.6. Equipamiento CNS : En este aspecto es esencial tomar conciencia acerca de la 
+disponibilidad del equipamiento ATC, esto incluye el equipo de reserva. La fiabilidad del equipo es 
+un factor muy importante, ya que un elevado número de fallas en una determinada pantalla radar 
+obligará a utilizarla con prudencia al trabajar en ese puesto de trabajo, incluidas tácticas tales 
+como aceptar menos transito o aplicar separaciones mayores que en circunstancias normales. 
+También pueden ocurrir degradaciones como resultado de problemas técnicos. La habilidad para 
+reconocer los problemas y saber cuáles son las consecuencias forma parte de la conciencia de la 
+situación del controlador. 
+ 
+7.8.7.7. Operadores y pilotos: La “cultura corporativa” en términos de diferencias entre las líneas 
+aéreas ha recibido considerable atención en los círculos de seguridad operacional de la aviación 
+en los últimos años. Estas diferencias existen en el subconsciente de los  controladores quienes 
+
+--- PAGE 15 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 15 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+han aprendido a tener en cuenta el nivel de actuación subjetivo de los diversos operadores. Esta 
+subconsciencia es parte de la conciencia de situación del controlador. 
+ 
+7.8.8. SEPARACIÓN 
+ 
+Es el término genérico usado para describir la acción de los servicios de tránsito aéreo (ATS) para 
+mantener los aviones en operación en una misma área general en tales distancias que el riesgo 
+de colisión está mantenido debajo de un nivel aceptable de seguridad. Tal separación se puede 
+aplicar horiz ontalmente y verticalmente. La separación requerida entre el avión se expresa 
+generalmente en términos de distancias mínimas en cada dimensión que no deba ser infringida 
+simultáneamente. 
+ 
+7.8.8.1. Determinación de la separación : La determinación de la sepa ración vertical o de los 
+mínimos de separación longitudinales basados en distancia o tiempo se debe basar en la calidad 
+de la información disponible para el ATC y el piloto. Los tiempos de la decisión, de la coordinación 
+y de la transmisión pueden tener un a influencia en el uso de los mínimos longitudinales de 
+separación. 
+ 
+7.8.8.2. Separación horizontal:  Regulaciones Internacionales adoptadas por Colombia que 
+permiten unas separaciones  bajo ambiente RADAR de: 
+ 
+ 2.5 NM (Dos punto cinco millas náuticas en apr oximaciones dependientes con las 
+aeronaves establecidas en los respectivos LLZ). 
+ 3.0 NM (Aeronaves establecidas en el mismo LLZ sin ser afectadas por la turbulencia de 
+estela). 
+ 4.0 NM (Separación por estela turbulenta, aeronave pesada1 – pesada2, separación para 
+configuración de pistas 31 con guía vectorial). 
+ 5.0 NM (Separación radar, separación por estela turbulenta pesada1 – media2   separación 
+en VAP a la misma pista). 
+ 6.0 NM (Separación por estela turbulenta media1 – ligera2 en configuración pistas 31).  
+ 7.0 NM (Separación por carta de acuerdo a la misma pista en condiciones MET sean 
+iguales o superiores a 5.000 mts y/o techo de 1.500’ y acción de frenado optima). 
+ 9.0 NM (separación a una sola pista en condiciones de 5.000 mts y/o techo inferior 1.500’ o 
+acción de frenado disminuida). 
+ 10.0 NM (Separación en espacios aéreos superiores).  
+ 12.0 NM (Separación en operación ILS CAT II de no existir transito para despegue). 
+ 15.0 NM (Separación en operación ILS CAT II).  
+ 
+Para el logro en la aplicación de una separación los controladores deberán considerar: 
+ 
+ La precisión de los equipos usados por el ATC. 
+ La dinámica natural del ATC. 
+ La dificultad en mantener una separación constante en distancia entre aeronaves con 
+diferentes velocidades (mezcla de aeronaves). 
+ Elementos de Conciencia de la Situación en el ATC (anteriormente descritos). 
+ Los estándares de eficiencia establecidos para el ATC. 
+ 
+
+--- PAGE 16 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 16 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+De este modo una práctica que no esta alineada con la eficiencia es que los controladores buscan 
+mantener una separación basa da en tiempo o de conservar una separación horizontal mucho 
+mayor a la mínima. 
+ 
+En sectores de control en los cuales exista una gran mezcla de aeronave se presenta y es muy 
+común el suceso del alcance entre las aeronaves. En condiciones bajo un ambiente ra dar es 
+necesario asegurar una separación en distancia de por lo menos 5 NM en áreas terminales y de 
+10 NM en áreas superiores, en todo punto de la trayectoria común en rutas de aeronaves con la 
+misma derrota, rutas con derrotas paralelas, derrotas que se c ruzan o derrotas opuestas, hasta el 
+punto en que las trayectorias se separan convencionalmente o se logra establecer otro tipo de 
+separación reglamentaria. La distancia será definida previo análisis de factores tales como los 
+tipos de aeronave, topografía circundante, complejidad de los procedimientos de vuelo y 
+confiabilidad del sistema radar y de comunicaciones, es conveniente evitar ese gran número de 
+mezclas de aeronaves en sectores demasiado grandes dado que se castiga en gran medida la 
+capacidad de los sectores. 
+ 
+7.8.9. CONDICIONES PARA LA MEDICIÓN 
+ 
+El análisis y toma de datos se efectuarán durante periodos comprendidos de horas pico de los 
+respectivos sectores de control, para lo cual se deberá tener en cuenta: 
+ 
+ La no interferencia en la operación del sector. 
+  La toma de datos en escenarios reales. 
+  La no realización de tomas en turnos de instrucción. 
+  La no realización de  tomas en ausencia del personal adecuado y/o mínimo de la posición 
+de control. 
+  La realización de tomas con una duración máxima de 60’ (sesenta minutos). 
+  La realización de tomas de cada uno de los sectores con diferentes controladores. 
+  La realización de tomas bajo ambiente RADAR. 
+ 
+7.9 RECOPILACIÓN DE DATOS 
+ 
+La recopilación de datos se centra en cuatro áreas básicas (tiempos de vuelo  de aeronaves, 
+tiempos en comunicaciones, tiempo en comunicaciones de coordinación, tiempo de tareas 
+observadas), que en gran medida podrán ser utilizadas para otros estudios. 
+ 
+Uno de los principales datos tomados para el análisis están representados en la  Tasa de 
+Ocupación de los Controladores, lo que significa el porcentaje (%) de tiempo de ocupación para 
+actividades identificadas como la Carga de Trabajo, ya que su desempeño es un factor 
+fundamental para la medición de la capacidad de sectores, logrando identificar finalmente dos 
+tipos de tareas desarrolladas por los ATCO y las cuales están definidas y agrupadas como: 
+ 
+7.9.1. TAREAS OBSERVABLES 
+ 
+Son tareas rutinarias las cuales son aplicadas por el personal de controladores de tránsito aéreo a 
+todas las a eronaves por igual, independientemente de cuantas aeronaves tenga bajo su control, 
+
+--- PAGE 17 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 17 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+las cuales pueden ser registradas y medidas por un observador externo. Para mayor identificación 
+estas han sido agrupadas en seis clases:  
+ 
+ Radiotelefonía (RTF).  
+  Marcado de fajas de progreso de vuelo (Manejo de planes de vuelo). 
+  Uso de las herramientas para realizar tareas del sistema Radar (Handovers radar, 
+coordinaciones, supervisión radar, etc.) 
+  Intervenciones RADAR (vectorización). 
+  Coordinación de los enlaces en fonía directos (Coordinaciones entre sectores externos del 
+ACC, coordinaciones entre sectores internos del ACC).  
+  Planeamiento de autorizaciones (planeación de conflictos, reautorizaciones de control); 
+ 
+7.9.2. TAREAS NO OBSERVABLES 
+ 
+Son las que el controlador  debe realizar casi continuamente y en forma paralela a las tareas 
+observables, son actividades mentales (no físicas) y por lo tanto un observador no puede registrar 
+o cronometrar directamente. No obstante, estas tareas comprenden la vigilancia de la panta lla 
+radar y la planificación de medidas futuras, las cuales resultan fundamentales en el quehacer del 
+controlador del sector.   
+ 
+7.10 REGISTRO DE DATOS 
+ 
+El registro de datos recopilados durante las actividades de medición en las instalaciones de las 
+dependencias de control, serán registrados por personal debidamente capacitado, bajo la 
+supervisión de expertos ATFCM mediante el uso del software SECAP (SISTEMA DE 
+EVALUACION DE CAPACIDAD), o manualmente utilizando cronómetros y hojas de cálculo para 
+recolección de datos (EXCEL), para luego ser analizadas matemáticamente. 
+ 
+El desarrollo de esta fase permite registrar las acciones de control, actuaciones en el sistema y 
+coordinaciones realizadas por los ATCO y la toma de datos en mención debe ser efectuada 
+durante periodos de 3,15 y 60 minutos, en donde la densidad de tráfico sea considerada alta. 
+ 
+La franja horaria escogida para la toma de datos deberá ser evaluada en base a estadísticas en 
+cada sector durante periodos anuales de mayor número de operaciones a fin  de lograr determinar 
+la franja horaria pico en los diferentes sectores de APP y ACC ya que: 
+ 
+El número de aeronaves que puedan ser controladas simultáneamente  por una Posición de 
+control de Aproximación es sensiblemente menor que el atribuido a una Posic ión de control de 
+Área.  Eso ocurre porque en las áreas terminales, las aeronaves se encuentran en una fase más 
+compleja de vuelo, es más elevado el número de cruces de trayectorias y la proximidad de otros 
+aeródromos, así como las combinaciones de pista q ue se utilizan en un dado momento tienden a 
+dificultar la afluencia de tránsito aéreo. Por lo tanto, la división de responsabilidades entre un 
+sector de control de Área y el correspondiente sector de control de Aproximación debe ser 
+establecida de modo que permita la utilización máxima del espacio aéreo. 
+ 
+El número de aeronaves que pueden ser controladas simultáneamente por una posición de control 
+de Área, depende, en promedio, de la estructura y de la utilización de las rutas ATS abarcadas por 
+
+--- PAGE 18 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 18 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+el sector.  En el caso de un sector en que la mayoría del tránsito aéreo realiza vuelo nivelado y 
+opera a lo largo de las rutas ATS con sentido único, la capacidad del Controlador es 
+considerablemente superior a aquella de un sector que posee varios puntos de cruce, d onde son 
+frecuentes los cambios de niveles y que se tenga que establecer separaciones con tránsitos en 
+sentido contrario. 
+ 
+Mediante un promedio diario de operaciones de cada uno de los sectores se deberá establecer un 
+número mínimo de tomas por sector. Es importante que la recolección de datos sea bastante 
+significativa, a fin de diluir las desviaciones estocásticas provisionales y de representar valores 
+fidedignos para la dependencia ATC. En las condiciones ideales, la investigación de datos debe 
+ser llevada a cabo en el momento en que haya gran movimiento de tránsito aéreo, por eso elegir 
+la época ideal es un factor a ser considerado, puesto que tiene influencia directa en el resultado 
+final.  
+ 
+Los datos a ser registrados en el sistema son: 
+ 
+1. Número de vuelos en el sector. 
+2. Hora de entrada de las aeronaves al sector. 
+3. Hora de salida de las aeronaves del sector. 
+4. Tipo de Aeronave, tipo de operación. 
+5. Tiempo empleado en las comunicaciones con las aeronaves (controlador – piloto), Ej.  
+a. Primer llamado de la aeronave posterior al despegue. 
+b. Primer llamado de la aeronave entrando al sector proveniente de un sector del mismo 
+ACC. 
+c. Primer llamado de la aeronave entrando al sector proveniente de un sector diferente  
+ del ACC. 
+d. Informe de reporte de posición de una aeronave. 
+e. Reporte de una aeronave alcanzando o cruzando un nivel. 
+f. Transmisión de instrucción para cambio de código SSR. 
+g. Instrucción a una aeronave para cambio de autorización (nivel, inicio de descenso, 
+velocidades). 
+h. Transmisión de fin de control en el sector. 
+ 
+6. Tiempo empleado en las comunicaciones entre sectores del ACC control (controlador – 
+controlador). 
+ 
+a. Solicitud de coordinación de un vuelo. 
+b. Revisión (hora, ruta, nivel). 
+c. Transferencia (fix, hora, nivel). 
+ 
+7. Tiempo empleado en las comunicaciones entre sectores externos del ACC en la  
+transmisión y recepción de solicitudes. 
+ 
+a. Transferencia y recepción (hora y nivel). 
+b. Transferencia con solicitud de autorización de control. 
+c. Revisión (hora, ruta, nivel). 
+d. Transferencia de una solicitud de cambio de ruta o nivel. 
+
+--- PAGE 19 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 19 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+e. Transferencia a una torre de control. 
+f. Recepción de transferencia de una torre de control (hora de despegue). 
+g. Recepción de cambio de ruta o nivel. 
+h. Transmisión de una nueva restricción por falla de comunicaciones de una aeronave. 
+ 
+8. Tiempo empleado en el desarrollo de las tareas RADAR. 
+ 
+a. Manejo de fajas de progreso de vuelo. 
+b. Registro de cambios de datos en la faja de progreso de vuelo (física o electrónica). 
+c. Recepción, verificación y acomodación de la faja de progreso de vuelo. 
+d. Funciones de HANDOFF y HANDOVER. 
+ 
+9. Separación RADAR, tareas de supervisión de conflictos radar. 
+ 
+a. Supervisión radar por conflicto de tipo 1, (dos aeronaves con la misma derrota y nivel de 
+vuelo). 
+b. Supervisión radar por conflicto de tipo 2, (dos aeronaves con la misma derrota y una de las 
+cuales está en ascenso o descenso). 
+c. Supervisión radar por conflicto de tipo 3, (dos aeronaves con la misma derrota en ascenso 
+o descenso). 
+d. Supervisión radar por conflicto de tipo 4, (dos aeronaves con derrotas cruzadas con el 
+mismo nivel de vuelo). 
+e. Supervisión radar por conflicto de tipo 5, (dos aeronaves con derrotas cruzadas y una de 
+las cuales está en ascenso o descenso). 
+f. Supervisión radar por conflicto d e tipo 6, (dos aeronaves con derrotas que se cruzan en 
+ascenso o descenso). 
+g. Supervisión radar por conflicto de tipo 7, (dos aeronaves en derrotas opuestas al mismo 
+nivel de vuelo). 
+h. Supervisión radar por conflicto de tipo 8, (dos aeronaves en derrotas  opuestas una en 
+descenso o ascenso). 
+i. Supervisión radar por conflicto de tipo 9, (dos aeronaves en derrotas opuestas en ascenso 
+o descenso). 
+ 
+10. Identificación del controlador trabajando en el sector (siglas del controlador). 
+11. Identificación del sector.  
+12. Observaciones operativas, estado de (radio ayudas, frecuencias aeronáuticas, equipos de 
+reserva). 
+13. Estado de la presentación RADAR.  
+14. Condiciones meteorológicas al momento o instante de la toma. 
+15. Procedimientos Radar (Vínculos de predicc ión entre aeronaves y puntos de referencia, 
+Vínculos de predicción entre aeronaves y aeronaves). 
+16. Niveles de ocupación de los sectores. 
+17. Mezcla del tráfico. 
+18. Entrevista con los ATCO. 
+ 
+Nota: Los datos deberán ser medidos “in situ” para que se obten ga una medición más 
+exacta de la realidad. 
+
+--- PAGE 20 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 20 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+ 
+7.11. TRATAMIENTO Y ESCRUTINIO DE DATOS 
+ 
+Debido a que, durante el registro de las tomas se ingresan a la base de datos interna un gran 
+número de tareas del controlador las cuales son recopiladas durante el paso d e cada uno de los 
+vuelos a través del sector analizado durante un tiempo determinado, y en aras de prevenir errores 
+en los resultados finales antes de realizar el cálculo matemático de los datos recopilados se 
+realiza una verificación manual, a fin de dete ctar posibles errores en la toma o registro de los 
+mismos. Una vez realizada la verificación se ejecuta el procesamiento de los datos mediante el 
+uso de la metodología matemática, obteniendo al final los valores de capacidad del sector 
+evaluado. 
+ 
+Estas tareas son aquellas ejecutadas por los ATCO  para cualquier aeronave determinada que va 
+de un punto  "A" a un punto "B", esto debido a que todas las aeronaves tienen que establecer 
+contacto con el ATC para que éste le proporcione autorizaciones de control, de terminados 
+rumbos, autorizaciones de nivel de vuelo y las transfiera al siguiente sector. 
+ 
+La secuencia en las instrucciones que se dan a una aeronave están determinadas virtualmente 
+por la ruta asignada a través del sector, por sus puntos de  origen – destino y las solicitudes 
+realizadas durante el tiempo de vuelo en el respectivo sector. 
+ 
+7.12. ANÁLISIS FINAL 
+ 
+Los parámetros generales tomados en cuenta para la determinación y declaración de la capacidad 
+son los siguientes: 
+ 
+ El nivel y el tipo de ATS suministrado. 
+  Volumen del tránsito. 
+  La complejidad estructural del sector de control analizado. 
+  La carga de trabajo del controlador. 
+  Los tipos de sistemas CNS de soporte, su grado de fiabilidad y disponibilidad técnicas, así 
+como la disponibilidad de sistemas o procedimientos de reserva. 
+  La disponibilidad y fiabilidad de los sistemas ATC que proporcionan apoyo a los 
+controladores y funciones de alerta. 
+  Cualquier otro factor o elemento que se juzgue o sea necesario para la determinación de  
+la carga de trabajo del controlador. 
+ 
+La definición de capacidad establece lo siguiente: “La capacidad teórica o cadencia es el número 
+máximo de aeronaves que el sistema ATC podrá físicamente evacuar en algún sector en una 
+unidad de tiempo (15´ o, la hora) sin tener en cu enta la calidad del servicio y que resulta de la 
+aplicación de fórmulas matemáticas. La consideración teórica de variables frecuentes ha llevado a 
+definir la capacidad práctica u operacional como “el débito máximo de tránsito evacuado con una 
+calidad de servicio igual o superior a un umbral indicado previamente.  
+ 
+El ajuste de la capacidad teórica, entiéndase cálculo de la capacidad operacional, deberá ser 
+definido por quién realiza el estudio, previa consideración de los diferentes escenarios y de las 
+variables de difícil control, tales como: 
+
+--- PAGE 21 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 21 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+ 
+ Aplicación de procedimientos locales; 
+ Juzgamiento profesional; 
+ Ajuste óptimo de la capacidad del sector en valores superiores o inferiores de acuerdo a la 
+necesidad. 
+ Estructuras de las rutas en el sector; 
+ Factores humanos; 
+ Factores limitantes; 
+ Volumen del sector del espacio aéreo  (vertical y horizontal); 
+ Complejidad de operaciones en el sector; 
+ Numero de sectores fusionados; 
+ Cantidad de tráfico en ascenso y descenso; 
+ Topografía (terreno); 
+ Operaciones militares y uso especial del espacio aéreo; 
+ 
+Lo expuesto anteriormente  significaría  que la capacidad teórica puede ser afectada en algún 
+momento por un factor de rendimiento (R) llamado también FACTOR DE AJUSTE . Un valor R 
+entre 0.6 y 0.9 podrá considerarse como apropiado. 
+ 
+7.13 VALIDACIÓN DE RESULTADOS 
+ 
+Una vez estudiada y desarrollada la metodología y de haber obtenido los  valores de capacidad de 
+cada sector, estos deberán serán convalidados mediante la ejecución de ejercicios prácticos en un 
+simulador RADAR con los valores que se obtuvieron como resultado en el estudio de cada uno de 
+los sectores. 
+ 
+7.13.1. TÉCNICA PARA OBTENCIÓN DE LAS MUESTRAS  
+ 
+En estadística se conoce como MUESTREO a la técnica para la selección de una muestra a partir 
+de una población. 
+ 
+Al elegir una muestra se espera conseguir que sus propiedades sean explotables a la población. 
+Este proceso permite ahorrar recursos, y a la vez obtener resultados parecidos a los que se 
+alcanzarían si se realizase un estudio de toda la población. Cabe mencionar que para el muestreo 
+sea válido y se pueda realizar un estudio adecuado que consienta no solo hacer estimaciones de 
+la población, sino estimar también los márgenes de error correspondientes a dichas estimaciones 
+y que  debe cumplir ciertos requisitos. Nunca po dremos estar enteramente seguros de que el 
+resultado sea una muestra representativa, pero si podemos actuar de manera que esta condición 
+se alcance con una probabilidad alta. Durante el muestreo, si el tamaño de la muestra es más 
+pequeño que el tamaño de l a población, se puede extraer dos o más muestras de la misma 
+población.  
+ 
+Existen dos métodos para seleccionar muestras de poblaciones: el muestreo no aleatorio o de 
+juicio y el muestreo aleatorio (que incorpora el azar como recurso en el proceso de selecc ión). 
+Cuando este último cumple con la condición de que todos los elementos de la población tienen 
+alguna oportunidad de ser escogidos en la muestra -  si la probabilidad correspondiente a cada 
+sujeto de la población es conocida de antemano -  recibe el nombre de muestreo probabilístico. El 
+
+--- PAGE 22 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 22 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+concepto adoptado en este modelo es el de extraer una fracción de la población (muestra) que 
+sea representativa y que permita hacer afirmaciones y deducciones. Para que estas 
+consideraciones tengan alguna validez, se debe garantizar que la muestra haya sido seleccionada 
+de manera aleatoria y probabilística. Al obtener resultados en un proceso investigativo que sea 
+elaborado a partir de muestras estas deducciones no son rigurosamente exactas con respecto al 
+universo ya que , tales resultados presentan un error de medición denominado error de mues tra 
+(ε), en tal sentido no se puede evitar la ocurrencia del error de muestra, pero si se puede limitar su 
+valor a través de la elección de una muestra de tamaño adecuado, en consecuencia cuanto mayor 
+es la muestra, menor el error cometido y viceversa. 
+ 
+7.13.2. NIVELES DE CONFIANZA 
+ 
+La confianza o el porcentaje de confianza es el porcentaje de seguridad que existe para 
+generalizar los resultados obtenidos. Esto quiere decir que un porcentaje de 100% equivale a 
+decir que no existe ninguna duda para generaliz ar tales resultados, pero también implica estudiar 
+a la totalidad de los casos de la población. Para evitar un alto costo para el estudio o debido a que 
+en ocasiones llega a ser prácticamente imposible el estudio de todos los casos, se busca un 
+porcentaje de confianza menor. Comúnmente en las investigaciones sociales se busca un 95% 
+probabilidad de que la estimación efectuada se ajuste a la realidad. Cualquier información que 
+queramos recoger está distribuida según la ley de probabilidad (Gauss o Student), así llamamos 
+nivel de confianza a la probabilidad de que el intervalo construido en torno a un estadístico capte 
+el verdadero valor del parámetro. 
+ 
+A la vez hay que considerar que el nivel de confianza no es ni un porcentaje, ni la proporción que 
+le correspondería, a pesar de que se expresa en términos de porcentajes. El nivel de confianza se 
+obtiene a partir de la distribución normal estándar, pues la proporción correspondiente al 
+porcentaje de confianza es el área simétrica bajo la curva normal que se tom a como la confianza, 
+y la intención es buscar el valor Z de la variable aleatoria que corresponda a tal área. 
+ 
+TABLA DE APOYO AL CALCULO DEL TAMAÑO DE UNA  
+MUESTRA POR NIVELES DE CONFIANZA 
+CERTEZA 95% 94% 93% 92% 91% 90% 80% 62.27% 50% 
+Z 1.96 1.88 1.81 1.75 1.69 1.65 1.28 1 0.6745 
+Z2 3.84 3.53 3.28 3.06 2.86 2.72 1.64 1.00 0.45 
+E 0.05 0.06 0.07 0.08 0.09 0.10 0.20 0.37 0.50 
+e2 0.0025 0.0036 0.0049 0.0064 0.0081 0.01 0.04 0.1369 0.25 
+ 
+ 
+7.13.3. ERROR O PORCENTAJE DE ERROR PERMITIDO 
+ 
+El error o porcentaje de error equivale a elegir una probabilidad de aceptar una hipótesis que sea 
+falsa como si fuera verdadera, o la inversa, rechazar la hipótesis verdadera por considerarla falsa. 
+Al igual que en el caso de la confianza, si se quiere eliminar el riesgo del error y considerarlo como 
+0%, entonces la muestra es del mismo tamaño que la población, por lo que conviene correr un 
+cierto riesgo de equivocarse. Casi siempre se aceptan errores del 3% al 5%, en este caso 
+
+--- PAGE 23 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 23 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+cualquiera que sea el procedimiento utilizado y la perfección del método empleado, la muestra 
+diferirá de la población. A esta diferencia se le denomina error de muestreo.  
+ 
+Ejemplo: 
+ 
+Se ha seleccionado una muestra de un Centro de Control en el que hay 30 ATCO’, se elige una 
+muestra de 16 ATCO. Para ele gir la proporción de ATCO que monitorearemos, dividimos el 
+tamaño de la muestra entre el tamaño total: 
+ 
+16/30=0.53, 
+ 
+Lo que quiere decir que estamos tomando el monitoreo al 53% de la población. 
+ 
+Ahora vamos a calcular a cuantos ATCO representa cada uno de los elementos de la muestra, 
+para el caso hacemos la división contraria, dividimos el número de ATCO de la población entre los 
+de la muestra: 
+ 
+30/16=1.875, 
+ 
+Lo que quiere decir que cada uno de los elementos de la muestra representa a 2 ATCO del Centro 
+de Control. 
+ 
+Nota: El nivel de confianza adoptado en esta metodología es de 95% de confiabilidad y el 
+error máximo tolerable es de 5%. 
+ 
+7.13.3 DESVÍO ESTÁNDAR OPERACIONAL 
+ 
+La desviación solo significa que tan lejos de lo normal se encuentra los datos. 
+ 
+La desviación estándar (σ) mide cuanto se separan los datos. Este valor será tomado de acuerdo 
+al desvío estándar del muestreo que se hará durante la obtención de tiempo promedio de duración 
+de cada mensaje, en segundos (tm). 
+ 
+7.13.4. MUESTREO ALEATORIO SIMPLE PARA POBLACIÓN INFINITA 
+ 
+ 
+ 
+Con el fin de obtener unas muestras en tamaños compatibles con el nivel de confianza y con el 
+error del muestreo deseable, este modelo utiliza la formula de muestreo aleatorio simple para 
+
+--- PAGE 24 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 24 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+población infinita, esto debido a que no es posible definir con una mayor precisión el tamaño de la 
+población durante la aplicación de la metodología para determinar el numero de aeronaves bajo 
+control simultaneo de un controlador. A fin de determinar el tamaño de la muestra de los 
+parámetros del modelo matemático que calcula la capacidad de los sectores de las dependencias 
+ATC. 
+ 
+Ejemplo para un sector: 
+ 
+Desviación estándar (σ) obtenida en un del (tm)=21 
+σ = tm= 11 sg 
+Nivel de confianza= 95% 
+Error máximo permitido= 5% 
+ 
+Aplicando la formula de muestreo para población infinita, 
+ 
+ 
+ 
+n=18,59 
+ 
+De acuerdo a lo expuesto y con base del valor obtenido en el ejemplo la cual es menor a 21, es 
+necesario incrementarlo a 21, de esta forma el número mínimo de repeticiones para medir el (tm) 
+deberá ser de por lo menos 21. 
+ 
+7.14. MUESTREO ALEATORIO SIMPLE PARA POBLACIÓN FINITA 
+ 
+ 
+ 
+Esta fórmula será aplicada para definir la cantidad minina de controladores a ser observados en 
+cada dependencia, la técnica de muestreo mas indicada es el muestreo aleatorio simple para 
+población finita. 
+ 
+
+--- PAGE 25 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 25 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+Otro dato a tenerse en cuenta es la probabilidad de que un controlador sea observado durante un 
+día de labores. Así, un día tiene X  turnos de control, con esto la probabilidad del controlador de 
+ser observado para uno de los turnos es de X dividido por e l total de controladores y multiplicado 
+por la cantidad de sectores. 
+ 
+ 
+ 
+Para realizar el calculo del numero mínimo de controladores a ser considerados en las tomas de 
+tiempo debe tomar en cuenta las peculiaridades de la operación del cada Centro de Control.  
+ 
+Ejemplo: 
+ 
+ATCO en el ACC Estelar = 93 
+# de turnos diarios = 4 
+# de sectores de control = 6 
+ 
+p=0.25; p= 25% 
+ 
+Teniendo en cuenta un nivel de confianza elegido de 95%, un valor de 5% para el error máximo 
+permitido un N de 93 y un p de 0.25 y aplicando l a formula de la técnica de muestreo aleatoria 
+simple para población infinita se consiguen los siguientes valores: 
+ 
+ 
+ 
+ 
+ 
+n= 74.6 ATCO 
+ 
+Debido a que el tamaño total de la población es considerado pequeño, la aplicación de la formula 
+da como resultado una mu estra bastante grande con respecto de la población (81%), así  cuanto 
+menor sea el tamaño de la población, más próximo de ese valor será el valor del tamaño de la 
+
+--- PAGE 26 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 26 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+muestra. En consideración esta muestra podrá ser repartida entre la cantidad de sectores del 
+Centro de Control así: 
+ 
+Ejemplo: 
+# de sectores = 6 
+n= 75 ATCO 
+y=?                                               
+ 
+ 
+ 
+ 
+ 
+Y= 12.5, Y=13 
+ 
+Se reitera que las técnicas de muestreo revelan valores mínimos de muestras relevantes. Por lo 
+tanto, siempre que exista l a oportunidad de que sean recolectadas mas muestras, de acuerdo al 
+tiempo y costos disponibles, se aconseja recolectar un número mayor de muestras.  
+ 
+“CUANTO MAYOR SEA LA MUESTRA, MAS PRECISO SERÁ EL RESULTADO DEL 
+ESTUDIO”. 
+ 
+Mediante la aplicación de la té cnica de muestreo aleatorio simple para población infinita, se 
+obtiene el número de observaciones mínimas para la obtención de los parámetros n y tm de cada 
+sector. 
+ 
+Mediante la aplicación de la técnica de muestreo aleatorio simple para población finita, s e obtiene 
+del numero mínimo de controladores a ser considerados en  las tomas. 
+ 
+Si los recursos lo permiten se sugiere colectar el mayor numero posible de observaciones y de 
+controladores por sector, ya que esto sirve para compensar eventuales descartes de  “outliers” 
+(valores extremos) y para minimizar cualquier tipo de tendencia existente, como por ejemplo 
+cuando alguna de las partes (controlador o piloto) se prolongan o reducen en exceso las 
+comunicaciones lo cual puede provocar una tendencia de aumento o disminución del tm. 
+ 
+7.15. DESARROLLO METODOLÓGICO 
+ 
+Es importante que la recolección de datos sea bastante significativa, a fin de diluir las 
+desviaciones estocásticas provisionales y de representar valores fidedignos para la dependencia 
+ATC. 
+Este método tiene en cuenta la carga soportada por el ATCO durante la ejecución de sus tareas y 
+está basado en la evaluación de tareas ejecutadas por el controlador en los momentos de gran 
+volumen de tránsito como hemos visto en el modelo DORATASK. 
+
+--- PAGE 27 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 27 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+ 
+De acuerdo con el modelo actual, la carga de trabajo de un controlador es la sumatoria de los 
+tiempos empleados en: 
+ 
+ Comunicación (transmisión/recepción); 
+ Actividades manuales (relleno de fajas de progreso de vuelo) y coordinación; y 
+ Planificación y distribución del tránsito. 
+ 
+Esta metodología utiliza el concepto de “ factor de disponibilidad ” del controlador (φ), que es 
+definido como el porcentaje de tiempo disponible para que el ATCO planifique los procedimientos 
+de separación de aeronaves. 
+ 
+Ese factor de disponibilidad se sitúa, comúnmente, entre un valor mínimo de 40% del tiempo del 
+ATCO, para control no radar, y 60%, para radar. Por consiguiente, es fácil deducir que se deben 
+concentrar los esfuerzos para un aumento del “factor de disponibilidad” φ. 
+ 
+Esto último solo es posible con la aplicación de medidas que resulten en una menor interve nción 
+del controlador con las actividades citadas en 1 y 2. 
+ 
+Ese factor φ puede presentar un porcentaje más grande al perfeccionarse la “Interfaz Hombre / 
+Máquina – IHM., es decir al aumentar la automatización de algunas tareas.  
+ 
+La recolección de la mayo r cantidad posible de observaciones y de controladores de la 
+dependencia a evaluar es fundamental para descartar valores extremos y para minimizar cualquier 
+tipo de tendencia existente (Ej. Casos de controladores o pilotos lentos o demasiado rápidos en 
+las comunicaciones que afecten la media aritmética).  
+ 
+7.15.1 NÚMERO DE REFERENCIA DE POSICIÓN DE CONTROL (N) 
+ 
+El valor N es el número de aeronaves que pueden ser controladas simultáneamente por un 
+controlador de tránsito aéreo y se expresa por medio de la siguiente fórmula: 
+ 
+N = F ⋅ d  / (n ⋅ tm ⋅ Vm) 
+ 
+Esta capacidad ATC es función directa o inversa de algunos factores, considerados: 
+ 
+i. Factores directamente proporcionales a la capacidad ATC (Funciones Directas): 
+ 
+ F : factor de disponibilidad del controlador , definido como el porcentaje de tiempo 
+disponible para planificar los procedimientos de separación de aeronaves; 
+ d : distancia promedio recorrida por las aeronaves en el sector, que es función de las 
+trayectorias y de los procedimientos de ruta o terminal establecidos para cada sector; 
+  
+ii. Factores inversamente proporcionales a la capacidad ATC (Funciones Inversas): 
+ 
+ n: número de comunicaciones para cada aeronave en el sector, que debe ser restricto al 
+mínimo necesario para el entendimiento entre el pilo to y el controlador. Ese número puede ser 
+
+--- PAGE 28 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 28 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+minimizado a través de la emisión de una autorización completa con una anticipación suficiente 
+para la planificación del vuelo; 
+ tm: tiempo medio de duración de cada mensaje. Este factor puede ser minimizado al 
+emitirse mensajes de manera objetiva, sin largas explicaciones perjudiciales al entendimiento 
+entre el piloto y el controlador; y 
+ Vm: velocidad medio de las aeronaves en el sector. Las velocidades medias en Áreas 
+Terminales se ajustan, según las normas para ve locidades máximas. En ruta, se recomienda, 
+cuando necesario, sectorizar el espacio aéreo de la FIR en Espacios Aéreos Superior e Inferior, 
+donde las aeronaves presentan desempeños equilibrados. 
+ 
+Substituyéndose d y Vm por el tiempo promedio de vuelo de la aeronave en la travesía del sector 
+(T), la fórmula anterior puede ser simplificada: 
+ 
+N = F ⋅ T  / (n ⋅ tm) 
+ 
+7.15.2 FACTOR DE DISPONIBILIDAD DEL CONTROLADOR (F) 
+ 
+Se define como " FACTOR DE DISPONIBILIDAD " del Controlador, el porcentaje de tiempo 
+dedicado exclusivamente a las comunicaciones (transmisión/recepción) con las aeronaves. Así no 
+estén in cluidos en este parámetro, los tiempos consumidos con las demás actividades 
+relacionadas directamente con el control, tales como: relleno de FPV, coordinación entre 
+Órganos/sectores, identificación de blancos, transferencias, y todavía, todo el tiempo dest inado a 
+la distribución y planificación consideradas. 
+ 
+Podemos identificar una relación directa entre este factor y la capacidad de control simultáneo de 
+aeronaves, eso es, cuanto mayor el "factor de disponibilidad" (F) de un Controlador, mayor su 
+capacidad de control simultáneo.  Observamos, también, que ese factor se presentará con un 
+porcentual mayor a medida que son optimizados los sistemas de tratamiento de plan de vuelo, 
+vehiculación de mensajes ATS, identificación de blancos, correlación de trazas/pl anes de vuelo, 
+visualización de Modo C, transferencias automáticas de control ("hand -off") y, principalmente, 
+cuando las condiciones técnicas de las "consolas" permitan la utilización de la Posición 
+Controlador Planificador/Coordinador como asistente para el Controlador Titular. En ese caso, 
+todo el trabajo de coordinación será ejecutado por el Asistente. Para una mejor comprensión de la 
+interacción de ese factor con las demás actividades de control, consideremos la carga de trabajo 
+de un Controlador como la sumatoria de los tiempos consumidos con: 
+ 
+a. Comunicación (transmisión/recepción) o "F"; 
+b. Actividades manuales (relleno de "strips") y coordinación; y 
+c. Planificación y distribución del tránsito. 
+ 
+Tomándose como objetivo una mejor capacidad de control  simultáneo de aeronaves en un 
+determinado sector, debemos direccionar nuevos esfuerzos para un aumento de "F". Como 
+podemos deducir, eso será posible con la aplicación de medidas que resulten en un menor 
+envolvimiento del controlador con las actividades b y c arriba enunciadas. 
+ 
+Básicamente, esas medidas envuelven estandarización y automatización de procedimientos, 
+mejorías técnicas y, especialmente, el empleo del RADAR. 
+
+--- PAGE 29 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 29 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+ 
+7.15.3 PROCEDIMIENTO PARA EL LEVANTAMIENTO DE LOS VALORES (F,tm,n,T) 
+ 
+• Factor de Disponibilidad del controlador (F): 
+ 
+Se realiza mediante la verificación de los intervalos de tiempo durante los cuales el controlador 
+ejecuta las tareas de coordinación, llenado de fajas, o cualquier otra necesaria para el desempeño 
+de sus funciones en la po sición de control, excepto las comunicaciones con aeronaves 
+(transmisión/recepción), el valor considerado será la Media aritmética de los resultados obtenidos. 
+ 
+EJEMPLO 
+ 
+ 
+ 
+ 
+FECHA 
+HORA  
+(INICIO-
+FINAL) 
+CONTROL
+ADOR 
+(SIGLAS) 
+POSICIO
+N    DE 
+CONTRO
+L 
+TIEMPO 
+TOTAL (sg) 
+TIEMPO DE 
+DISPONIBILI
+DAD (sg) 
+f 
+(%) 
+20/12/20
+09 
+1300/1400 VV LLEGADA
+S 
+3600 1133 31,4 
+21/12/20
+09 
+2300/0000 YT LLEGADA
+S 
+3600 1205 33,4 
+22/12/20
+09 
+1500/1600 HX LLEGADA
+S 
+3600 1145 31,8 
+23/12/20
+09 
+2100/2200 BZ LLEGADA
+S 
+3600 1230 34,1 
+FACTOR DE DISPONIBILIDAD MEDIA DEL CONTROLADOR 32,6 
+ 
+ 
+• Tiempo medio de duración de los mensajes radiotelefónicos (tm): 
+ 
+Se realiza mediante el levantamiento del tiempo consumido por el controlador en las tareas de 
+comunicación y recepción con cada una de las aeronaves durante todo su vuelo en el sector. 
+ 
+ 
+FECHA HORA CONTROLADOR POSICION 
+22/12/2009 INICIO FINAL HX LLEGADAS 1300 1400 
+MATRICULA 
+NUMERO DE CONTACTOS Y TIEMPO EN LA TRANSMISION / RECEPCION 
+(sg) 
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 tm 
+SLX6401 11 8 13             10,6 
+
+--- PAGE 30 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 30 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+ONE6185 14 11 6 10            10,25 
+NHT3465 13 11 7 9            10 
+KLT2176 13 7 5 10 15           10 
+TIEMPO MEDIO DE DURACION DE CADA MENSAJE 10 
+• Numero medio de comunicaciones de cada aeronave en el sector (n): 
+ 
+Se contabilizan y promedian el número de comunicaciones entre el controlador y las tripulaciones 
+durante el tiempo en el que la aeronave sobrevuela el sector. 
+ 
+FECHA HORA CONTROLADOR POSICION 
+22/12/2009 INICIO FINAL HX LLEGADAS 1300 1400 
+MATRICULA 
+NUMERO DE CONTACTOS Y TIE MPO EN LA TRANSMISION / RECEPCION 
+(sg) 
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 n 
+SLX6401 11 8 13             3 
+ONE6185 14 11 6 10            4 
+NHT3465 13 11 7 9            4 
+KLT2176 13 7 5 10 15           5 
+TIEMPO MEDIO DE DURACION DE CADA MENSAJE 4 
+ 
+• Tiempo medio de permanencia de las aeronaves en el sector (T): 
+ 
+Se contabilizan los tiempos de sobrevuelo de las aeronaves en el sector evaluado. 
+ 
+FECHA HORA CONTROLADOR POSICION 
+22/12/2009 INICIO FINAL HX LLEGADAS 1900 2000 
+MATRICULA 
+TIEMPO DE VUELO EN EL SECTOR 
+HORA ENTRADA 
+HORA DE 
+SALIDA 
+ 
+TIEMPO DE VUELO EN EL 
+SECTOR 
+ 
+SLX6401 19:20 19:28 8 
+ONE6185 19:22 19:32 10 
+NHT3465 19:18 19:30 12 
+KLT2176 19:10 19:17 7 
+TIEMPO MEDIO EN SEGUNDOS (T) = 9,2 Min * 60  552  
+ 
+7.15.4. CÁLCULO DEL NÚMERO DE REFERENCIA (N) 
+
+--- PAGE 31 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 31 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+ 
+El valor del número de Referencia es proporcionado por el desarrollo de la fórmula simplificada 
+descrita: 
+ 
+N=F*T / (n*tm) 
+ 
+Ejemplo 1: 
+ 
+Se asignan los siguientes valores a la variables F, n, tm, y T en un sector de control Radar con 
+dos posiciones, Controlador titular Radar y Controlador Planificador/Coordinador: 
+ 
+F=65% 
+n=8 
+tm=23 sg 
+T=20 min. 
+ 
+N=0,65*20’/8*23’’ 
+N=0,65*(20*60)/8*23’’ 
+N=4,2 
+ 
+Ejemplo 2: 
+ 
+Se asignan los siguientes valores a las variables F, n, tm, y T en  un sector de control Radar con 
+una sola posición, Controlador Radar sin Controlador Planificador: 
+ 
+F=45% 
+n=8 
+tm=23 sg 
+T=20 min. 
+  
+N=0,45*20/8*23 
+N=0,45*(20*60)/8*23 
+N=2,9 
+ 
+Según los anteriores ejemplos se deduce que la capacidad máxima de control simultáneo de 
+aeronaves para un sector d e control que cuente con un controlador titular Radar y un controlador 
+Planificador/Coordinador es de cuatro (4) aeronaves, y que para el mismo sector de control pero 
+que solo cuente con el controlador radar es de tres (3) aeronaves. 
+ 
+NOTA: Los valores resultantes fueron redondeados así: 
+Para valores decimales de N< 5 se redondea al entero inferior. 
+Para valores decimales de N> 5 se redondea al entero superior. 
+ 
+7.15.5. CÁLCULO DE CAPACIDAD HORARIA 
+ 
+La capacidad horaria se calculará utilizando la siguiente fórmula: 
+ 
+
+--- PAGE 32 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 32 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+CH = 3600sg * N  /  T (sg) 
+ 
+ Utilizando el ejemplo 1 anterior: 
+ 
+CH = 3600sg * 4.2  /  1200sg 
+CH = 12.6 (aeronaves/hora) 
+ 
+7.16. DETERMINACIÓN DE LA CAPACIDAD DE SECTOR PARA PERIODOS DE 15 MINUTOS 
+ 
+El método consiste en dividir el tiempo promedio d e vuelo en el sector, entre el total del tiempo 
+empleado para desempeñar las funciones de control necesarias para manejar el tránsito el cual 
+contempla el tiempo que un Controlador invierte en la planeación, organización del tránsito y 
+vigilancia radar en un sector.  
+ 
+7.16.1. PASOS PARA LA DETERMINACIÓN DE LA CAPACIDAD DE SECTOR PARA 
+PERIODOS DE 15 MINUTOS 
+ 
+• Determine el número de vuelos en el sector.  
+• Determine el promedio de tiempo de vuelo de las aeronaves en el sector (T). 
+• Determine el tiempo promedio de comunicaciones (controlador-piloto) en el sector (Tm). 
+• Determine el tiempo promedio de comunicaciones (controlador -controlador) en el sector 
+(Tc). 
+• Determine el tiempo promedio en las tareas observables del controlador en el sector (Tt). 
+ 
+Ejemplo: 
+ 
+• PROMEDIO DE TIEMPO DE VUELO DE LAS AERONAVES EN EL SECTOR A 
+EVALUAR: 
+ 
+FECHA HORA CONTROLADOR POSICION 
+22/12/2009 INICIO FINAL HX LLEGADAS 1300 1315 
+MATRICULA 
+TIEMPO DE VUELO EN EL SECTOR 
+HORA ENTRADA 
+HORA DE 
+SALIDA 
+ 
+TIEMPO DE VUELO EN EL 
+SECTOR (T) 
+ 
+SLX6401 19:00 19:04 4 
+ONE6185 19:00 19:06 6 
+NHT3465 19:03 19:08 5 
+KLT2176 19:09 19:14 5 
+TIEMPO PROMEDIO DE VUELO EN EL SECTOR  en 
+segundos (T) =  (20/4) * 60  
+300 sg 
+ 
+ 
+
+--- PAGE 33 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 33 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+• PROMEDIO DE TIEMPO EN COMUNICACIONES CONTROLADOR /  
+PILOTO: 
+ 
+FECHA HORA CONTROLADOR POSICION 
+22/12/2009 INICIO FINAL HX LLEGADAS 1300 1315 
+MATRICULA 
+NUMERO DE CONTACTOS Y TIEMPO EN LA TRANSMISION / RECEPCION 
+(sg) 
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 Tm 
+SLX6401 11 8 13             10,6 
+ONE6185 14 11 6 10            10,25 
+NHT3465 13 11 7 9            10 
+KLT2176 13 7 5 10 15           10 
+TIEMPO PROMEDIO DE LAS COMUNICACIONES CONTROLADOR / PILOTO 10 sg 
+ 
+• PROMEDIO DE TIEMPO DE COMUNICACIONES ENTRE CONTROLADOR / 
+CONTROLADOR EN LA POSICIÓN DE CONTROL: 
+ 
+FECHA HORA CONTROLADOR POSICION 
+22/12/2009 INICIO FINAL HX LLEGADAS 1300 1315 
+SECTOR 
+NUMERO DE CONTACTOS Y TIEMPO EN LA TRANSMISION / RECEPCION 
+(sg) 
+1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 Tc 
+SUR 9 16 13             12,6 
+NORTE 10 11 6             9 
+TORRE N 13 15 7 9            11 
+TORRE S 19 7 5 10            10,2 
+TIEMPO PROMEDIO DE LAS COMUNICACIONES CONTROLADOR / 
+CONTROLADOR 
+10,7 sg 
+ 
+• PROMEDIO DE TIEMPO DE TAREAS OBSERVADAS DEL CONTROLADOR EN LA 
+POSICIÓN DE CONTROL: 
+ 
+FECH
+A 
+HORA  
+(INICIO-
+FINAL) 
+CONTRO
+LADOR 
+(SIGLAS) 
+POSICIO
+N    
+ DE 
+CONTR
+OL 
+TIEMP
+O  
+TOTAL 
+(sg) 
+TIEMP
+O DE  
+TAREA
+S (sg) 
+# DE 
+AERO
+NAVES 
+(Tt) 
+PROMEDI
+O TIEMPO 
+DE 
+TAREAS 
+(sg) 
+
+--- PAGE 34 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 34 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+20/12
+/2009 
+1300/131
+5 
+VV LLEGAD
+AS 
+900 420 10 42 
+21/12
+/2009 
+2300/231
+5 
+YT LLEGAD
+AS 
+900 350 8 43,7 
+22/12
+/2009 
+1515/153
+0 
+HX LLEGAD
+AS 
+900 310 9 34,4 
+23/12
+/2009 
+2105/212
+0 
+BZ LLEGAD
+AS 
+900 280 6 46,6 
+TIEMPO PROMEDIO DE TAREAS OBSERVADAS DEL 
+CONTROLADOR 
+41,6 sg 
+ 
+7.16.3. CALCULO DEL NÚMERO DE REFERENCIA DE LA CAPACIDAD DE SECTOR (N) 
+ 
+El valor del número de Referencia es proporcionado a través de la ejecución del siguiente modelo 
+matemático simplificado. 
+ 
+ 
+ 
+Ejemplo: 
+ 
+Se asignan los siguientes valores a la variables f, n, tm, y T en un sector de control Radar con dos 
+posiciones, Controlador Radar y Controlador Planificador: 
+ 
+T=300sg 
+Tm=10sg 
+Tc=11sg 
+Tt=41sg 
+ 
+N=T/Tm+Tc+Tt 
+N=300sg/10sg+11sg+41sg 
+N=300/62 
+N=4,8 
+ 
+Según el anterior ejemplo se deduce que la capacidad máxima de control de aeronaves para un 
+sector de control que cuente con un controlador Radar y un controlador Planificador es de cinco 
+(5) aeronaves en un periodo de tiempo de quince (15) minutos. 
+ 
+NOTA: Los valores resultantes fueron redondeados así: 
+Para valores decimales de N< 5 se redondea al entero inferior. 
+Para valores decimales de N> 5 se redondea al entero superior. 
+ 
+7.16.4. AJUSTES DEL VALOR ÓPTIMO DE CAPACIDAD DEL SECTOR 
+ 
+
+--- PAGE 35 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 35 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+Estos ajustes podrán ser realizados en valores superiores o inferiores. 
+ 
+Tenga en cuenta las siguientes consideraciones que afectan el sector para el ajuste de los valores 
+el cual será efectuado durante el proceso de validación. 
+ 
+ Estructuras de las rutas en el sector; 
+ Factores humanos; 
+ Factores limitantes (guía vectorial – para separación); 
+ Volumen del sector del espacio aéreo  (vertical y horizontal); 
+ Complejidad de operaciones en el sector; 
+ Numero de sectores fusionados; 
+ Cantidad de tráfico en ascenso y descenso; 
+ Operaciones militares sin restricción y uso especial del espacio aéreo; 
+ 
+Se deberá analizar y tener en consideración otros factores que afectan la capacidad del sector 
+como lo son: 
+ 
+ Aplicación de procedimientos locales; 
+ Juzgamiento profesional y; 
+ Ajuste óptimo de la capacidad del sector en valores superiores o inferiores de acuerdo a la 
+necesidad. 
+ 
+Para el caso de este ejercicio los FACTORES DE AJUSTE fueron considerados con un valor de 
+CERO (0). 
+ 
+El resultado de 5, es el valor óptimo de capacidad para 15’ minutos. 
+ 
+VALOR ÓPTIMO DE CAPACIDAD DE SECTOR  
+             
+ + / -    FACTORES DE AJUSTES 
+          ---------------------------------------- 
+    CAPACIDAD DEL SECTOR 
+ 
+7.16.5. MEJORAS PARA EL INCREMENTO DE CAPACIDAD DE SECTORES 
+ 
+La autoridad ATS competente deberá: 
+ 
+ Examinar periódicamente cada 10 meses la capacidad del ATS en relación con la demanda 
+del tránsito;  
+ Prever el uso flexible del espacio aéreo para mejorar la eficiencia de las operaciones y 
+aumentar la capacidad; 
+ Prever la elaboración de procedimientos para la reducción de las comunicaciones 
+radiotelefónicas aeroterrestres en áreas congestionadas. 
+ Prever la elaboración y mejoramiento de procedimientos de vuelo a fin de reducir tiempos de 
+vuelo en los sectores de control. 
+ 
+
+--- PAGE 36 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 36 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+En caso de que la demanda de tránsito exceda regularmente de la capacidad del ATC, con el 
+resultado de demoras continuas y frecuentes del tránsito, o cuando resulte evidente que el 
+pronóstico de demanda de tránsito excederá de los va lores de la capacidad, la autoridad ATS 
+competente debería, en la medida de lo posible: 
+ 
+ Poner en práctica medidas destinadas a utilizar al máximo la capacidad existente del sistema; 
+ Preparar planes para aumentar la capacidad a fin de satisfacer la demanda  actual o 
+pronosticada. 
+ 
+7.17 DECLARACIÓN E INFORME INICIAL DE CAPACIDAD  SECTORES SUPERIORES ATC 
+EN COLOMBIA 
+ 
+Con el objeto de determinar un nivel inicial de capacidad inicial de los sectores ATC, los aquí 
+descritos corresponden a los sectores de los cent ro de control radar de Bogotá y Barranquilla, 
+para el efecto se utiliza la metodología para determinar esta capacidad conocida como Sector 
+Capacity Value – SCV, de su aplicación, aquí se determinan y se declaran las capacidades de los 
+centro de Control Radar de Bogotá y Barranquilla. 
+ 
+7.17.1 CENTRO DE CONTROL BOGOTÁ  
+ 
+SECTOR NE: 
+ 
+SCV=TPS/(TFC X 1.3) 
+SCV NE = Capacidad de Sector. 
+TPS = 28 Minutos, 1680Segundos. 
+TFC = 40 segundos 
+1.3 = Valor constante. 
+SCV NE=1680/(40 X 1.3) 
+ 
+SVC NE =32.3 
+SECTOR NW: 
+ 
+SCV=TPS/(TFC X 1.3) 
+SCV NW = Capacidad de Sector. 
+TPS = 28 Minutos, 1680 Segundos. 
+TFC = 40 segundos 
+1.3 = Valor constante. 
+SCV NW=1680/(40 X 1.3) 
+ 
+SVC NW = 32.3. 
+SECTOR SE: 
+ 
+SCV=TPS/(TFC X 1.3) 
+SCV SE = Capacidad de Sector. 
+TPS = 52 Minutos, 3120 Segundos. 
+TFC = 40 segundos 
+1.3 = Valor constante. 
+SCV SE=3120/(40 X 1.3) 
+ 
+SVC SE = 60.  
+SECTOR SW: 
+ 
+SCV=TPS/(TFC X 1.3) 
+SCV SW = Capacidad de Sector. 
+TPS = 42 Minutos, 2520Segundos. 
+TFC = 40 segundos 
+1.3 = Valor constante. 
+SCV SW=2520/(40 X 1.3) 
+ 
+SVC SW =48.46. 
+ 
+El Método recomendado para el cálculo de capacidad horaria sigue la siguiente formula: 
+ 
+CH=(3600 segundos x SCV)/TPS 
+ 
+Donde: 
+CH = Capacidad horaria. 
+
+--- PAGE 37 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 37 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+SCV = Valor de Capacidad de Sector 
+TPS = Tiempo Promedio de Permanencia en el Sector. 
+ 
+SECTOR NE: 
+Asumiendo los siguientes factores: 
+SCV = 32 aeronaves 
+TPS = 1680 segundos 
+(3600 segundos)(32 aeronaves)/(1680 
+segundos) 
+ 
+CH = 68.5 aeronaves/hora. 
+ 
+17 AERONAVES CADA 15 MINUTOS 
+SECTOR NW: 
+Asumiendo los siguientes factores: 
+SCV = 32 aeronaves 
+TPS = 1680 segundos 
+(3600 seg undos)(32 aeronaves)/(1680 
+segundos) 
+ 
+CH = 68.5 aeronaves/hora. 
+ 
+17 AERONAVES CADA 15 MINUTOS 
+SECTOR SE: 
+Asumiendo los factores siguientes: 
+SCV = 60 aeronaves 
+TPS = 3120 segundos 
+(3600 segundos)(60 aeronaves)/(3120 
+segundos) 
+ 
+CH = 69 aeronaves/hora 
+ 
+17 AERONAVES CADA 15 MINUTOS 
+SECTOR SW: 
+Asumiendo los factores siguientes: 
+SCV = 48 aeronaves 
+TPS = 1680 segundos 
+(3600 segundos)(48 aeronaves)/(2520 
+segundos) 
+ 
+CH = 68 aeronaves/hora. 
+ 
+17 AERONAVES CADA 15 MINUTOS 
+ 
+7.17.2. CENTRO DE CONTROL BARRANQUILLA 
+ 
+SECTOR AREA NORTE: 
+ 
+SCV=TPS/(TFC X 1.3) 
+SCV AREA NORTE = Capacidad de Sector. 
+TPS = 33 Minutos, 1980 Segundos. 
+TFC = 40 segundos 
+1.3 = Valor constante. 
+SCV AREA NORTE=1980/(40 X 1.3) 
+ 
+SVC AREA NORTE = 38. 
+SECTOR AREA SUR: 
+ 
+SCV=TPS/(TFC X 1.3) 
+SCV AREA SUR = Capacidad de Sector. 
+TPS = 27 Minutos, 1620 Segundos. 
+TFC = 40 segundos 
+1.3 = Valor constante. 
+SCV AREA SUR=1620/(40 X 1.3) 
+ 
+SVC AREA SUR = 31. 
+ 
+El cálculo de capacidad horaria sigue la formula y se obtiene: 
+ 
+SECTOR AREA NORTE: 
+Factores utilizados: 
+SCV = 38 aeronaves 
+TPS = 1980 segundos 
+(3600 segundos)(38 aeronaves)/(1980 
+segundos) 
+ 
+CH = 69 aeronaves/hora. 
+SECTOR AREA SUR: 
+Factores utilizados: 
+SCV = 31 aeronaves 
+TPS = 1620 segundos 
+(3600 segundos)(31 aeronaves)/(1620 
+segundos) 
+ 
+CH = 68.8 aeronaves/hora. 
+
+--- PAGE 38 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 38 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+ 
+17 AERONAVES CADA 15 MINUTOS 
+ 
+17 AERONAVES CADA 15 MINUTOS 
+ 
+ 
+7.18 CONCLUSIÓN GENERAL 
+ 
+El conocimiento de la capacidad de los sectores de tránsito aéreo o de posiciones de operación 
+ATC es necesario por dos razones principales: La primera es que para planificar a  largo plazo se 
+necesita anticiparse en forma eficiente a cualquier capacidad futura, según lo indiquen las 
+previsiones de tránsito; La segunda razón es que si ya existe una capacidad que requiere la 
+aplicación de control de afluencia, es necesario conocer la para poder limitar el tránsito sin 
+sobrecargar el sistema ni perjudicar a los explotadores o implementar mejores prácticas de 
+desempeño operacional bajo la Unidad de Flujo. 
+ 
+Existen innumerables métodos para el cálculo de la capacidad y de los métodos d escritos, es fácil 
+observar que la carga de trabajo del controlador de tránsito aéreo es un parámetro significativo. 
+Por consiguiente, cuanto mayor es el conocimiento de los factores relacionados con la carga de 
+trabajo, las acciones para mejorar su eficie ncia y sus implicaciones mejor serán su adecuación y 
+ajuste operacional de los servicios brindados para satisfacer la demanda. 
+ 
+Paralelamente, es de fundamental importancia que haya una perfecta comprensión de las 
+variables atribuidas al modelo matemático,  utilizadas en el cálculo del número de aeronaves que 
+se pueden atender en los sectores ATC dentro de un determinado lapso de tiempo. 
+ 
+Para ello se necesita un estudio crítico, un análisis imparcial y minucioso ajustado a la realidad de 
+cada dependencia co n relación a los resultados alcanzados en el levantamiento de datos para 
+cuantificar estas variables por parte de la Unidad de Flujo, que permitirán a los planificadores 
+identificar, con la anticipación requerida, los puntos de limitación operacional de lo s servicios 
+prestados. 
+ 
+Por otro lado, las observaciones de factores ocasionales, tales como, inoperancias en las 
+comunicaciones, condiciones meteorológicas adversas, operación de aeronaves con preferencia, 
+operación militar, aeronaves en emergencia entre muchísimas otras que pueden ocasionar 
+demoras operacionales, pueden influir en los resultados de forma no deseada y conducir a 
+conclusiones que no reflejen la realidad sino son debidamente ponderadas. 
+ 
+La periodicidad de los levantamientos de datos y la ca ntidad de los mismos por sector y 
+controlador debería ser suficiente para contemplar los casos de modificaciones de la circulación 
+aérea, sectorización, instalación/inoperancia de la infraestructura de la navegación, nuevo diseño 
+para la optimización del espacio aéreo, etc. 
+ 
+Con la aplicación de mejores prácticas en el diseño del espacio aéreo, en la gestión del secuencia 
+miento y coordinación, en la aplicación de separaciones mínimas reglamentarias entre aeronaves, 
+así como mejores prácticas de mantenimien to CNS y sobre todo la rigurosa selección y 
+entrenamiento de los recursos humanos puede elevar el estándar y optimizar la formulación 
+matemática del modelo que se aplique aumentando significativamente la capacidad. 
+ 
+
+--- PAGE 39 ---
+ CIRCULAR TÉCNICA REGLAMENTARIA 006 
+METODOLOGÍA DE MEDICIÓN Y CÁLCULO PARA LA 
+DETERMINACIÓN DE CAPACIDAD DE LOS SECTORES ATC DE LOS 
+CENTROS Y SALAS DE CONTROL RADAR 
+NID: 4002082.006.12 Versión: 02 Fecha: 28/03/2012 Página 39 de 39 
+ 
+ 
+SECRETARIA DE SISTEMAS OPERACIONALES – GRUPO COORDINACIÓN DE SERVICIOS 
+Teléfono: (57 1) 296 3152 – Fax: (57 1) 296 3961  
+E-mail: Carmen.murcia@aerocivil.gov.co 
+ 
+AERONÁUTICA CIVIL DE COLOMBIA 
+UNIDAD ADMINISTRATIVA ESPECIAL 
+La optimización de la morfología existen te de pistas y calles de rodaje, la mezcla de aeronaves, 
+los tiempos promedios de ocupación de pista, la longitud determinada del segmento de 
+aproximación final para la distancia de seguridad, la capacidad y equipamiento de la flota así 
+como el entrenamien to de las tripulaciones constituyen también factores contribuyentes a la 
+optimización de la capacidad que deben ser considerados a la hora de la declaración de la 
+capacidad sea esta de un sector ATC o la capacidad Aeroportuaria. 
+ 
+La Aerocivil adopta estas metodologías para la determinación de la capacidad de sectores de APP 
+y ACC del espacio aéreo de la República de Colombia a fin de facilitar la obtención de un valor de 
+referencia de capacidad de sectores el cual consiste en la obtención de un valor, calculado a 
+través de fórmula o modelo matemático, cuyos datos básicos son extraídos a través de 
+investigación realizada por un grupo de expertos ATFCM de las dependencias ATC considerando 
+un momento de elevado movimiento, donde son observadas y cronometradas las acciones del 
+controlador y su disponibilidad para controlar los tránsitos del sector de control en un instante de 
+tiempo.  
+ 
+NOTA: Cuando se trate de un sector donde ya se venga aplicando, con éxito, una 
+capacidad estimada, no es necesaria el desarrollo de este procedimiento. 
+ 
+8. VIGENCIA:  
+La presente Circular Reglamentaria rige a partir del 30 de marzo 2012  y complementa todas las 
+medidas de carácter particular y técnico que adopte la Entidad en la materia, en especial aquellas 
+de gestión de flujo de tránsito aéreo. Así mismo, deroga todas las disposiciones que le sean 
+contrarias.  
+ 
+La Dirección de Servicios a la Nave gación Aérea deberá actualizar los procesos y procedimientos 
+del sistema de calidad pertinentes y el Servicio de Información Aeronáutica - AIS debe publicar lo 
+oportuno de esta circular de conformidad con sus responsabilidades. 
+ 
+9. CONTACTO PARA MAYOR INFORMACIÓN 
+Para cualquier consulta técnica adicional con respecto a esta Circular de metodología de medición 
+y cálculo para la determinación de capacidad de los sectores ATC de los centros y salas de 
+control radar, favor dirigirse a la Unidad de Flujo CFMU-Colombia de la Dirección de Servicios a la 
+Navegación Aérea al teléfono 266 3835, correo electrónico fmp.bogota@aerocivil.gov.co y 
+fmp@aerocivil.gov.co  y cfmu.dsna@aerocivil.gov.co o a la Dirección de Servicios a la Navegación 
+Aérea directamente.   En caso de sugerencias, puede dirigirse al Grupo de Coordinación de 
+Servicios de la Secretaria de Sistemas Operacionales. 
+ 
+
