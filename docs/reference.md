@@ -76,12 +76,37 @@ classDiagram
 
 ---
 
-## 📚 5. Bibliografía de Desarrollo y Librerías
+## 📚 5. Ecosistema de Librerías y Dependencias
 
-1.  **Pedregosa, F., et al. (2011)**. *Scikit-learn: Machine Learning in Python*. JMLR. [Librería base para Random Forest].
-2.  **Virtanen, P., et al. (2020)**. *SciPy 1.0: Fundamental Algorithms for Scientific Computing in Python*. Nature Methods. [Base para optimización y Fourier].
-3.  **Vandervoort, R. (2022)**. *Polars Documentation*. [polars.rs](https://pola.rs).
-4.  **Robert C. Martin (2017)**. *Clean Architecture*. Prentice Hall.
+El sistema se apoya en una selección curada de tecnologías de vanguardia para garantizar el rendimiento, la mantenibilidad y la precisión analítica.
+
+### 🐍 Backend (Python)
+
+| Librería | Documentación Oficial | Justificación de Uso | Implementación Crítica |
+| :--- | :--- | :--- | :--- |
+| **Polars** | [pola.rs](https://pola.rs/) | Procesamiento de datos ultrarrápido mediante multithreading y SIMD. | Ingesta masiva en [`polars_data_source.py`](file:///c:/Users/LENOVO/Documents/tesis/src/infrastructure/adapters/polars/polars_data_source.py). |
+| **FastAPI** | [fastapi.tiangolo.com](https://fastapi.tiangolo.com/) | Framework de alto rendimiento basado en tipos de Python para APIs asíncronas. | Orquestación de endpoints en [`src/infrastructure/api_server.py`](file:///c:/Users/LENOVO/Documents/tesis/src/infrastructure/api_server.py). |
+| **DuckDB** | [duckdb.org](https://duckdb.org/) | Base de datos analítica integrada (OLAP) optimizada para storage columnar. | Persistencia y agregaciones en [`duckdb_repository.py`](file:///c:/Users/LENOVO/Documents/tesis/src/infrastructure/adapters/database/duckdb_repository.py). |
+| **Scikit-learn**| [scikit-learn.org](https://scikit-learn.org/) | Estándar de la industria para algoritmos de Machine Learning tradicionales. | Modelo Random Forest en [`predict_daily_demand.py`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/predict_daily_demand.py). |
+| **SciPy** | [scipy.org](https://scipy.org/) | Librería de algoritmos fundamentales para computación científica. | Optimización y Series de Fourier en [`predict_seasonal_trend.py`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/predict_seasonal_trend.py). |
+| **Pydantic** | [docs.pydantic.dev](https://docs.pydantic.dev/) | Validación de datos y gestión de configuraciones mediante modelos de tipo. | Esquemas de entrada/salida en [`src/application/dtos/`](file:///c:/Users/LENOVO/Documents/tesis/src/application/dtos/). |
+
+### ⚛️ Frontend (React & TS)
+
+| Librería | Documentación Oficial | Justificación de Uso | Implementación Crítica |
+| :--- | :--- | :--- | :--- |
+| **React v19** | [react.dev](https://react.dev/) | Paradigma declarativo para la construcción de interfaces reactivas eficientes. | Orquestación en [`App.tsx`](file:///c:/Users/LENOVO/Documents/tesis/web/src/App.tsx). |
+| **ApexCharts** | [apexcharts.com](https://apexcharts.com/) | Biblioteca de gráficos moderna y fluida con soporte para visualizaciones dinámicas. | Dashboard en [`SectorSaturationChart.tsx`](file:///c:/Users/LENOVO/Documents/tesis/web/src/components/SectorSaturationChart.tsx). |
+| **Axios** | [axios-http.com](https://axios-http.com/) | Cliente HTTP basado en promesas con soporte para interceptores y cancelaciones. | Centralización de llamadas en [`api.ts`](file:///c:/Users/LENOVO/Documents/tesis/web/src/api.ts). |
+| **Lucide React**| [lucide.dev](https://lucide.dev/) | Set de iconos vectoriales optimizados para React. | Navegación en [`Sidebar.tsx`](file:///c:/Users/LENOVO/Documents/tesis/web/src/components/layout/Sidebar.tsx). |
+| **TailwindCSS** | [tailwindcss.com](https://tailwindcss.com/) | Framework de CSS utilitario para diseño rápido y consistente. | Estilos en [`index.css`](file:///c:/Users/LENOVO/Documents/tesis/web/src/index.css). |
+
+---
+
+## 🏛️ 6. Notas de Implementación (Decisiones de Diseño)
+
+- **Por qué DuckDB en lugar de SQLite?** SQLite es transaccional (OLTP). DuckDB es analítico (OLAP). Para este proyecto, donde realizamos agregaciones (`SUM`, `AVG`, `COUNT`) sobre millones de vuelos, DuckDB ofrece una mejora de rendimiento de hasta 50x.
+- **Por qué Polars en lugar de Pandas?** Polars utiliza una arquitectura de memoria Apache Arrow y está escrito en Rust. Es significativamente más eficiente en memoria y permite procesar datos en paralelo, algo vital para la ingesta de archivos SRS de gran tamaño.
 
 ---
 

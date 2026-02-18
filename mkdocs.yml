@@ -55,6 +55,7 @@ nav:
     - Capa de Dominio: domain.md
     - Capa de Aplicación: application.md
     - Capa de Infraestructura: infrastructure.md
+  - 📋 Requerimientos: requirements.md
   - 💻 Frontend: frontend.md
   - 📚 Referencia Técnica: reference.md
   - 📘 Manual Técnico Maestro: tech_manual.md
