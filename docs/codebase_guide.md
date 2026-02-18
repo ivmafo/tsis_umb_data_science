@@ -258,4 +258,30 @@ A continuación, se presenta la cartografía arquitectónica del proyecto, ident
 - **Data Transfer Object (DTO)**: Implícito en el uso de modelos Pydantic y Interfaces TypeScript para validar el intercambio de datos entre capas.
 - **Fail-Fast**: Validaciones tempranas en los constructores y métodos `execute` (ej. `if not sector: raise ValueError`).
 
+### 🗺️ 7.4 Mapa Visual de Patrones
+
+```mermaid
+graph TD
+    subgraph Backend_Hexagonal_Architecture
+        DI[Container (Dependency Injection)] -->|Injects Dependencies| UC[Use Case (Command)]
+        DI -->|Wires| REPO_IMPL[Repository Impl (Adapter)]
+        CTRL[Controller (Adapter)] -->|Invokes| UC
+        UC -->|Depends On| REPO_INT[Repository Interface (Port)]
+        REPO_IMPL -->|Implements| REPO_INT
+        REPO_IMPL -->|Queries| DB[(DuckDB / Polars)]
+        SETTINGS[Settings (Singleton)] -.->|Configures| DI
+    end
+
+    subgraph Frontend_Component_Architecture
+        VIEW[View (Container Component)] -->|Manages State| COMP[Component (Presentational)]
+        VIEW -->|Subscribes| HOOK[Custom Hook (Observer)]
+        HOOK -->|Calls| API[API Facade (Proxy)]
+        API -->|HTTP JSON| CTRL
+        SIDEBAR[Sidebar (Composite)] -.->|Navigates| VIEW
+    end
+
+    classDef pattern fill:#f9f,stroke:#333,stroke-width:2px;
+    class DI,UC,REPO_INT,REPO_IMPL,CTRL,VIEW,COMP,API,HOOK,SETTINGS,SIDEBAR pattern;
+```
+
 ---
