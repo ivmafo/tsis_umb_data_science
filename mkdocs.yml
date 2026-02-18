@@ -51,6 +51,7 @@ plugins:
 nav:
   - Inicio: index.md
   - 📐 Project Blueprints: project_blueprints.md
+  - 📈 Análisis y Resultados: results_analysis.md
   - 🏛️ Arquitectura:
     - Conceptos Hexagonales: architecture.md
     - Capa de Dominio: domain.md
