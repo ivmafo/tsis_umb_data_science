@@ -51,3 +51,6 @@ build/
 # Backups and Large Files
 *.zip
 src_backup_*/
+
+# Documentation
+site/
