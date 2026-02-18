@@ -39,6 +39,17 @@ graph TD
 
     DASH -- Feedback --> USER((Controlador ATC))
 ```
+### 🔍 Análisis Detallado: Flujo de Valor del Dato
+- **Explicación del Gráfico**: Ilustra la metamorfosis del dato desde su estado crudo hasta convertirse en decisión estratégica.
+- **Niveles de Transformación**:
+    1.  **Nivel 1 (Ingesta)**: Archivos `.csv` de vigilancia radar (SRS) son procesados por [`polars`](https://pola.rs) para limpieza y tipado.
+    2.  **Nivel 2 (Analítica)**: Los datos limpios residen en `DuckDB`. Aquí se aplica la **Circular 006** para calcular capacidades históricas.
+    3.  **Nivel 3 (Inteligencia)**: Se entrenan modelos de ML con los históricos de DuckDB para proyectar escenarios futuros.
+- **Interacción de Componentes**:
+    - `SRS` -> [`Use Case: Ingest`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/ingest_flights_data.py)
+    - `C006` -> [`Use Case: Capacity`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/calculate_sector_capacity.py)
+    - `ML` -> [`Use Case: Prediction`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/predict_daily_demand.py)
+
 
 ---
 

@@ -44,6 +44,18 @@ graph TD
     PORTS -- Implementado por --> FS
     UC -- Usa --> ENT
 ```
+### 🔍 Análisis Detallado: Niveles de Abstracción
+- **Explicación del Gráfico**: Representa la "Cebolla" donde las dependencias solo pueden apuntar hacia adentro.
+- **Capas (de afuera hacia adentro)**:
+    1.  **Infraestructura (Volátil)**: Aquí viven los frameworks (`FastAPI`) y drivers (`DuckDB`). Si cambia la base de datos, solo esta capa se entera.
+    2.  **Aplicación (Orquestación)**: Contiene los Casos de Uso (`UC`) que coordinan las tareas. No sabe de SQL ni de HTTP.
+    3.  **Dominio (Estable)**: El núcleo del sistema. Contiene las Entidades (`ENT`) y las definiciones de Puertos (`PORTS`). Es la verdad absoluta del negocio.
+- **Regla de Oro**: `API` depende de `UC`, `UC` depende de `ENT`. Nunca al revés.
+- **Referencias a Código**:
+    - **Nivel Extremo**: [`src/infrastructure/`](file:///c:/Users/LENOVO/Documents/tesis/src/infrastructure/)
+    - **Nivel Medio**: [`src/application/`](file:///c:/Users/LENOVO/Documents/tesis/src/application/)
+    - **Nivel Núcleo**: [`src/domain/`](file:///c:/Users/LENOVO/Documents/tesis/src/domain/)
+
 
 ---
 

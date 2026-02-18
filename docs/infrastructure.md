@@ -51,6 +51,13 @@ graph LR
     SCH -- 3. Vectorized Push --> DDB[DuckDB Engine]
     DDB -- 4. Write Columnar --> DISK[(metrics.duckdb)]
 ```
+### 🔍 Análisis Detallado: Pipeline ETL
+- **Explicación del Gráfico**: Detalla el viaje del dato desde el upload hasta el disco.
+- **Optimizaciones Clave**:
+    - **Step 1 (Scan)**: `Polars` mapea el archivo en memoria virtual. No lee nada aún.
+    - **Step 3 (Vectorized)**: Se transforma el dataframe de Polars a DuckDB usando **Apache Arrow** (transferencia zero-copy).
+    - **Step 4 (Write)**: Se persiste en formato comprimido.
+- **Código**: [`src/infrastructure/adapters/polars/`](file:///c:/Users/LENOVO/Documents/tesis/src/infrastructure/adapters/polars/)
 
 ---
 
@@ -78,6 +85,17 @@ flowchart TD
     API -- Trigger --> PL_AD
     PL_AD <--> STORAGE
 ```
+### 🔍 Análisis Detallado: Mapa de Despliegue
+- **Explicación del Gráfico**: Muestra los límites físicos de los componentes en tiempo de ejecución.
+- **Relación de Componentes**:
+    - `UI` corre en el navegador del cliente.
+    - `API`, `JDBC`, `PL_AD` corren en el servidor (Python process).
+    - `STORAGE` es el sistema de archivos del servidor.
+- **Flujo**:
+    - El Frontend nunca toca el disco. Siempre pide al API.
+    - El API delega a los adaptadores (JDBC/Polars) el acceso al hardware.
+- **Referencias**: [`src/main.py`](file:///c:/Users/LENOVO/Documents/tesis/src/main.py) (punto de montaje).
+
 
 ---
 

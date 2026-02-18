@@ -46,6 +46,19 @@ graph TD
     V_PRED -- Prop Drilling/State --> C_HEAT
     C_DEMAND -- Render --> DS
 ```
+### 🔍 Análisis Detallado: Cascada de Renderizado
+- **Explicación del Gráfico**: Visualiza el patrón **Container-Presentational**.
+- **Jerarquía y Responsabilidades**:
+    1.  **Nivel 1 (View)**: [`PredictiveView`](file:///c:/Users/LENOVO/Documents/tesis/web/src/views/PredictiveView.tsx) es el "Cerebro". Gestiona estados `useState` (filtros, loading) y efectos `useEffect` (llamadas API).
+    2.  **Nivel 2 (Organism)**: [`DailyDemandChart`](file:///c:/Users/LENOVO/Documents/tesis/web/src/components/DailyDemandChart.tsx) es "Tonto". Solo sabe pintar gráficas con los datos que recibe vía `props`.
+    3.  **Nivel 3 (Atom/Util)**: `api.ts` es el "Mensajero". Puente HTTP agnóstico de UI.
+- **Flujo de Datos (Prop Drilling)**:
+    - `View` obtiene JSON -> Pasa `data={json}` a `Chart` -> `Chart` pasa `rows={json.history}` a `DataTable`.
+- **Referencias a Código**:
+    - Vistas: [`web/src/views/`](file:///c:/Users/LENOVO/Documents/tesis/web/src/views/)
+    - Componentes: [`web/src/components/`](file:///c:/Users/LENOVO/Documents/tesis/web/src/components/)
+    - Cliente HTTP: [`web/src/api.ts`](file:///c:/Users/LENOVO/Documents/tesis/web/src/api.ts)
+
 
 ---
 

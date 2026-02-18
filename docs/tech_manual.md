@@ -40,6 +40,20 @@ graph TD
     P_REPO -- "Implementación" --> DB
     UC_INGEST -- "IO/Parallel" --> PLAD
 ```
+### 🔍 Análisis Detallado: Jerarquía de Capas
+- **Explicación del Gráfico**: Mapa completo de dependencias del sistema, mostrando cómo la interfaz de usuario y la persistencia son meros detalles para la lógica de negocio.
+- **Componente por Componente**:
+    - **UI (React)**: Consume el API JSON. No conoce la lógica de negocio, solo muestra datos.
+    - **API (FastAPI)**: "Enrutador". Recibe JSON, valida con Pydantic y llama al Caso de Uso.
+    - **UC (Caso de Uso)**: El "Cerebro". Orquesta la validación de negocio y llama a los Puertos.
+    - **Port (Interfaz)**: El "Contrato". `IMetricRepository` dice *qué* necesitamos guardar.
+    - **Adapter (DuckDB)**: El "Mecanismo". Implementa el contrato usando SQL.
+- **Flujo de Retorno**:
+    - `DB` retorna `Row` -> `Adapter` convierte a `Dict` -> `UC` convierte a `DTO` -> `API` convierte a `JSON` -> `UI` renderiza `Chart`.
+- **Referencias Críticas**:
+    - Definición de Puertos: [`src/domain/repositories/`](file:///c:/Users/LENOVO/Documents/tesis/src/domain/repositories/)
+    - Implementación de Adaptadores: [`src/infrastructure/adapters/`](file:///c:/Users/LENOVO/Documents/tesis/src/infrastructure/adapters/)
+
 
 ---
 

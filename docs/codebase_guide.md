@@ -282,7 +282,17 @@ graph TD
 
     classDef pattern fill:#f9f,stroke:#333,stroke-width:2px;
     class DI,UC,REPO_INT,REPO_IMPL,CTRL,VIEW,COMP,API,HOOK,SETTINGS,SIDEBAR pattern;
+    classDef pattern fill:#f9f,stroke:#333,stroke-width:2px;
+    class DI,UC,REPO_INT,REPO_IMPL,CTRL,VIEW,COMP,API,HOOK,SETTINGS,SIDEBAR pattern;
 ```
+### 🔍 Análisis Detallado: Interacción de Patrones
+- **Explicación del Flujo**:
+    1.  **Backend**: `Singleton` (Settings) configura el `DI Container`. Este inyecta el `Repository` al `Use Case`. El `Controller` invoca al `Use Case`.
+    2.  **Frontend**: `Sidebar` (Composite) navega a una `View` (Container). La `View` usa un `Hook` (Observer) que llama al `API Proxy`. La `View` pasa datos al `Component` (Presentational).
+- **Código Clave**:
+    - **Wiring**: [`src/application/di/container.py`](file:///c:/Users/LENOVO/Documents/tesis/src/application/di/container.py)
+    - **Orchestration**: [`web/src/views/PredictiveView.tsx`](file:///c:/Users/LENOVO/Documents/tesis/web/src/views/PredictiveView.tsx)
+
 
 
 ---

@@ -74,8 +74,18 @@ classDiagram
     }
 
     IMetricRepository <|-- DuckDBMetricRepository : implementa
+    IMetricRepository <|-- DuckDBMetricRepository : implementa
     IMetricRepository <|-- PolarsDataSource : implementa (vía Interface)
 ```
+### 🔍 Análisis Detallado: Polimorfismo
+- **Explicación del Gráfico**: Estructura de clases UML.
+- **Jerarquía**:
+    - `IMetricRepository` es una **Clase Abstracta (ABC)**. No tiene código, solo definiciones.
+    - `DuckDBMetricRepository` es la implementación real que sabe escribir SQL.
+- **Relación de Código**:
+    - Puerto: [`src/domain/repositories/metric_repository.py`](file:///c:/Users/LENOVO/Documents/tesis/src/domain/repositories/metric_repository.py)
+    - Adaptador: [`src/infrastructure/adapters/database/duckdb_repository.py`](file:///c:/Users/LENOVO/Documents/tesis/src/infrastructure/adapters/database/duckdb_repository.py)
+
 
 ---
 

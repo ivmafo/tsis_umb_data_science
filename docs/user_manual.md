@@ -14,6 +14,11 @@ graph LR
     B --> C[Análisis y Cálculo]
     C --> D[Predicción y Reporte]
 ```
+### 🔍 Análisis Detallado: Cadena de Valor
+- **Paso A**: El usuario alimenta el sistema (`UploadView`). Sin datos, no hay cálculo.
+- **Paso B**: El usuario define la "física" del sector (polígonos, TFC) en `SectorConfigurationView`.
+- **Paso C**: El sistema cruza A + B para generar métricas (`CalculateSectorCapacity`).
+- **Paso D**: IA proyecta estas métricas al futuro.
 
 ---
 
@@ -63,6 +68,14 @@ sequenceDiagram
     B-->>V: Respuesta JSON (SCV, CH, CH_Adjusted)
     V-->>U: Muestra Reporte con Gráficos
 ```
+### 🔍 Análisis Detallado: Secuencia de Interacción
+- **Actores**:
+    - **Usuario**: Disparador del evento.
+    - **UI**: Captura datos y valida formulario.
+    - **Backend**: Ejecuta la lógica "pura" (fórmula matemática).
+    - **DB**: Motor de agregación masiva.
+- **Retorno Clave**: El JSON de respuesta contiene no solo el número final, sino el desglose de pasos (`metrics.calculation_steps`) para auditoría.
+
 
 ---
 

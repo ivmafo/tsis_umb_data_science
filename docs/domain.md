@@ -85,6 +85,19 @@ classDiagram
     Sector ..> DateRange : usa para TPS
     FileInfo -- "*" Airport : provee datos de
 ```
+### 🔍 Análisis Detallado: Estructura del Dominio
+- **Explicación del Gráfico**: Muestra las relaciones estáticas entre las Entidades de Negocio (diagrama de clases UML simplificado).
+- **Semántica de Relaciones**:
+    - **Composición (`*--`)**: Una `Region` *se compone de* múltiples `Airports`. Si la región desaparece, la asignación pierde sentido.
+    - **Dependencia (`..>`)**: El `Sector` *usa* `DateRange` para delimitar temporalmente sus cálculos de TPS.
+    - **Asociación (`--`)**: `FileInfo` *conoce* qué aeropuertos contiene un archivo SRS procesado.
+- **Atributos Clave**:
+    - `Sector.config`: Objeto complejo JSON con la geometría del polígono.
+    - `Airport.timezone`: Crucial para la normalización de horas UTC vs Locales.
+- **Referencias de Código**:
+    - Entidades Puras: [`src/domain/entities/`](file:///c:/Users/LENOVO/Documents/tesis/src/domain/entities/)
+    - Value Objects: [`src/domain/value_objects/`](file:///c:/Users/LENOVO/Documents/tesis/src/domain/value_objects/)
+
 
 ---
 
