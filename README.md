@@ -93,7 +93,15 @@ Para generar la aplicación independiente (`.exe`) que incluye tanto el backend 
 
 ---
 
-## 🛠️ Tecnologías Principales
+## � Documentación Técnica
+El proyecto cuenta con documentación técnica autogenerada detallando la arquitectura y las clases:
+1. Asegurar tener el entorno virtual activo.
+2. Ejecutar: `mkdocs serve -a localhost:9800`
+3. Abrir en el navegador: `http://localhost:9800`
+
+---
+
+## �🛠️ Tecnologías Principales
 - **Backend**: FastAPI, Polars (procesamiento eficiente), DuckDB (base de datos OLAP), Scikit-Learn.
 - **Frontend**: React, TypeScript, Tailwind CSS, Recharts (gráficos), Lucide React (iconos).
 - **Arquitectura**: Clean Architecture / Hexagonal Architecture.
