@@ -62,6 +62,7 @@ graph TD
 | [🏗️ Infraestructura](infrastructure.md) | Implementación de DuckDB, Polars y FastAPI. | DevOPS y Data Engineers |
 | [⚛️ Frontend](frontend.md) | React, ApexCharts y gestión de estado. | Frontend Developers |
 | [📘 Manual Técnico Maestro](tech_manual.md) | Derivaciones matemáticas y lógica de ML. | Data Scientists / Tesistas |
+| [📐 Project Blueprints](project_blueprints.md) | Especificaciones UML detalladas (Clases, Secuencia, Estados). | Arquitectos / Auditores |
 
 ---
 
