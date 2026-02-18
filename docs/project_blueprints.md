@@ -327,6 +327,7 @@ Muestra cómo se organiza el código en módulos físicos y sus dependencias.
 
 ```mermaid
 graph TD
+    %% Nodes
     subgraph Client_Side ["Client Side"]
         UI["React App"]
         HTTP["Axios Lib"]
@@ -349,12 +350,13 @@ graph TD
 
     FILE["metrics.duckdb"]
 
-    UI ..> HTTP
+    %% Edges
+    UI -.-> HTTP
     HTTP -- "JSON/REST" --> API
     API --> UC
     UC --> DOM
-    UC ..> DUCK
-    UC ..> POL
+    UC -.-> DUCK
+    UC -.-> POL
     DUCK -- "SQL" --> FILE
 ```
 
