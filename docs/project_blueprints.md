@@ -325,35 +325,36 @@ Muestra cómo se organiza el código en módulos físicos y sus dependencias.
 
 ```mermaid
 graph TD
-    subgraph Client_Side [Client Side]
-        UI[React App]
-        HTTP[Axios Lib]
+    subgraph Client_Side ["Client Side"]
+        UI["React App"]
+        HTTP["Axios Lib"]
+        
         UI ..> HTTP
     end
 
-    subgraph Server_Side [Server Side]
-        API[FastAPI App]
-        SRV[Uvicorn Server]
+    subgraph Server_Side ["Server Side"]
+        API["FastAPI App"]
+        SRV["Uvicorn Server"]
         
-        subgraph Core_Logic [Core Logic]
-            UC[Use Cases]
-            DOM[Entities]
+        subgraph Core_Logic ["Core Logic"]
+            UC["Use Cases"]
+            DOM["Entities"]
         end
 
-        subgraph Data_Access [Data Access]
-            DUCK[DuckDB Driver]
-            POL[Polars Lib]
+        subgraph Data_Access ["Data Access"]
+            DUCK["DuckDB Driver"]
+            POL["Polars Lib"]
         end
     end
 
-    HTTP -- JSON/REST --> API
+    HTTP -- "JSON/REST" --> API
     API --> UC
     UC --> DOM
     UC ..> DUCK
     UC ..> POL
     
-    FILE[metrics.duckdb]
-    DUCK -->|SQL| FILE
+    FILE["metrics.duckdb"]
+    DUCK -- "SQL" --> FILE
 ```
 
 #### 🔍 Análisis Detallado: Componentes
@@ -369,30 +370,30 @@ Muestra los nodos de hardware/software donde corre el sistema.
 
 ```mermaid
 graph TD
-    subgraph User_Workstation [User Workstation]
-        subgraph Web_Browser [Web Browser]
-            SPA[Single Page App React]
+    subgraph User_Workstation ["User Workstation"]
+        subgraph Web_Browser ["Web Browser"]
+            SPA["Single Page App React"]
         end
     end
 
-    subgraph App_Server [Application Server Windows/Linux]
-        subgraph Python_Process [Python Process 3.10+]
-            FAST[FastAPI]
-            ML[ML Models Scikit]
-            ING[Ingestion Engine Polars]
+    subgraph App_Server ["Application Server Windows/Linux"]
+        subgraph Python_Process ["Python Process 3.10+"]
+            FAST["FastAPI"]
+            ML["ML Models Scikit"]
+            ING["Ingestion Engine Polars"]
         end
         
-        subgraph Local_Storage [Local Storage]
-            DB_FILE[metrics.duckdb]
-            POLY_FILE[polygons.json]
-            LOGS[usage_logs/]
+        subgraph Local_Storage ["Local Storage"]
+            DB_FILE["metrics.duckdb"]
+            POLY_FILE["polygons.json"]
+            LOGS["usage_logs/"]
         end
     end
 
-    SPA -- HTTP/1.1 Port 8000 --> FAST
-    FAST -- File I/O --> DB_FILE
-    ML -- File I/O --> DB_FILE
-    ING -- File I/O --> DB_FILE
+    SPA -- "HTTP/Port 8000" --> FAST
+    FAST -- "File I/O" --> DB_FILE
+    ML -- "File I/O" --> DB_FILE
+    ING -- "File I/O" --> DB_FILE
 ```
 
 #### 🔍 Análisis Detallado: Despliegue
