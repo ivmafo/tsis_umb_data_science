@@ -1,80 +1,148 @@
 # Capa de Aplicación (Application Layer)
 
-La capa de aplicación es la responsable de orquestar el flujo de datos entre la infraestructura y el dominio. Contiene los **Casos de Uso** (Use Cases), que representan las acciones específicas que un usuario puede realizar en el sistema.
-
-## 🚀 Casos de Uso Principales
-
-Los casos de uso se dividen en categorías funcionales:
-
-### 1. Motor de Capacidad (Circular 006)
-[`calculate_sector_capacity.py`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/calculate_sector_capacity.py)
-Implementa la lógica matemática para determinar la capacidad de un sector ATC.
-- **Flujo**: Recibe parámetros de sector -> Consulta trayectorias históricas -> Aplica fórmula SCV/DORATASK -> Retorna métricas TPS, TFC y CH.
-
-### 2. Ingestión y Procesamiento (ETL)
-[`ingest_flights_data.py`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/ingest_flights_data.py)
-Orquesta la carga masiva de datos desde archivos Excel hacia DuckDB.
-- **Acciones**: Validación de esquema -> Deduplicación -> Transformación de tipos -> Carga asíncrona -> Actualización de historial.
-
-### 3. Análisis Predictivo (ML)
-[`predict_sector_saturation.py`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/predict_sector_saturation.py)
-Cruza la predicción de demanda con la capacidad técnica.
-- **Modelos**: Utiliza Random Forest para la demanda y modelos de Fourier para tendencias estacionales ([`predict_seasonal_trend.py`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/predict_seasonal_trend.py)).
-
-### 4. Generación de Reportes
-- **Ejecutivo**: [`generate_executive_report.py`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/generate_executive_report.py) (Narrativa técnica generada).
-- **Estadístico**: Reportes de empresas, orígenes, destinos y picos horarios.
+La capa de aplicación es el núcleo orquestador del sistema. Implementa el patrón **Command** (vía Casos de Uso) para separar la intención del usuario de la implementación técnica.
 
 ---
 
-## 🔄 3.2.3 Casos de Uso Extendidos
-
-Más allá de los flujos básicos, el sistema contempla escenarios de excepción y flujos alternos críticos para la operación ATC.
-
-### Ingesta de Datos con Recuperación de Errores
-- **Escenario**: El archivo cargado contiene columnas faltantes o formatos de fecha no estándar.
-- **Flujo Alterno**: El `DateParser` intenta múltiples formatos -> Si falla, el registro se marca como `ERROR` en `file_processing_control` -> Se notifica al frontend sin detener la ingesta de los registros válidos.
-
-### Análisis de Saturación con Umbrales ATFM
-- **Escenario**: La saturación proyectada supera el 100%.
-- **Acción**: El sistema activa una lógica de recomendación que sugiere la activación de sectores secundarios o la aplicación de slots temporales.
-
----
-
-## 📅 3.6.5 Diagramas de Secuencia (Predicción de ML)
-
-Este diagrama detalla la orquestación interna cuando se solicita un pronóstico de demanda estacional.
+## 🏛️ 3.1 Arquitectura de Orquestación
 
 ```mermaid
-sequenceDiagram
-    participant UI as PredictiveView (React)
-    participant Ctrl as PredictiveController (FastAPI)
-    participant UC as PredictSeasonalTrend (Use Case)
-    participant ML as FourierModel (Scikit-Learn)
-    participant DB as DuckDB Adaptador
+graph TD
+    subgraph "Adaptadores de Entrada (Primary)"
+        API[FastAPI Controllers]
+    end
 
-    UI->>Ctrl: GET /predict/seasonal?sector=SKBO
-    Ctrl->>UC: execute(sector_id)
-    UC->>DB: query_historical_data(12_months)
-    DB-->>UC: flights_dataframe (Polars)
-    
-    Note over UC, ML: Ingeniería de Características
-    UC->>ML: add_fourier_terms(data)
-    UC->>ML: fit_linear_regression()
-    ML-->>UC: coeficients_and_residuals
-    
-    UC->>UC: compute_confidence_intervals(95%)
-    UC-->>Ctrl: PredictionResultDTO
-    Ctrl-->>UI: JSON (Chart Data + Narrative)
+    subgraph "Capa de Aplicación (Use Cases)"
+        UC_INGEST[IngestFlightsData]
+        UC_CAP[CalculateSectorCapacity]
+        UC_PRED[PredictDailyDemand]
+    end
+
+    subgraph "Puertos de Salida (Secondary)"
+        P_REPO[MetricRepository Port]
+        P_FILE[FileRepository Port]
+    end
+
+    API -- Invoca --> UC_INGEST
+    API -- Invoca --> UC_CAP
+    UC_INGEST -- Usa --> P_FILE
+    UC_CAP -- Consulta --> P_REPO
 ```
 
 ---
 
-## 🔄 Flujo de Datos Arquitectural
-... (Contenido existente simplificado)
+## 📥 3.2 Ingesta y Procesamiento Técnica (ETL)
 
-## 📦 Objetos de Transferencia de Datos (DTOs)
-Ubicados en `src/application/dtos/`, aseguran que la información que sale de la aplicación esté estructurada y validada para la interfaz de usuario.
+El archivo [`ingest_flights_data.py`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/ingest_flights_data.py) coordina el flujo desde el archivo plano hasta la persistencia relacional.
 
-> [!TIP]
-> Cada caso de uso es una clase o función independiente. Esto facilita el mantenimiento y evita que el sistema se convierta en una "Big Ball of Mud".
+### Diagrama de Secuencia: Ingesta Masiva
+```mermaid
+sequenceDiagram
+    participant UI as UploadView
+    participant UC as IngestFlightsData
+    participant PL as PolarsAdapter
+    participant DB as DuckDBRepository
+
+    UI->>UC: start_ingestion(xlsx_path)
+    UC->>PL: scan_and_validate(schema)
+    Note over PL: Lazy Evaluation (pl.scan_csv)
+    PL-->>UC: validated_dataframe
+    
+    loop Per Chunk
+        UC->>DB: save_flights(chunk)
+        DB-->>UC: success/count
+    end
+
+    UC->>DB: update_file_status(COMPLETED)
+    UC-->>UI: IngestionSummaryDTO
+```
+
+---
+
+## 🧮 3.3 Motor de Capacidad: Derivación Circular 006
+
+Este caso de uso ([`calculate_sector_capacity.py`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/calculate_sector_capacity.py)) traduce la normativa de la Aerocivil en algoritmos computacionales.
+
+### Flujo Lógico de Cálculo
+```mermaid
+flowchart LR
+    A[get_sector_config] --> B[query_historical_tps]
+    B --> C{TFC configurado?}
+    C -- No --> D[Error: Parametros Manuales Faltantes]
+    C -- Si --> E[SCV Calculation]
+    E --> F[CH Calculation]
+    F --> G[Apply Factor R]
+    G --> H[ResultDTO]
+```
+
+### Mapeo de Métodos Críticos
+- **`_get_tps()`**: Calcula el promedio de duración de vuelos en el sector mediante agregación SQL en DuckDB.
+- **`execute()`**: Centraliza la aplicación de la fórmula `CH = (3600 * SCV) / TPS`.
+
+---
+
+## 🤖 3.4 Análisis Predictivo (ML Pipeline)
+
+La orquestación de modelos en [`predict_daily_demand.py`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/predict_daily_demand.py) sigue un patrón de **Recursive Forecasting** para series temporales.
+
+### Ingeniería de Características (Features)
+El sistema genera automáticamente:
+- **Lags Temporales**: Desplazamientos de 1, 7, 14 y 28 días para capturar la auto-correlación.
+- **Dummies Estacionales**: Día de la semana, mes y tendencia anual.
+
+```mermaid
+graph LR
+    RAW[Datos Crudos] --> ENG[Feature Engineering]
+    ENG --> RF[Random Forest Model]
+    RF --> PRED[Prediction Matrix]
+    PRED --> CI[Confidence Intervals 95%]
+```
+
+---
+
+## 🏗️ 3.5 Inyección de Dependencias (Dependency Injection)
+
+El sistema utiliza la librería `dependency-injector` ([`container.py`](file:///c:/Users/LENOVO/Documents/tesis/src/application/di/container.py)) para desacoplar la creación de objetos de su uso.
+
+### Flujo de Resolución de Dependencias
+```mermaid
+graph TD
+    subgraph "Infrastructure Layer"
+        CONF[Settings/Env]
+        DB_ADAP[DuckDBAdapter]
+        PL_ADAP[PolarsAdapter]
+    end
+
+    subgraph "DI Container"
+        CONT[Container]
+    end
+
+    subgraph "Application Layer"
+        UC[Use Case Instance]
+    end
+
+    CONF --> CONT
+    DB_ADAP --> CONT
+    PL_ADAP --> CONT
+    CONT -- Inyecta Singleton/Factory --> UC
+```
+
+**Beneficios Técnicos**:
+- **Ciclo de Vida**: Los repositorios son `Singleton` (una sola instancia compartida), mientras que los Casos de Uso son `Factory` (nueva instancia por petición), optimizando el uso de memoria.
+- **Configuración Centralizada**: Todos los paths (DuckDB, Logs, Temp) se inyectan desde `Settings`, eliminando hardcoding.
+
+---
+
+## 📦 3.6 Arquitectura de DTOs y Validación
+
+Los DTOs definidos en `src/application/dtos/` actúan como el contrato formal entre el backend y el frontend.
+
+### Validación Prospectiva con Pydantic
+Cada DTO utiliza el motor de validación de **Pydantic v2**. Esto garantiza que:
+1.  **Tipado Estricto**: Un `sector_id` debe ser un `str`, no un entero.
+2.  **Reglas de Negocio**: Mediante `Field(...)`, se validan rangos operativos (ej: el `R_factor` debe estar entre 0.1 y 1.0).
+
+---
+
+> [!IMPORTANT]
+> Esta arquitectura garantiza la integridad de la transacción de negocio. Ninguna operación de persistencia se realiza sin pasar antes por la lógica de validación del Caso de Uso.

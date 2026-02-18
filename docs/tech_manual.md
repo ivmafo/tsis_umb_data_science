@@ -77,107 +77,83 @@ Actúa como el cerebro del sistema, coordinando el flujo de datos hacia y desde 
 
 ---
 
-## 🧮 4. Fundamentos Matemáticos y Algoritmos
+---
 
-El valor diferencial del sistema reside en su capacidad de convertir datos crudos en métricas de ingeniería.
+## 🧮 4. Fundamentos Matemáticos y Algoritmos (Extreme Detail)
 
-### 📐 Metodología Circular 006 (Capacidad Técnica)
-El sistema calcula la **Capacidad Horaria (CH)** mediante la derivación de la **Capacidad Simultánea de Vuelos (SCV)**.
+### 📐 4.1 Metodología Circular 006 (UAEAC)
 
-**Fórmulas Implementadas:**
-1.  **TFC (Tiempo de Funciones de Control)**:
-    $$TFC = t_{transfer} + t_{comunicaciones} + t_{vigilancia} + t_{coordinacion}$$
-2.  **SCV (Capacidad Simultánea)**:
-    $$SCV = \frac{TPS}{TFC \times 1.3}$$
-    *Donde TPS es el Tiempo de Permanencia en Sector calculado dinámicamente y 1.3 es el buffer de carga mental.*
-3.  **CH (Capacidad Horaria)**:
-    $$CH = \frac{3,600 \times SCV}{TPS} \times R$$
-    *Donde R es el factor de ajuste operacional definido por el usuario.*
+La **Capacidad de un Sector ATC** se define como el número de aeronaves que pueden ser aceptadas en un sector de control en un periodo de tiempo determinado, garantizando que la carga de trabajo del controlador se mantenga dentro de niveles seguros.
 
-### 🤖 Motor de Inteligencia Artificial (Predictive engine)
-El sistema utiliza dos enfoques para la predicción de demanda:
+#### A. Derivación Matemática del SCV
+La **Capacidad Simultánea de Vuelos (SCV)** es el número máximo de aeronaves que un controlador puede gestionar simultáneamente sin exceder su umbral cognitivo.
 
-#### A. Bosques Aleatorios (Random Forest Regressor)
-Utilizado para la predicción a 30 días.
-- **Por qué**: No asume una distribución lineal y es altamente resistente a valores atípicos (outliers) en el tráfico aéreo.
-- **Features**: Lags temporales (t-1, t-7, t-14, t-28), día del año, mes y día de la semana.
-- **Incertidumbre**: Se calcula el Intervalo de Confianza (95%) mediante la varianza de las predicciones de los 100 árboles de decisión en el ensamble.
+$$SCV = \frac{TPS}{TFC \times f_{mental}}$$
 
-#### B. Series de Fourier (Tendencia Estacional)
-Utilizado para el análisis de estacionalidad pura.
-- **Mecánica**: Descompone la señal de tráfico en componentes sinusoidales para identificar ciclos anuales y semanales, aislando la tendencia secular mediante regresiones lineales.
+Donde:
+- **TPS (Time in Sector)**: Tiempo promedio que una aeronave permanece dentro del volumen del sector. Calculado dinámicamente en el método `CalculateSectorCapacity._get_tps()`.
+- **TFC (Time of Control Functions)**: Suma de los tiempos de Transferencia, Comunicación, Separación y Coordinación. Definido por el usuario en `SectorForm.tsx` y procesado en `CalculateSectorCapacity.execute()`.
+- **$f_{mental}$ (Factor de Carga Mental)**: Constante 1.3 recomendada por la OACI (Doc 9689) para asegurar que el controlador disponga de un 30% de tiempo libre para imprevistos.
+
+#### B. Capacidad Horaria (CH)
+La capacidad horaria extrapola el SCV a una ventana de 60 minutos:
+
+$$CH = \frac{3600 \times SCV}{TPS} \times R$$
+
+- **Factor de Ajuste R**: Un coeficiente multiplicador (0.1 a 1.0) que penaliza la capacidad teórica ante factores externos (ej: degradación de radar o tormentas). Implementado en `src/application/use_cases/calculate_sector_capacity.py#L121`.
 
 ---
 
-## 📥 5. Infraestructura y Adaptadores
+### 🤖 4.2 Inferencia Predictiva con Random Forest
 
-### ⚡ Motor ETL con Polars
-- **Estrategia**: Streaming + Lazy Evaluation.
-- El sistema utiliza `pl.scan_csv()` para no cargar archivos pesados en RAM. Realiza validaciones de tipos en tiempo real antes de inyectar a DuckDB.
+El modelo implementado en [`predict_daily_demand.py`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/predict_daily_demand.py) utiliza un ensamble de 100 árboles de decisión para mitigar el sesgo y la varianza.
 
-### 🦆 Persistencia con DuckDB
-- Se seleccionó DuckDB por ser un motor **OLAP in-process**.
-- Permite realizar agregaciones de millones de filas en milisegundos directamente sobre el archivo `data/metrics.duckdb`, eliminando la necesidad de un servidor de base de datos pesado como PostgreSQL.
+#### Justificación de la Estrategia "Recursive Lag"
+Debido a que el sistema debe predecir hasta 30 días con una granularidad diaria, se utiliza una estrategia recursiva:
+1. Se predice el día $t+1$ usando los lags reales de la historia.
+2. El valor predicho para $t+1$ se reinyecta como "Input" para calcular el lag de 1 día para la predicción de $t+2$.
+3. Este proceso se repite $n$ veces hasta completar el horizonte.
 
----
+**Ecuación de Características (Feature Vector):**
+$$X_t = [D_{wk}, M_{yr}, Y_{trend}, Lag_1, Lag_7, Lag_{14}, Lag_{28}]$$
 
-## ⚛️ 6. Arquitectura Frontend
-
-Desarrollado con **React v18** y **Vite**.
-
-### 🎨 Design System
-- **Tailwind CSS**: Implementación de una estética "Glassmorphic" y "Clean Layout".
-- **Framer Motion**: Micro-animaciones para transiciones de estados y carga de datos.
-
-### 📈 Visualización de Datos
-- **ApexCharts**: Motor principal para gráficos de líneas, áreas y mapas de calor térmicos.
-- **Lucide React**: Sistema de iconografía semántica.
+- **Teoría de Lags**: El uso de lags de 7 y 14 permite capturar la estacionalidad semanal (el factor con mayor auto-correlación en el tráfico aéreo comercial).
 
 ---
 
-## 🏛️ 7. Taxonomía de Componentes y Widgets (Frontend)
+### 📈 4.3 Análisis Estacional via FFT (Fast Fourier Transform)
 
-Cada elemento visual en el sistema ha sido diseñado para cumplir un rol específico dentro de la visualización de datos aeronáuticos.
+En el módulo [`predict_seasonal_trend.py`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/predict_seasonal_trend.py), la estacionalidad no se trata como una variable discreta, sino como un fenómeno ondulatorio.
 
-### 📊 Capa de Visualización (Charts & Dashboards)
+$$y(t) = \alpha + \beta t + \sum_{k=1}^{N} (a_k \sin(\frac{2\pi kt}{P}) + b_k \cos(\frac{2\pi kt}{P})) + \epsilon$$
 
-1.  **DailyDemandChart.tsx**
-    - **Lógica**: Utiliza un gráfico de líneas superpuestas para proyecciones de 30 días.
-    - **Algoritmo**: Renderiza intervalos de confianza (bandas de color) basados en el desvío estándar provisto por el modelo de Bosque Aleatorio.
-    - **Ubicación**: `web/src/components/DailyDemandChart.tsx`
-
-2.  **PeakHoursHeatmap.tsx**
-    - **Lógica**: Implementa un mapa de calor 24x7.
-    - **Dato**: Cruza la intensidad de vuelos por hora vs. día de la semana para identificar saturaciones cíclicas.
-    - **Ubicación**: `web/src/components/PeakHoursHeatmap.tsx`
-
-3.  **RegionsTreemap.tsx**
-    - **Lógica**: Visualización jerárquica de vuelos por región.
-    - **Impacto**: Permite ver proporcionalmente qué FIR concentra la mayor masa crítica de operaciones.
-
-### 🛠️ Capa de Layout e infraestructura UI
-
-- **Sidebar.tsx**: Gestiona el enrutamiento y la navegación por estados.
-- **SystemStatus.tsx**: Realiza polling (muestreo periódico) al backend para verificar la latencia y disponibilidad de la base DuckDB.
-- **MainLayout.tsx**: Orquesta el contenedor principal y asegura la responsividad del diseño.
+- **Fundamentación**: Se utilizan 10 órdenes de Fourier para capturar la estacionalidad anual ($P=365.25$) y 3 órdenes para la semanal ($P=7$). Esto permite que el modelo "aprenda" formas complejas de demanda que no son puramente sinusoidales.
 
 ---
 
-## ⚡ 8. Ciclo de Vida del Dato (Detailed ETL)
+## 🏛️ 5. Mapeo Técnico de Funcionalidades (Code Matrix)
 
-1.  **Upload**: El archivo `.xlsx` llega al controlador FastAPI.
-2.  **Streaming**: Polars escanea el archivo buscando inconsistencias en fechas y nombres de aeródromos ICAO.
-3.  **Normalización**: Se mapean las columnas origen/destino a la tabla `airports` para asegurar integridad referencial.
-4.  **Indexación**: Los datos se insertan en `flights` y se dispara un refresh de las vistas materializadas de DuckDB.
+| Funcionalidad | Archivo de Orquestación (UC) | Método Crítico | Adaptador / Puerto |
+| :--- | :--- | :--- | :--- |
+| Ingesta ETL | `ingest_flights_data.py` | `execute()` | `PolarsDataSource` |
+| Cálculo Capacidad | `calculate_sector_capacity.py` | `execute()` | `DuckDBRepository` |
+| Predicción Demanda | `predict_daily_demand.py` | `execute()` | `Scikit-Learn (RF)` |
+| Análisis Geográfico | `generate_region_report.py` | `execute()` | `DuckDBRepository` |
+| Exportación PDF/XL | `generate_executive_report.py` | `generate_pdf()` | `ReportLab / Pandas` |
 
 ---
 
-## 📚 9. Bibliografía y Fuentes Académicas
+## 📚 9. Bibliografía Ampliada y Referencias Académicas
 
-Para la construcción de este sistema se consultaron las siguientes bases normativas y técnicas:
+### Normativa Internacional y Local
+1.  **OACI (ICAO)**. *Doc 9689: Manual on Air Traffic Services (ATS) Ground Capacity Planning*. Primera Edición.
+2.  **Aerocivil Colombia**. *Circular Informativa No. 006: Procedimientos para la determinación de capacidad de los sectores**.
 
-1.  **Unidad Administrativa Especial de Aeronáutica Civil (UAEAC)**. *Circular 006: Metodología para la determinación de la capacidad de los sectores de control de tránsito aéreo*. Bogotá, Colombia.
-2.  **OACI (Organización de Aviación Civil Internacional)**. *Documento 9689: Manual on Air Traffic Services (ATS) Ground Capacity Planning*. Montreal, Canadá.
-3.  **Breiman, L.** (2001). *Random Forests*. Machine Learning, 45, 5-32.
-4.  **McKinney, W.** (2010). *Data Structures for Statistical Computing in Python*. Proceedings of the 9th Python in Science Conference.
-5.  **Polars Development Team**. (2023). *Polars: Lightning-fast DataFrame library*. [pola.rs](https://pola.rs).
+### Fundamentos de Ciencia de Datos e IA
+3.  **Breiman, L. (2001)**. *Random Forests*. Machine Learning Journal. [Referencia académica para la estabilidad del ensamble].
+4.  **Hyndman, R.J., & Athanasopoulos, G. (2021)**. *Forecasting: Principles and Practice*. OTexts. [Base teórica para el uso de términos de Fourier en series temporales].
+5.  **VanderPlas, J. (2016)**. *Python Data Science Handbook*. O'Reilly Media. [Guía técnica para la implementación de Scikit-Learn].
+
+### Recursos Digitales
+6.  **DuckDB Documentation**. *DuckDB: The SQLite for Analytics*. [duckdb.org](https://duckdb.org).
+7.  **Polars User Guide**. *Lazy Evaluation and Memory Efficiency in Python*. [pola.rs](https://pola.rs).
