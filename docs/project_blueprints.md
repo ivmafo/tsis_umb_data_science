@@ -328,35 +328,34 @@ Muestra cómo se organiza el código en módulos físicos y sus dependencias.
 ```mermaid
 graph TD
     subgraph Client_Side ["Client Side"]
-        UI["React App"];
-        HTTP["Axios Lib"];
-        
-        UI ..> HTTP;
+        UI["React App"]
+        HTTP["Axios Lib"]
     end
 
     subgraph Server_Side ["Server Side"]
-        API["FastAPI App"];
-        SRV["Uvicorn Server"];
+        API["FastAPI App"]
+        SRV["Uvicorn Server"]
         
         subgraph Core_Logic ["Core Logic"]
-            UC["Use Cases"];
-            DOM["Entities"];
+            UC["Use Cases"]
+            DOM["Entities"]
         end
 
         subgraph Data_Access ["Data Access"]
-            DUCK["DuckDB Driver"];
-            POL["Polars Lib"];
+            DUCK["DuckDB Driver"]
+            POL["Polars Lib"]
         end
     end
 
-    HTTP -- "JSON/REST" --> API;
-    API --> UC;
-    UC --> DOM;
-    UC ..> DUCK;
-    UC ..> POL;
-    
-    FILE["metrics.duckdb"];
-    DUCK -- "SQL" --> FILE;
+    FILE["metrics.duckdb"]
+
+    UI ..> HTTP
+    HTTP -- "JSON/REST" --> API
+    API --> UC
+    UC --> DOM
+    UC ..> DUCK
+    UC ..> POL
+    DUCK -- "SQL" --> FILE
 ```
 
 #### 🔍 Análisis Detallado: Componentes
