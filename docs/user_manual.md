@@ -1,93 +1,111 @@
-# 📙 Manual de Usuario: ATC Capacity & Analytics
+# 📙 Manual de Usuario Maestro: ATC Capacity & Analytics
 
-Bienvenido a la plataforma líder para el análisis de capacidad y proyecciones de tráfico aéreo. Este manual le guiará a través de todas las funcionalidades del sistema para maximizar su eficiencia operativa.
-
----
-
-## 🚀 1. Introducción y Acceso
-
-El sistema está diseñado para ser intuitivo y reactivo. Tras iniciar la aplicación, se encontrará con un Dashboard principal que resume el estado actual del tráfico ingestatdo.
-
-### 🧭 Navegación Principal
-Utilice la barra lateral para acceder a los módulos:
-- **📊 Distribución**: Análisis geográfico y estadístico actual.
-- **📑 Capacidad**: Cálculo normativo Circular 006.
-- **🔮 Predicción**: Pronóstico de demanda con Inteligencia Artificial.
-- **⚙️ Configuración**: Catálogos de aeropuertos, regiones y sectores.
+Este manual proporciona una guía detallada sobre la operación del sistema, fundamentando cada acción del usuario en los principios técnicos y matemáticos que rigen el control de tráfico aéreo moderno.
 
 ---
 
-## 📊 2. Análisis de Distribución de Vuelos
+## 🚀 1. Ciclo de Vida Operativo del Sistema
 
-Este módulo le permite entender **quién, por dónde y cuándo** está volando.
+El sistema transforma datos brutos de vuelos en inteligencia operativa mediante un flujo dividido en tres etapas críticas:
 
-### 📁 Widgets de Visualización
-- **Vuelos por Región**: Identifique qué FIR (Región de Información de Vuelo) tiene mayor carga.
-- **Evolución Temporal**: Vea el crecimiento del tráfico por mes y año.
-- **Tipo de Vuelo**: Clasificación entre vuelos Nacionales e Internacionales.
-- **Principales Aerolíneas**: Conozca a los operadores dominantes en su entorno.
-
----
-
-## 📑 3. Cálculo de Capacidad (Circular 006)
-
-Es el núcleo técnico para la planificación de recursos ATC.
-
-### 📝 Cómo realizar un cálculo:
-1.  **Seleccione un Sector**: Elija un sector configurado (ej: Sector Bogota-Cali).
-2.  **Defina el Rango de Fechas**: El sistema analizará la historia para calcular el **TPS** (Tiempo promedio en sector).
-3.  **Revise los Parámetros**: Asegúrese de que el **TFC** (Tiempo de Funciones de Control) sea acorde a la realidad operativa del día.
-4.  **Ajuste el Factor R**: Utilice el slider para aplicar factores de ruido (clima, degradación de equipos).
-5.  **Generar Reporte**: Obtenga la Capacidad Horaria Teórica y Ajustada.
+```mermaid
+graph LR
+    A[Carga de Datos] --> B[Configuración de Sectores]
+    B --> C[Análisis y Cálculo]
+    C --> D[Predicción y Reporte]
+```
 
 ---
 
-## 🔮 4. Centro de Análisis Predictivo (IA)
+## 📥 2. Ingesta de Datos (Data Ingestion)
 
-Vea el futuro de la demanda aérea utilizando modelos avanzados de Machine Learning.
+El motor de ingesta es el primer punto de contacto. Técnica y matemáticamente, su función es la **normalización y limpieza de series temporales**.
 
-### 🤖 Modelos Disponibles:
-- **Predicción 30 Días (Random Forest)**: Proyecta la demanda diaria. Si ve una banda de color claro alrededor de la línea, representa el margen de incertidumbre.
-- **Saturación de Sectores**: Identifica momentos críticos donde la demanda superará la capacidad declarada.
-- **Crecimiento de Aerolíneas**: Proyecta qué empresas aumentarán sus operaciones.
-- **Tendencia Estacional**: Visualiza cómo se repetirá el tráfico en temporadas altas (fin de año, semana santa).
+### 📝 Procedimiento de Carga:
+1.  **Acceso**: Diríjase a la sección de **Repositorio de Archivos**.
+2.  **Carga masiva**: Arrastre archivos `.csv` o `.xlsx`. Internamente, el sistema activa el adaptador [`PolarsDataSource`](file:///c:/Users/LENOVO/Documents/tesis/src/infrastructure/adapters/polars/polars_data_source.py).
+3.  **Validación Técnica**: El sistema verifica que el archivo contenga las columnas obligatorias (`origen`, `destino`, `fecha`, `duracion`).
 
----
-
-## ⚙️ 5. Gestión y Configuración
-
-El sistema requiere de catálogos actualizados para funcionar correctamente.
-
-### 🏷️ Maestros de Datos
-- **Sectores**: Aquí se definen los límites de un sector. Debe especificar qué aeropuertos de origen y destino "pertenecen" a la lógica de ese sector.
-- **Regiones**: Administración de FIRs.
-- **Aeropuertos**: Mantenga actualizado el catálogo ICAO de aeródromos.
-
-### 📥 Ingesta de Datos (Carga de Archivos)
-1.  Vaya a la sección **"Repositorio de Archivos"**.
-2.  Utilice el portal de carga para arrastrar sus archivos `.xlsx` o `.csv`.
-3.  El sistema validará el esquema. Si hay errores, aparecerá un mensaje en rojo indicando la fila o columna inválida.
-4.  Una vez cargado, los gráficos se actualizarán automáticamente.
+**¿Qué ocurre detrás de escena?**
+Al subir un archivo, se dispara el caso de uso `IngestFlightsData`, que utiliza **Evaluación Perezosa (Lazy Evaluation)** para procesar cientos de miles de filas sin saturar la memoria del servidor.
 
 ---
 
-## ❓ 6. Solución de Problemas y Preguntas Frecuentes
+## 📑 3. Cálculo de Capacidad (Módulo Normativo)
 
-**P: Los gráficos aparecen en blanco.**
-*R: Verifique que haya cargado datos para el periodo de tiempo seleccionado en los filtros. Asegúrese de que el servidor DuckDB esté conectado.*
+Este es el módulo central basado en la **Circular 006 de la UAEAC**.
 
-**P: ¿Qué es el Factor R?**
-*R: Es un factor de ajuste del 0.1 al 1.0 que permite al jefe de tráfico reducir la capacidad teórica por condiciones como fallas técnicas o meteorología adversa.*
+### 📐 Fundamentación de los Parámetros UI:
+Al realizar un cálculo, usted interactúa con variables que tienen un impacto matemático directo en el resultado final:
 
-**P: El modelo de IA dice "Datos Insuficientes".**
-*R: Para realizar predicciones confiables, el sistema requiere al menos 14 días de historia previa en la base de datos.*
+1.  **TFC (Tiempo de Funciones de Control)**: 
+    - Es la suma de los tiempos promerdio de coordinación, transferencia y comunicación. 
+    - **Ubicación en Código**: `CalculateSectorCapacity.execute#L41-L49`.
+2.  **TPS (Time in Sector)**:
+    - El sistema lo calcula automáticamente promediando la duración de los vuelos que cruzaron el sector en el rango de fechas seleccionado.
+3.  **Factor de Ajuste R**:
+    - **Slider en Vista**: Permite penalizar la capacidad (ej: un Factor R de 0.8 reduce la capacidad teórica en un 20%).
+    - **Uso Técnico**: Se utiliza para modelar condiciones de degradación operativa.
+
+### 🔄 Flujo de Cálculo:
+```mermaid
+sequenceDiagram
+    participant U as Usuario
+    participant V as UI: CapacityReportView
+    participant B as Backend: CalculateSectorCapacity
+    participant D as DB: DuckDB
+
+    U->>V: Selecciona Sector y Filtros
+    V->>B: Petición de Cálculo (sector_id, filters)
+    B->>D: Query SQL (Agregación de TPS)
+    D-->>B: Resultado TPS
+    B->>B: Aplica Fórmula Circular 006
+    B-->>V: Respuesta JSON (SCV, CH, CH_Adjusted)
+    V-->>U: Muestra Reporte con Gráficos
+```
 
 ---
 
-## 📖 Glosario de Términos
-- **ATC**: Air Traffic Control.
-- **TFC**: Tiempo de Funciones de Control (minutos que un controlador invierte por vuelo).
-- **TPS**: Tiempo de Permanencia en Sector.
-- **SCV**: Capacidad Simultánea de Vuelos (cuántos vuelos hay al mismo tiempo en el aire).
-- **CH**: Capacidad Horaria (vuelos por hora).
-- **R²**: Indicador de precisión del modelo de IA (entre 0 y 100%).
+## 🔮 4. Análisis Predictivo con Inteligencia Artificial
+
+El módulo predictivo le permite anticiparse a la demanda futura basándose en modelos de **Aprendizaje Supervisado**.
+
+### 📊 Interpretación de Visualizaciones:
+- **Daily Demand Chart**: Muestra la línea de tendencia central. El área sombreada representa el **Intervalo de Confianza**.
+- **Seasonal Trend**: Visualiza la descomposición de Fourier. Es útil para identificar si un pico de tráfico se debe a un evento estacional (ej: temporada de vacaciones).
+- **Sector Saturation Chart**: Compara la demanda proyectada contra la capacidad calculada en el Módulo 3. 
+    - **Alerta 🟡 (80%)**: El sector se acerca a su límite operativo.
+    - **Crítico 🔴 (100%)**: Se recomienda implementar medidas de control de flujo (ATFM).
+
+---
+
+## ⚙️ 5. Gestión de Catálogos (Configuración)
+
+La precisión del sistema depende de la correcta definición de los activos aeronáuticos.
+
+- **Definición de Sectores**: Un sector NO es una geometría simple para el sistema; es una **Lógica de Conectividad**. Se define por los pares Origen-Destino que lo atraviesan.
+- **Mantenimiento de Aeropuertos**: Asegúrese de que los códigos ICAO sean correctos para que los uniones (JOINs) en DuckDB no fallen.
+
+---
+
+## 📖 Glosario Técnico-Operativo
+
+| Término | Definición Técnica | Referencia Normativa |
+| :--- | :--- | :--- |
+| **SCV** | Capacidad Simultánea de Vuelos. Límite instantáneo de gestión. | OACI Doc 9689 |
+| **CH** | Capacidad Horaria. Potencial de tráfico en 60 minutos. | UAEAC Circular 006 |
+| **Random Forest** | Algoritmo de ensamble usado para la predicción de residuos. | Machine Learning |
+| **ETL** | Siglas de Extraer, Transformar y Cargar (Proceso de datos). | Ingeniería de Datos |
+
+---
+
+## 📚 6. Bibliografía de Procedimientos
+
+1.  **UAEAC**. *Manual de Procedimientos de Control de Tránsito Aéreo*.
+2.  **OACI**. *Gestión del Flujo del Tránsito Aéreo (ATFM)*.
+3.  **NASA**. *Human Multi-model Analysis (Workload Theory)*. [Referencia para la fundamentación del Factor de Carga Mental 1.3].
+
+---
+
+> [!TIP]
+> **Recomendación de Uso**: Para obtener predicciones más precisas, realice una carga de datos al menos una vez por semana para que el modelo de IA se re-entrene con las tendencias más recientes.
