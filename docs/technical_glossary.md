@@ -70,3 +70,104 @@ Donde:
 | **Outlier** | Valor Atípico | Un dato muy alejado del promedio (ej. un día con 0 vuelos por falla de radar). Se filtran en el ETL. |
 | **Feature Engineering** | Ingeniería de Características | Crear nuevas variables (ej. "Día de la semana", "Mes") a partir de la fecha para ayudar al modelo a aprender patrones. |
 
+---
+
+## 👨‍💻 5. Vocabulario del Código Fuente (Backend & Frontend)
+
+Términos específicos encontrados en `src/` y `web/src/`.
+
+### 5.1 Backend (Python / FastAPI)
+| Término | Definición Simplificada | Ejemplo de Código |
+| :--- | :--- | :--- |
+| **Decorator** | Función que modifica a otra función sin cambiar su código interno. Se usa el símbolo `@`. | `@router.get("/metrics")` le dice a FastAPI que esa función responde a peticiones Web. |
+| **Pydantic Model** | Clase que valida datos automáticamente. Si el tipo de dato es incorrecto, lanza error. | `class SectorConfig(BaseModel): ...` asegura que la configuración del sector tenga el formato correcto. |
+| **Dependency Injection (DI)** | Técnica para pasar objetos ("servicios") a una función en lugar de crearlos dentro. Facilita el cambio de piezas. | `container.wire(modules=[...])` conecta los repositorios con los casos de uso. |
+| **Yield** | Palabra clave en Python para generar valores uno a uno (generador), ahorrando memoria. | `def read_chunks(): yield chunk` procesa archivos gigantes por partes. |
+
+### 5.2 Frontend (React / TypeScript)
+| Término | Definición Simplificada | Ejemplo de Código |
+| :--- | :--- | :--- |
+| **Hook** | Función especial de React (empieza con `use`) para "engancharse" al ciclo de vida del componente. | `useEffect(() => { ... }, [])` ejecuta código cuando la pantalla se carga por primera vez. |
+| **Props** | Argumentos que recibe un componente UI. Son de solo lectura. | `<Chart data={vuelos} />`. `data` es una prop. |
+| **State** | Memoria interna de un componente. Si cambia, la pantalla se redibuja automáticamente. | `const [loading, setLoading] = useState(false)` guarda si está cargando. |
+| **Interface** | Contrato en TypeScript que define la forma obligatoria de un objeto. | `interface Flight { id: string; ... }` obliga a que todo vuelo tenga ID. |
+
+---
+
+## 🧮 6. Desglose Matemático "Para Humanos"
+
+Aquí explicamos las fórmulas con peras y manzanas (ejemplos numéricos).
+
+### 6.1 Fórmula de Capacidad (C006) Explicada
+
+$$ C = \frac{U}{t_{occ} \cdot (1 + B)} $$
+
+**Traducción**:
+> "La capacidad es qué tan lleno queremos el sector ($U$), dividido por cuánto se demora cada avión en cruzarlo ($t_{occ}$), dejándole un espacito extra por si acaso ($B$)."
+
+**Ejemplo Paso a Paso**:
+Imagina un sector (pedazo de cielo) llamado "BOG-NORTE".
+
+1.  **Datos de Entrada**:
+    *   Queremos usar el sector al **80%** de eficiencia ($U = 0.80$).
+    *   Los aviones tardan en promedio **45 segundos** en cruzarlo ($t_{occ} = 45$).
+    *   Dejamos un margen de seguridad del **10%** ($B = 0.10$).
+
+2.  **Cálculo**:
+    *   *Paso A (Denominador)*: Multiplicamos el tiempo por el margen.
+        $$ 45 \text{ seg} \times (1 + 0.10) = 45 \times 1.10 = \mathbf{49.5} \text{ segundos ajustados} $$
+        *(Esto significa que cada avión "ocupa" teóricamente 49.5 segundos)*.
+    *   *Paso B (División)*: Dividimos la eficiencia por el tiempo ajustado.
+        $$ C = \frac{0.80}{49.5} = \mathbf{0.01616} \text{ vuelos por segundo} $$
+
+3.  **Conversión a Horas**:
+    *   Una hora tiene 3600 segundos.
+        $$ 0.01616 \times 3600 = \mathbf{58.18} \text{ vuelos por hora} $$
+
+**Resultado Final**: El sector BOG-NORTE puede manejar máximo **58 aviones por hora**. Si entran 60, se satura.
+
+---
+
+### 6.2 Regresión Lineal (Tendencia) Explicada
+
+$$ y = mx + b $$
+
+**Traducción**:
+> "Predecimos el tráfico futuro ($y$) asumiendo que crece o decrece a un ritmo constante ($m$) desde un punto de partida ($b$)."
+
+**Ejemplo**:
+Queremos predecir el tráfico para el año 2026.
+
+1.  **Datos**:
+    *   $x$: Año (2026).
+    *   $m$ (Pendiente): Crecimiento de **200 vuelos extra por año** (calculado históricamente).
+    *   $b$ (Intersección): En el año 0 (base), había teóricamente **5000 vuelos**.
+
+2.  **Cálculo**:
+    $$ \text{Tráfico} = (200 \times 2026) + 5000 $$
+    $$ \text{Tráfico} = 405,200 + 5,000 = \mathbf{410,200} \text{ vuelos} $$
+
+**Nota**: Nuestro sistema usa esto + *Random Forest* (que corrige el error de esta línea recta usando patrones complejos).
+
+### 6.3 Intervalo de Confianza (Predicción)
+
+$$ \text{Rango} = \hat{y} \pm (1.96 \times \sigma) $$
+
+**Traducción**:
+> "El valor más probable es $\hat{y}$, pero estamos 95% seguros de que el valor real caerá entre un mínimo y un máximo definidos por qué tan volátiles son los datos ($\sigma$)."
+
+**Ejemplo**:
+El modelo predice que mañana a las 8:00 AM habrá **100 vuelos** ($\hat{y}=100$).
+La volatilidad histórica (desviación estándar) a esa hora es de **5 vuelos** ($\sigma=5$).
+
+1.  **Cálculo del Margen**:
+    $$ 1.96 \times 5 = \mathbf{9.8} \text{ vuelos} $$
+    *(Usamos 1.96 porque eso cubre el 95% de la curva normal)*.
+
+2.  **Rango**:
+    *   Mínimo: $100 - 9.8 = 90.2$
+    *   Máximo: $100 + 9.8 = 109.8$
+
+**Interpretación**: "Esperamos 100 vuelos, pero prepárese para tener entre **90 y 110**."
+
+
