@@ -127,3 +127,13 @@ A pesar de los buenos resultados, existen limitaciones teóricas:
 *   Integración con APIs meteorológicas (NOAA/IDEAM) para modular la capacidad teórica.
 *   Implementación de modelos LSTM (Long Short-Term Memory) para capturar secuencias temporales complejas a corto plazo.
 
+---
+
+## 📚 6. Referencias Bibliográficas
+
+*   Breiman, L. (2001). Random Forests. *Machine Learning*, 45(1), 5–32. https://doi.org/10.1023/A:1010933404324
+*   Hyndman, R. J., & Athanasopoulos, G. (2018). *Forecasting: principles and practice* (2nd ed.). OTexts.
+*   Pedregosa, F., et al. (2011). Scikit-learn: Machine Learning in Python. *Journal of Machine Learning Research*, 12, 2825–2830.
+*   Ritchie Vink, et al. (2024). *Polars User Guide*. https://docs.pola.rs/
+*   VandenBos, G. (2020). *Python for Data Analysis*. O'Reilly Media.
+

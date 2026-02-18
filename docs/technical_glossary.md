@@ -178,3 +178,13 @@ La volatilidad histórica (desviación estándar) a esa hora es de **5 vuelos** 
     *   Máximo: $100 + 9.8 = 109.8$
 
 **Interpretación**: "Esperamos 100 vuelos, pero prepárese para tener entre **90 y 110**."
+
+---
+
+## 📚 7. Referencias Bibliográficas
+
+*   Aerocivil. (2023). *AIP Colombia: Publicación de Información Aeronáutica*. https://www.aerocivil.gov.co/servicios-a-la-navegacion/servicio-de-informacion-aeronautica-ais
+*   Eurocontrol. (2024). *ATM Lexicon*. https://ext.eurocontrol.int/lexicon/
+*   Fowler, M. (2004). *Inversion of Control Containers and the Dependency Injection pattern*. https://martinfowler.com/articles/injection.html
+*   Python Software Foundation. (2024). *Python 3.10.13 Documentation*. https://docs.python.org/3/
+*   React Documentation. (2024). *Hooks API Reference*. https://react.dev/reference/react

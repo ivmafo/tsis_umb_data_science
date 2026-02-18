@@ -408,5 +408,16 @@ graph TD
 
 ---
 
+## 📚 8. Referencias Bibliográficas
+
+*   Aerocivil. (2015). *Circular Reglamentaria 006: Metodologías para el cálculo de capacidad en sectores ATC y aeropuertos*. Unidad Administrativa Especial de Aeronáutica Civil de Colombia.
+*   Cockburn, A. (2005). *Hexagonal architecture*. Alistair Cockburn. https://alistair.cockburn.us/hexagonal-architecture/
+*   Evans, E. (2004). *Domain-Driven Design: Tackling Complexity in the Heart of Software*. Addison-Wesley Professional.
+*   Object Management Group (OMG). (2017). *Unified Modeling Language (UML) Specification Version 2.5.1*. https://www.omg.org/spec/UML/
+*   OACI. (2020). *Doc 9971: Manual on Collaborative Air Traffic Flow Management*. International Civil Aviation Organization.
+*   Raasveldt, M., & Mühleisen, H. (2019). DuckDB: an Embeddable Analytical Database. *Proceedings of the 2019 International Conference on Management of Data* (pp. 1981–1984). https://doi.org/10.1145/3299869.3320212
+
+---
+
 
 
