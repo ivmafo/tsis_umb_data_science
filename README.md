@@ -1,112 +1,230 @@
-# ATC Capacity & Analytics System
+# Metrics Processing System
 
-**Sistema de Procesamiento de Métricas y Cálculo de Capacidad con Arquitectura Hexagonal**
+**Hexagonal Architecture Data Processing System with Polars and FastAPI**
 
-Este proyecto es una herramienta avanzada para el análisis de tráfico aéreo, cálculo de capacidad de sectores (Circular 006) y predicción de tendencias utilizando modelos híbridos de Machine Learning.
-
----
-
-## 🏗️ Descripción General
-
-El sistema permite la ingesta de grandes volúmenes de datos de vuelos, la generación de reportes detallados y la visualización interactiva de métricas clave para la toma de decisiones en el control de tráfico aéreo (ATC).
-
-### Módulos Principales:
-- **Gestión de Datos**: Ingesta incremental de archivos Excel/CSV/Parquet usando Polars y DuckDB.
-- **Análisis de Capacidad**: Cálculo de capacidad de sectores basado en la fórmula de la Circular 006 (TFC, Factor R, Carga Mental).
-- **Gestión Regional**: Administración de regiones aeronáuticas y asignación de aeropuertos.
-- **Análisis Predictivo**: Predicción de demanda diaria, tendencias estacionales (Fourier), crecimiento de aerolíneas y saturación de sectores.
-- **Visualización**: Dashboard interactivo construido con React, Vite y Tailwind CSS.
+A production-ready data processing system built following **Hexagonal Architecture** (Ports and Adapters) and **Clean Architecture** principles. Efficiently processes 100+ CSV/Parquet files (30MB each) using Polars' lazy evaluation and streaming capabilities, calculates aggregated metrics, and exposes them through a FastAPI REST API.
 
 ---
 
-## 📁 Estructura del Proyecto
+## 🏗️ Architecture Overview
+
+This project implements **Hexagonal Architecture** (also known as Ports and Adapters) to achieve:
+
+- **Dependency Inversion**: Core business logic has zero external dependencies
+- **Testability**: Easy to mock and test each layer independently
+- **Flexibility**: Swap implementations (e.g., PostgreSQL → DuckDB) without changing business logic
+- **Maintainability**: Clear separation of concerns across layers
+
+### Architecture Diagram
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      API Layer (FastAPI)                     │
+│                    metrics_controller.py                     │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────────┐
+│                   Application Layer                          │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │  Use Cases (Orchestration)                           │   │
+│  │  - GetDashboardMetrics                               │   │
+│  │  - ProcessFiles                                      │   │
+│  └──────────────────────────────────────────────────────┘   │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │  DTOs (Pydantic v2)                                  │   │
+│  │  - MetricDTO, DashboardMetricsRequest, etc.          │   │
+│  └──────────────────────────────────────────────────────┘   │
+└────────────────────────┬────────────────────────────────────┘
+                         │ depends on (interfaces only)
+                         ▼
+┌─────────────────────────────────────────────────────────────┐
+│                      Domain Layer                            │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │  Entities (Business Objects)                         │   │
+│  │  - Metric                                            │   │
+│  └──────────────────────────────────────────────────────┘   │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │  Value Objects                                       │   │
+│  │  - DateRange                                         │   │
+│  └──────────────────────────────────────────────────────┘   │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │  Repository Interfaces (PORTS)                       │   │
+│  │  - MetricRepository (abstract)                       │   │
+│  │  - DataSourceRepository (abstract)                   │   │
+│  └──────────────────────────────────────────────────────┘   │
+└────────────────────────┬────────────────────────────────────┘
+                         │ implemented by
+                         ▼
+┌─────────────────────────────────────────────────────────────┐
+│                  Infrastructure Layer                        │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │  Adapters (Concrete Implementations)                 │   │
+│  │  - PolarsDataSource (streaming, lazy API)            │   │
+│  │  - DuckDBMetricRepository                            │   │
+│  └──────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 📁 Project Structure
 
 ```
 tesis/
-├── src/                          # 🐍 Backend (Python + FastAPI)
-│   ├── domain/                   # 🔵 Reglas de Negocio (Entidades, Puertos/Interfaces)
-│   ├── application/              # 🟢 Casos de Uso (Orquestación, DTOs, DI)
-│   │   ├── use_cases/            # Lógica de reportes, predicción y gestión
-│   │   └── di/                   # Contenedor de Inyección de Dependencias
-│   ├── infrastructure/           # 🟡 Adaptadores (DuckDB, Polars, FastAPI)
-│   └── main.py                   # Punto de entrada del servidor
+├── src/
+│   ├── domain/                          # 🔵 Core Business Logic (no dependencies)
+│   │   ├── entities/
+│   │   │   └── metric.py               # Metric entity with business rules
+│   │   ├── value_objects/
+│   │   │   └── date_range.py           # DateRange value object
+│   │   └── repositories/               # Abstract interfaces (PORTS)
+│   │       ├── metric_repository.py
+│   │       └── data_source_repository.py
+│   │
+│   ├── application/                     # 🟢 Use Cases & Orchestration
+│   │   ├── use_cases/
+│   │   │   ├── get_dashboard_metrics.py
+│   │   │   └── process_files.py
+│   │   ├── dtos/
+│   │   │   └── metric_dto.py           # Pydantic v2 models
+│   │   └── di/
+│   │       └── container.py            # Dependency Injection
+│   │
+│   ├── infrastructure/                  # 🟡 Adapters & External Implementations
+│   │   ├── adapters/
+│   │   │   ├── polars/
+│   │   │   │   └── polars_data_source.py    # Polars streaming adapter
+│   │   │   ├── database/
+│   │   │   │   └── duckdb_metric_repository.py
+│   │   │   └── api/
+│   │   │       └── metrics_controller.py    # FastAPI endpoints
+│   │   └── config/
+│   │       └── settings.py             # Pydantic Settings
+│   │
+│   └── main.py                         # Application entry point
 │
-├── web/                          # ⚛️ Frontend (React + Vite + TS)
-│   ├── src/
-│   │   ├── components/           # Componentes UI reutilizables
-│   │   └── views/                # Pantallas principales (Capacidad, Predictivo, etc.)
-│   └── tailwind.config.js
+├── web/                                # ⚛️ Frontend React Application
+├── tests/
+│   ├── unit/                           # Unit tests with mocks
+│   │   └── application/
+│   │       └── test_get_dashboard_metrics.py
+│   ├── integration/                    # Integration tests
+│   │   └── test_polars_adapter.py
+│   └── conftest.py                     # Pytest fixtures
 │
-├── data/                         # 📊 Almacenamiento de Datos (DuckDB y archivos crudos)
-├── tests/                        # 🧪 Pruebas Unitarias e Integración
-├── build.spec                    # 📦 Configuración para generar el ejecutable (.exe)
-└── README.md
+├── data/                               # Data files directory
+├── .env.example                        # Environment variables template
+├── pyproject.toml                      # Project configuration
+├── requirements.txt                    # Dependencies
+└── README.md                           # This file
 ```
 
 ---
 
-## 🚀 Instalación y Uso
+## 🎯 Key Design Decisions
 
-### Requisitos
+### 1. **Hexagonal Architecture (Ports and Adapters)**
+
+- **Domain Layer**: Pure business logic with zero external dependencies
+- **Ports**: Abstract interfaces (`MetricRepository`, `DataSourceRepository`)
+- **Adapters**: Concrete implementations (Polars, DuckDB, FastAPI)
+- **Benefit**: Easy to swap Polars for Dask, or DuckDB for PostgreSQL
+
+### 2. **Polars Lazy API for Streaming**
+
+```python
+# Efficient processing of 100+ files without loading all into memory
+lazy_df = pl.scan_csv(file_paths)  # Lazy evaluation
+result = lazy_df.group_by(...).agg(...).collect()  # Execute only when needed
+```
+
+### 3. **DuckDB for Analytical Queries**
+
+- Embedded OLAP database (like SQLite but for analytics)
+- Integrates seamlessly with Polars
+- No separate database server needed
+
+### 4. **Dependency Injection**
+
+Uses `dependency-injector` to wire dependencies:
+
+```python
+container = Container()
+use_case = container.get_dashboard_metrics_use_case()
+```
+
+### 5. **Pydantic v2 for Strict Typing**
+
+All API requests/responses use Pydantic models with validation:
+
+```python
+class MetricDTO(BaseModel):
+    metric_id: str = Field(..., min_length=1)
+    value: Decimal = Field(..., ge=0)
+```
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
 - Python 3.10+
-- Node.js 18+ (para el desarrollo frontend)
+- Virtual environment (recommended)
 
-### Configuración del Backend
-1. Crear y activar entorno virtual:
+### Installation
+
+1. **Clone and navigate to the project**:
    ```bash
-   python -m venv venv
-   .\venv\Scripts\activate
+   cd tesis
    ```
-2. Instalar dependencias:
+
+2. **Activate virtual environment**:
+   ```bash
+   # Windows
+   .\\venv\\Scripts\\activate
+   
+   # Linux/Mac
+   source venv/bin/activate
+   ```
+
+3. **Install dependencies**:
    ```bash
    pip install -r requirements.txt
    ```
-3. Ejecutar servidor:
-   ```bash
-   python run.py
-   ```
 
-### Configuración del Frontend
-1. Navegar a la carpeta `web`:
+4. **Configure environment** (optional):
    ```bash
-   cd web
-   npm install
-   ```
-2. Ejecutar en modo desarrollo:
-   ```bash
-   npm run dev
+   cp .env.example .env
+   # Edit .env with your settings
    ```
 
 ---
 
-## 📈 Análisis Predictivo
-El sistema implementa modelos avanzados para anticipar la demanda:
-- **Tendencias Estacionales**: Uso de Series de Fourier (orden 10 anual, 3 semanal) combinadas con Regresión Lineal y Random Forest.
-- **Saturación de Sectores**: Identificación de puntos críticos basados en la capacidad calculada vs. demanda proyectada.
+## 📚 Documentación Técnica (NUEVO)
+Este proyecto incluye documentación técnica autogenerada detallada:
+1. Asegúrate de tener el entorno virtual activo.
+2. Ejecuta el servidor de documentación:
+   ```bash
+   mkdocs serve -a localhost:9800
+   ```
+3. Abre en tu navegador: **http://localhost:9800**
+
+> [!NOTE]
+> La aplicación principal sigue funcionando en el puerto **8000** (`run.py`). La documentación técnica es un servicio separado para desarrollo en el puerto **9800**.
 
 ---
 
-## 📦 Generación de Ejecutable
-Para generar la aplicación independiente (`.exe`) que incluye tanto el backend como el frontend compilado:
-1. Compilar frontend: `cd web && npm run build`.
-2. Ejecutar PyInstaller: `pyinstaller build.spec`.
+## 🧪 Testing
+
+### Run All Tests
+```bash
+pytest
+```
 
 ---
 
-## � Documentación Técnica
-El proyecto cuenta con documentación técnica autogenerada detallando la arquitectura y las clases:
-1. Asegurar tener el entorno virtual activo.
-2. Ejecutar: `mkdocs serve -a localhost:9800`
-3. Abrir en el navegador: `http://localhost:9800`
+## 📝 License
 
----
-
-## �🛠️ Tecnologías Principales
-- **Backend**: FastAPI, Polars (procesamiento eficiente), DuckDB (base de datos OLAP), Scikit-Learn.
-- **Frontend**: React, TypeScript, Tailwind CSS, Recharts (gráficos), Lucide React (iconos).
-- **Arquitectura**: Clean Architecture / Hexagonal Architecture.
-
----
-
-## 👥 Créditos
-Desarrollado como sistema de apoyo para la gestión de capacidad en servicios de navegación aérea.
+This project is for educational/demonstration purposes.
