@@ -50,6 +50,7 @@ Definición rigurosa de la notación usada en fórmulas y algoritmos.
 ### 3.2 Fórmulas Específicas (Circular 006)
 
 **Fórmula de Capacidad**:
+
 $$
 C = \frac{U}{t_{occ} \cdot (1 + B)}
 $$
@@ -58,7 +59,9 @@ Donde:
 *   **$C$ (Capacidad)**: Vuelos por hora sostenibles.
 *   **$U$ (Utilización)**: Factor de eficiencia máxima (típicamente 0.8 o 80%).
 *   **$t_{occ}$ (Tiempo de Ocupación)**: Promedio ponderado de segundos que un vuelo tarda en cruzar el sector.
+    
     $t_{occ} = \frac{\sum_{i=1}^{N} t_i}{N}$
+
 *   **$B$ (Buffer)**: Margen de seguridad para imprevistos (0.1 o 10%).
 
 ---
