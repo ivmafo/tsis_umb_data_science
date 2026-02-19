@@ -104,29 +104,78 @@ Este enfoque permite proyectar patrones repetitivos suaves hacia el futuro, supe
 
 ## 4. Predicción de Demanda Diaria: Random Forest
 
-Para la predicción a corto plazo (30 días), se emplea un **Random Forest Regressor** no paramétrico, capaz de capturar no linealidades y relaciones complejas entre variables de calendario.
+El sistema emplea un algoritmo de **Random Forest Regressor** (Bosque Aleatorio) para estimar la demanda futura. Este método no paramétrico es ideal para series temporales complejas porque captura interacciones no lineales entre variables (ej. "el tráfico aumenta los viernes, pero solo si no es feriado") sin requerir supuestos de normalidad en los datos (Breiman, 2001).
 
-### 4.1 Ingeniería de Características (Lags)
+### 4.1 Formulación Matemática del Modelo
 
-El vector de características $X$ para el día $t$ incluye retardos temporales (autocorrelación):
+Un Random Forest es un ensamble de $K$ árboles de regresión $\{T_1, T_2, ..., T_K\}$.
 
-$$
-X_t = [ \text{dia\_semana}, \text{mes}, y_{t-1}, y_{t-7}, y_{t-14}, y_{t-28} ]
-$$
-
-Esto permite que el modelo "aprenda" la dependencia del tráfico con respecto al día anterior y a la misma semana del mes pasado.
-
-### 4.2 Estimación de Incertidumbre
-
-El intervalo de confianza del 95% se estima utilizando la dispersión de las predicciones de los árboles individuales del bosque ($T_k$).
+Para un vector de entrada $X$ (las características del día a predecir), la predicción final $\hat{y}$ es el promedio de las predicciones de todos los árboles individuales:
 
 $$
-\sigma_{pred} = \text{std\_dev}(\{T_k(X) \mid k=1..K\})
+\hat{y} = \frac{1}{K} \sum_{k=1}^{K} T_k(X)
+$$
+
+### 4.2 Construcción de los Árboles (Entrenamiento)
+
+Cada árbol $T_k$ se entrena con una muestra aleatoria del dataset original (Bootstrap). En cada nodo del árbol, se selecciona un subconjunto de variables candidatas para encontrar el mejor corte.
+
+El criterio para dividir un nodo y crear ramas es la minimización de la **Impureza** (Impurity), que para tareas de regresión es el **Error Cuadrático Medio (MSE)**.
+
+Si un nodo $m$ contiene un conjunto de muestras $Q_m$ con $N_m$ observaciones, buscamos dividirlo en dos subconjuntos $Q_{left}$ y $Q_{right}$ mediante un umbral $\theta$. La función de costo $H$ que minimizamos es:
+
+$$
+H(Q_m) = \sum_{y \in Q_{left}} (y - \bar{y}_{left})^2 + \sum_{y \in Q_{right}} (y - \bar{y}_{right})^2
+$$
+
+*   **Donde**:
+    *   $\bar{y}_{left}$ es el promedio de la demanda en el hijo izquierdo.
+    *   $\bar{y}_{right}$ es el promedio de la demanda en el hijo derecho.
+
+El algoritmo busca iterativamente el corte que reduce la varianza interna de los nodos resultantes, agrupando días con comportamientos similares.
+
+### 4.3 Variables de Entrada (Features)
+
+El vector de características $X_t$ para un día $t$ se construye mediante ingeniería de variables para capturar la autocorrelación (dependencia temporal):
+
+$$
+X_t = [ DOW_t, MES_t, Lag_1, Lag_7, Lag_{14}, Lag_{28} ]
+$$
+
+**Definición de Variables**:
+
+1.  **Variables Calendario**:
+    *   $DOW_t$: Día de la semana (0=Lunes ... 6=Domingo). Captura el ciclo semanal.
+    *   $MES_t$: Mes del año (1..12). Captura la estacionalidad anual macro.
+
+2.  **Lags Temporales (Autocorrelación)**:
+    *   $Lag_1 = y_{t-1}$: Demanda del día anterior (Inercia inmediata).
+    *   $Lag_7 = y_{t-7}$: Demanda del mismo día la semana pasada (Patrón semanal).
+    *   $Lag_{14} = y_{t-14}$ y $Lag_{28}$: Tendencias quincenales y mensuales.
+
+### 4.4 Cálculo de Incertidumbre y Confianza
+
+A diferencia de una regresión simple que da un solo valor, el Random Forest permite estimar la incertidumbre del pronóstico observando la discrepancia entre los árboles.
+
+Calculamos la **Desviación Estándar de la Predicción** ($\sigma_{pred}$) y construimos un Intervalo de Confianza del 95% ($IC_{95}$), asumiendo una distribución normal de los errores de los árboles:
+
+1.  Calculamos la desviación estándar de las $K$ predicciones individuales:
+
+$$
+\sigma_{pred} = \sqrt{ \frac{1}{K-1} \sum_{k=1}^{K} (T_k(X) - \hat{y})^2 }
+$$
+
+2.  Definimos los límites superior e inferior:
+
+$$
+IC_{upper} = \hat{y} + 1.96 \cdot \sigma_{pred}
 $$
 
 $$
-IC_{95\%} = \hat{y} \pm 1.96 \cdot \sigma_{pred}
+IC_{lower} = \hat{y} - 1.96 \cdot \sigma_{pred}
 $$
+
+Este intervalo nos dice que, con un 95% de probabilidad estadística, la demanda real caerá dentro de este rango.
 
 ---
 
@@ -169,7 +218,7 @@ $$
 ## 📚 7. Bibliografía y Referencias
 
 *   **Aerocivil**. (2015). *Circular Reglamentaria 006: Metodologías para el cálculo de capacidad*.
-*   **Breiman, L.** (2001). Random Forests. *Machine Learning*.
-*   **Bloomfield, P.** (2004). *Fourier Analysis of Time Series: An Introduction*. Wiley. (Base para la descomposición estacional).
-*   **Hastie, T., et al.** (2009). *The Elements of Statistical Learning*. Springer.
+*   **Breiman, L.** (2001). Random Forests. *Machine Learning*, 45(1), 5-32. (Fundamento del algoritmo de predicción diaria).
+*   **Hastie, T., Tibshirani, R., & Friedman, J.** (2009). *The Elements of Statistical Learning*. Springer. (Teoría sobre minimización de impureza en árboles).
+*   **Hyndman, R. J., & Athanasopoulos, G.** (2018). *Forecasting: Principles and Practice*. OTexts. (Metodología de Lags y Series de Fourier).
 *   **OACI**. (2020). *Doc 9971: Manual on Collaborative Air Traffic Flow Management*.
