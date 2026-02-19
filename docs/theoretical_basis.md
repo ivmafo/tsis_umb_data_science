@@ -4,34 +4,29 @@ Este documento detalla los principios matemáticos, estadísticos y algorítmico
 
 ---
 
-## 1. Geometría Computacional: Pertenencia Espacial
+## 1. Definición de Sector: Heurística de Conectividad
 
-Para determinar si un vuelo (punto $P$) se encuentra dentro de un sector ATC (polígono $S$), utilizamos el algoritmo de **Ray Casting** (o "Even-Odd Rule"), fundamental en sistemas de información geográfica (Haines, 1994).
+A diferencia de los enfoques tradicionales basados en geometría computacional (e.g., Ray Casting), el sistema implementa una **Heurística de Conectividad** para determinar la pertenencia de un vuelo a un sector. Este modelo define un sector no como un polígono en el espacio, sino como un conjunto de reglas lógicas sobre el grafo de rutas aeroportuarias.
 
-### 1.1 Definición Formal
+### 1.1 Definición Formal (Teoría de Conjuntos)
 
-Sea $S$ un polígono simple definido por una secuencia de vértices $V_0, V_1, ..., V_n$, donde $V_n = V_0$.
-Sea $P = (x, y)$ un punto de prueba correspondiente a la posición de la aeronave ($\text{lon}, \text{lat}$).
-Sea $R$ un rayo que parte de $P$ y se extiende hasta el infinito en una dirección fija (usualmente eje $X$ positivo).
+Sea $S$ un sector definido por la tupla $(O_S, D_S)$, donde:
+*   $O_S$: Conjunto de aeropuertos de origen permitidos (e.g., $\{SKBO, SKRG\}$).
+*   $D_S$: Conjunto de aeropuertos de destino permitidos.
 
-El punto $P$ está dentro de $S$ si y solo si el rayo $R$ intersecta los bordes de $S$ un número **impar** de veces, conforme a los teoremas de topología de curvas de Jordan.
+Sea $f$ un vuelo caracterizado por el par ordenado $(o_f, d_f)$, correspondiente a sus aeropuertos de origen y destino reales.
 
-$$
-P \in S \iff (\text{Intersecciones}(R, S) \mod 2) \neq 0
-$$
-
-### 1.2 Formulación Algorítmica
-
-Para cada arista del polígono formada por $V_i$ y $V_{i+1}$:
-1.  Verificar si la coordenada $Y$ del punto $P$ está dentro del rango vertical de la arista.
-2.  Calcular la intersección en $X$ de la arista con la línea horizontal que pasa por $P$.
-3.  Si la intersección está a la derecha de $P$, contarla.
+La función de pertenencia $\mathbb{I}(f, S)$ se define mediante la intersección de condiciones lógicas:
 
 $$
-x_{int} = x_i + \frac{(y_P - y_i) \cdot (x_{i+1} - x_i)}{(y_{i+1} - y_i)}
+f \in S \iff (O_S = \emptyset \lor o_f \in O_S) \land (D_S = \emptyset \lor d_f \in D_S)
 $$
 
-Si $x_{int} > x_P$, entonces $Counter \leftarrow Counter + 1$.
+### 1.2 Justificación de Implementación
+
+Esta aproximación reduce la complejidad computacional de $O(N \cdot K)$ (donde $K$ es el número de vértices del polígono) a $O(1)$ mediante búsquedas hash en conjuntos, optimizando drásticamente el tiempo de procesamiento en grandes volúmenes de datos históricos (Big Data).
+
+> **Nota de Implementación**: En el código fuente (`calculate_sector_capacity.py`), esto se traduce en consultas SQL dinámicas que aplican filtros `WHERE origen IN (...)` y `WHERE destino IN (...)` solo si los conjuntos $O_S$ o $D_S$ no están vacíos.
 
 ---
 
