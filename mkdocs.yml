@@ -51,6 +51,7 @@ plugins:
 nav:
   - Inicio: index.md
   - 📐 Project Blueprints: project_blueprints.md
+  - 📏 Fundamentos Teóricos: theoretical_basis.md
   - 📈 Análisis y Resultados: results_analysis.md
   - 📖 Glosario Técnico: technical_glossary.md
   - 🏛️ Arquitectura:

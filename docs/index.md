@@ -63,6 +63,7 @@ graph TD
 | [⚛️ Frontend](frontend.md) | React, ApexCharts y gestión de estado. | Frontend Developers |
 | [📘 Manual Técnico Maestro](tech_manual.md) | Derivaciones matemáticas y lógica de ML. | Data Scientists / Tesistas |
 | [📐 Project Blueprints](project_blueprints.md) | Especificaciones UML detalladas (Clases, Secuencia, Estados). | Arquitectos / Auditores |
+| [📏 Fundamentos Teóricos](theoretical_basis.md) | Sustentación matemática y algorítmica (Fórmulas, Estadística, ML, Geometría). | Data Scientists / Tesistas |
 | [📈 Análisis y Resultados](results_analysis.md) | Validación empírica, métricas de ML y discusión. | Directores de Tesis / Stakeholders |
 | [📖 Glosario Técnico](technical_glossary.md) | Diccionario de acrónimos, símbolos y términos. | Todos los lectores |
 

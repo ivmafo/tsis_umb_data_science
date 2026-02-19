@@ -51,9 +51,7 @@ Definición rigurosa de la notación usada en fórmulas y algoritmos.
 
 **Fórmula de Capacidad**:
 
-$$
-C = \frac{U}{t_{occ} \cdot (1 + B)}
-$$
+$C = \frac{U}{t_{occ} \cdot (1 + B)}$
 
 Donde:
 *   **$C$ (Capacidad)**: Vuelos por hora sostenibles.
