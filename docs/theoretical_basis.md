@@ -11,6 +11,7 @@ A diferencia de los enfoques tradicionales basados en geometría computacional (
 ### 1.1 Definición Formal (Teoría de Conjuntos)
 
 Sea $S$ un sector definido por la tupla $(O_S, D_S)$, donde:
+
 *   $O_S$: Conjunto de aeropuertos de origen permitidos (e.g., $\{SKBO, SKRG\}$).
 *   $D_S$: Conjunto de aeropuertos de destino permitidos.
 
@@ -34,15 +35,17 @@ El cálculo de capacidad sigue la metodología de la **Circular Reglamentaria 00
 
 ### 2.1 Variables Fundamentales
 
-*   **TPS (Tiempo Promedio en Sector)**: Equivalente al tiempo de residencia ($t_{occ}$). Se calcula como la media aritmética de la duración de todos los vuelos $N$ en la muestra histórica.
-    $$
-    TPS = \frac{1}{N} \sum_{i=1}^{N} \text{duracion}_i
-    $$
+**TPS (Tiempo Promedio en Sector)**: Equivalente al tiempo de residencia ($t_{occ}$). Se calcula como la media aritmética de la duración de todos los vuelos $N$ en la muestra histórica.
 
-*   **TFC (Tiempo de Funciones de Control)**: Es la suma de los tiempos manuales requeridos por el controlador para gestionar un vuelo típico.
-    $$
-    TFC = t_{transfer} + t_{comms} + t_{sep} + t_{coord}
-    $$
+$$
+TPS = \frac{1}{N} \sum_{i=1}^{N} \text{duracion}_i
+$$
+
+**TFC (Tiempo de Funciones de Control)**: Es la suma de los tiempos manuales requeridos por el controlador para gestionar un vuelo típico.
+
+$$
+TFC = t_{transfer} + t_{comms} + t_{sep} + t_{coord}
+$$
 
 ### 2.2 Capacidad Simultánea de Vuelos (SCV)
 
@@ -120,6 +123,7 @@ El intervalo de confianza del 95% se estima utilizando la dispersión de las pre
 $$
 \sigma_{pred} = \text{std\_dev}(\{T_k(X) \mid k=1..K\})
 $$
+
 $$
 IC_{95\%} = \hat{y} \pm 1.96 \cdot \sigma_{pred}
 $$
