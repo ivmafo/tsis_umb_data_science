@@ -34,11 +34,12 @@ $$
 - **Justificación**: El espacio aéreo presenta ciclos anuales ($P=365.25$) y semanales ($P=7$). El uso de términos de Fourier ($N=10$ para anual, $N=3$ para semanal) permite capturar la ciclicidad sin sobreajuste (overfitting).
 - **Referencia**: Hyndman, R.J., & Athanasopoulos, G. (2018). *Forecasting: Principles and Practice*.
 
-### 🌲 2.2 Residuos Híbridos (Random Forest)
-[`PredictDailyDemand`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/predict_daily_demand.py) implementa un modelo de residuos.
-1.  **Paso 1**: Se extrae la tendencia estacional.
-2.  **Paso 2**: El **Random Forest** se entrena sobre los residuos ($\epsilon_t$) usando retardos (lags) de 7, 14 y 30 días.
-3.  **Matemática**: $\hat{\epsilon}_{t} = f(L_{7}, L_{14}, L_{30})$, donde $f$ son los árboles de decisión generados.
+### 🌲 2.2 Predicción de Demanda Diaria (Random Forest)
+[`PredictDailyDemand`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/predict_daily_demand.py) implementa un modelo de regresión no paramétrico.
+
+1.  **Entrada**: Características de calendario (Día, Mes) y Retardos temporales ($L_1, L_7, L_{14}, L_{28}$).
+2.  **Proceso**: Un ensamble de 100 árboles de decisión vota para estimar el volumen de vuelos.
+3.  **Matemática**: $\hat{y}_{t} = \frac{1}{K} \sum_{k=1}^{K} T_k(X_t)$.
 
 ---
 

@@ -125,14 +125,14 @@ $$
 - **Anual**: $P=365.25$, $k=10$ armónicos.
 - **Semanal**: $P=7$, $k=3$ armónicos.
 
-#### B. Componente Residual (Random Forest)
-Los residuos $R_{t} = Y_{t} - S_{t}$ son procesados por un bosque aleatorio de 100 árboles:
+#### B. Predicción de Demanda Diaria (Random Forest)
+El volumen total de vuelos $Y_{t}$ es pronosticado directamente mediante un ensamble de árboles de decisión:
 
 $$
-\hat{R}_{t+1} = \frac{1}{100} \sum_{m=1}^{100} T_{m}(L_{1}, L_{7}, L_{30})
+\hat{Y}_{t+1} = \frac{1}{100} \sum_{m=1}^{100} T_{m}(DOW, MES, L_{1}, L_{7}, L_{14}, L_{28})
 $$
 
-Donde $L_{n}$ son los **Lags** (retardos) de la serie de tiempo.
+Donde $L_{n}$ son los **Lags** (retardos) de la serie de tiempo y $DOW/MES$ son variables categóricas de calendario.
 
 ---
 

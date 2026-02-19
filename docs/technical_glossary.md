@@ -72,6 +72,8 @@ Donde:
 | **MAE** | Error Absoluto Medio | El error promedio en unidades reales. MAE=2.4 significa que la predicción falla por ~2.4 vuelos. |
 | **Outlier** | Valor Atípico | Un dato muy alejado del promedio (ej. un día con 0 vuelos por falla de radar). Se filtran en el ETL. |
 | **Feature Engineering** | Ingeniería de Características | Crear nuevas variables (ej. "Día de la semana", "Mes") a partir de la fecha para ayudar al modelo a aprender patrones. |
+| **Fourier Analysis** | Análisis de Fourier | Técnica matemática que descompone una señal compleja (tráfico anual) en sumas de ondas simples (senos y cosenos) para identificar ciclos repetitivos. |
+| **Random Forest** | Bosque Aleatorio | Algoritmo de ML que combina el voto de múltiples árboles de decisión para reducir el error y el sobreajuste (overfitting). |
 
 ---
 
@@ -155,7 +157,7 @@ Queremos predecir el tráfico para el año 2026.
     
     $\text{Tráfico} = 405,200 + 5,000 = \mathbf{410,200} \text{ vuelos}$
 
-**Nota**: Nuestro sistema usa esto + *Random Forest* (que corrige el error de esta línea recta usando patrones complejos).
+**Nota**: Nuestro sistema utiliza Regresión Lineal para tendencias de crecimiento (Aerolíneas) y *Random Forest* para predicción de demanda diaria (que captura patrones no lineales complejos).
 
 ### 6.3 Intervalo de Confianza (Predicción)
 

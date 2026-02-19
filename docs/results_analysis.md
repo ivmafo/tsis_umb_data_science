@@ -34,7 +34,7 @@ Se ha cumplido con el 100% de los requerimientos funcionales definidos en los *B
 | **RF-01** | Ingesta SRS | ✅ Completo | Implementado en `ingest_flights_data.py` usando `pl.scan_csv()` para manejo *out-of-core*. Soporta archivos mayores a la RAM disponible. |
 | **RF-02** | Gestión Sectores | ✅ Completo | CRUD completo en `ManageSectors`. Persistencia JSON transparente en base de datos relacional. |
 | **RF-03** | Cálculo C006 | ✅ Completo | Motor matemático en `CalculateSectorCapacity`. Implementa la fórmula exacta de la Circular 006 con precisión de punto flotante. |
-| **RF-04** | Predicción ML | ✅ Completo | Modelo híbrido (Tendencia Lineal + Random Forest) en `PredictDailyDemand`. |
+| **RF-04** | Predicción ML | ✅ Completo | Modelo de Ensamble (**Random Forest Regressor**) en `PredictDailyDemand`. |
 | **RF-05** | Alertas UI | ✅ Completo | Componentes visuales en React que cambian de color (Verde/Amarillo/Rojo) según umbrales de saturación. |
 | **RF-06** | Reportes | ✅ Completo | Generación de PDFs y Excels con `pandas` y `reportlab`. |
 
