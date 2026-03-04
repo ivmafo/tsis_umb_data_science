@@ -155,64 +155,88 @@ $$
 
 ### 4.4 Cálculo de Incertidumbre y Confianza
 
-A diferencia de una regresión simple que da un solo valor, el Random Forest permite estimar la incertidumbre del pronóstico observando la discrepancia entre los árboles.
+A diferencia de los modelos estadísticos clásicos que proporcionan un único valor futuro, en nuestro proyecto aprovechamos la estructura del Random Forest para estimar qué tan seguros estamos de una predicción.
 
-Calculamos la **Desviación Estándar de la Predicción** ($\sigma_{pred}$) y construimos un Intervalo de Confianza del 95% ($IC_{95}$), asumiendo una distribución normal de los errores de los árboles:
+En la implementación actual (`predict_daily_demand.py`), no usamos fórmulas paramétricas tradicionales para el intervalo de confianza. Lo que hacemos es pedirle una predicción a cada uno de los 100 árboles del ensamble y medir qué tanto difieren entre sí sus respuestas.
 
-1.  Calculamos la desviación estándar de las $K$ predicciones individuales:
+1. Primero, calculamos la desviación estándar ($\sigma_{pred}$) de estas 100 predicciones individuales:
 
 $$
 \sigma_{pred} = \sqrt{ \frac{1}{K-1} \sum_{k=1}^{K} (T_k(X) - \hat{y})^2 }
 $$
 
-2.  Definimos los límites superior e inferior:
+2. Luego, apoyándonos en el Teorema del Límite Central, construimos el intervalo de confianza del 95% ($IC_{95}$) usando la aproximación normal ($Z=1.96$):
 
 $$
 IC_{upper} = \hat{y} + 1.96 \cdot \sigma_{pred}
 $$
 
 $$
-IC_{lower} = \hat{y} - 1.96 \cdot \sigma_{pred}
+IC_{lower} = \max(0, \hat{y} - 1.96 \cdot \sigma_{pred})
 $$
 
-Este intervalo nos dice que, con un 95% de probabilidad estadística, la demanda real caerá dentro de este rango.
+El uso de `max(0, ...)` en el código simplemente evita proyectar valores de tráfico negativos. Lo interesante de este enfoque es que la incertidumbre se vuelve dinámica: si intentamos predecir un día históricamente inestable, los árboles no se pondrán de acuerdo, la desviación estándar crecerá, y nuestra banda de confianza será mucho más ancha, alertándonos del riesgo.
 
 ---
 
 ## 5. Regresión Lineal: Crecimiento de Aerolíneas
 
-Para el módulo de **Crecimiento de Aerolíneas**, se aplica el método de Mínimos Cuadrados Ordinarios (OLS) sobre series temporales agregadas mensualmente.
+Para analizar el crecimiento del mercado, decidimos aislar el "ruido" diario (como picos por festivos o variaciones semanales) y enfocarnos exclusivamente en la tendencia macroeconómica mensual o anual de cada operador. Para esto, implementamos una Regresión Lineal Simple usando el método de Mínimos Cuadrados Ordinarios (OLS).
+
+La ecuación base es la estándar:
 
 $$
 y = \beta_0 + \beta_1 \cdot t
 $$
 
-Donde la pendiente $\beta_1$ representa la **Tasa de Crecimiento Mensual** (vuelos/mes). Una $\beta_1$ positiva significativa indica expansión de mercado, mientras que negativa indica contracción.
+Donde $t$ es el índice temporal (el mes o año a evaluar) e $y$ es la cantidad de vuelos operados.
+
+### 5.1 Interpretación de la Pendiente ($\beta_1$) en el Negocio
+
+En el submódulo `predict_airline_growth.py`, lo que realmente nos interesa extraer tras entrenar el modelo es el valor de $\beta_1$ (accesible vía `model.coef_[0]`). Esta pendiente nos da directamente la **Tasa de Crecimiento** de la aerolínea (cuántos vuelos adicionales agrega por cada mes que pasa).
+
+Para facilitar el análisis en la interfaz, el sistema clasifica automáticamente a las aerolíneas basándose en este valor estadístico:
+
+* **Expansión Positiva ($\beta_1 > 0.5$):** La compañía está en crecimiento comprobable (suma en promedio más de medio vuelo base cada mes).
+* **Contracción Negativa ($\beta_1 < -0.5$):** El operador está reduciendo su oferta.
+* **Estable ($-0.5 \le \beta_1 \le 0.5$):** Empresas maduras cuya operación se mantiene constante, sin variaciones drásticas a largo plazo.
 
 ---
 
 ## 6. Saturación de Sectores y Picos Hora
 
-### 6.1 Perfilamiento Estadístico (Picos Hora)
+La principal dificultad operativa es que no podemos predecir con exactitud cuántos vuelos habrá a las 10:00 AM de un martes dentro de tres meses debido a la alta volatilidad horaria. 
 
-No es un modelo predictivo *per se*, sino una agregación estadística. Se calcula la intensidad $I$ para cada hora del día ($h$) y día de la semana ($d$):
+### 6.1 Estimación del Pico Horario (La Regla del 10%)
+
+Para resolver esto de forma práctica en el sistema (`predict_sector_saturation.py`), optamos por utilizar el estándar aeronáutico de **Volumen Horario de Diseño**. En lugar de intentar predecir cada hora individualmente, tomamos la predicción agregada del día completo que nos da el Random Forest ($\hat{y}_{diario}$) y asumimos que durante la "hora pico" o mayor congestión del sector, se concentrará aproximadamente el 10% de las operaciones diarias:
 
 $$
-I_{d,h} = \frac{1}{|D_{d}|} \sum_{date \in D_d} \text{vuelos}(date, h)
+\hat{D}_{max} = \hat{y}_{diario} \cdot 0.10
 $$
 
-### 6.2 Índice de Saturación ($IS$)
+Esta heurística es mucho más robusta computacionalmente y suficientemente precisa para planeación a mediano y largo plazo.
 
-Calculado en el módulo de **Saturación**, cruza la demanda máxima estimada ($\hat{D}_{max}$) con la capacidad ajustada ($CH_{adj}$).
+### 6.2 Construcción del Índice de Saturación ($IS$)
+
+Con la demanda máxima por hora estimada ($\hat{D}_{max}$), ahora debemos cruzarla con la barrera física de lo que un controlador puede manejar. Esta barrera es la Capacidad Ajustada ($CH_{adj}$).
+
+Calculamos la capacidad base sumando los tiempos que le toma al controlador gestionar un vuelo individual ($TFC = \text{T. Transferencia} + \text{T. Comunicaciones} + \dots$). Para evitar saturación cognitiva, le aplicamos un margen de seguridad ($\beta = 1.3$) y finalmente ajustamos por complejidad del sector (factor $R$):
+
+$$
+CH_{adj} = \left(\frac{3600}{TFC \cdot \beta}\right) \cdot R
+$$
+
+Finalmente, el **Índice de Saturación ($IS$)** se calcula como una simple relación porcentual entre lo que va a llegar y lo que podemos atender:
 
 $$
 IS = \left( \frac{\hat{D}_{max}}{CH_{adj}} \right) \cdot 100
 $$
 
-*   **Normal**: $IS \le 80\%$
-*   **Alerta**: $80\% < IS \le 100\%$
-*   **Crítico**: $IS > 100\%$
-
+Para que esta matemática sea útil a nivel operativo, el código define límites duros de decisión:
+* **Operación Normal ($IS \le 80\%$):** El sector operará dentro de límites seguros.
+* **Estado de Alerta ($80\% < IS \le 100\%$):** Riesgo inminente de saturación; es el momento ideal para planear regulaciones ATFM (Air Traffic Flow Management).
+* **Estado Crítico ($IS > 100\%$):** Demanda excesiva confirmada que sobrepasará la capacidad del control manual.
 ---
 
 ## 📚 7. Bibliografía y Referencias
