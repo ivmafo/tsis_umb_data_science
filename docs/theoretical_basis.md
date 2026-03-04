@@ -35,6 +35,9 @@ conditions.append(f"origen IN ('{origins_str}') AND destino IN ('{destinations_s
 ```
 Esto reduce la complejidad computacional en tiempo real de $O(N \cdot K)$ (intersección poligonal geométrica clásica) a $O(1)$ mediante indexación Hash en la base de datos, lo que resulta indispensable al procesar Big Data de miles de vuelos históricos en microsegundos para alimentar los modelos predictivos AI.
 
+**Justificación del Modelo en Contexto Aeronáutico:**
+En el control de tráfico aéreo, las aerovías son corredores lógicos definidos por puntos de notificación, no simples polígonos en un plano 2D. Utilizar algoritmos geométricos tradicionales como *Ray Casting* resulta ineficiente y propenso a errores debido a los límites difusos de los sectores en altitud. La Heurística de Conectividad fue elegida porque modela fielmente la realidad operativa operativa: un avión impacta la carga de trabajo de un sector si su ruta (Origen-Destino combinados) atraviesa lógicamente ese volumen de control. Además, la ejecución $O(1)$ permite escalar el sistema a nivel país sin saturar el motor de base de datos relacional.
+
 ---
 
 ## 2. Reporte de Capacidad (Cálculo ATM)
@@ -83,6 +86,9 @@ CH_Adjusted = CH * R
 ```
 Al tener este cálculo paramétrico, cualquier coordinador de vuelo puede ajustar un tiempo en la Plataforma UI y ver reflejado instantáneamente el impacto real en la Capacidad Declarada del sector, cerrando la brecha entre la teoría ATC OACI y la operación en vivo.
 
+**Justificación del Modelo:** 
+El uso de las directrices del Doc 9971 de la OACI garantiza que el cálculo base esté alineado con los máximos estándares internacionales de seguridad aérea. Sin embargo, en precedentes aeronáuticos, la teoría matemática pura sobreestima la capacidad real al ignorar fricciones locales (meteorología, orografía compleja). La inclusión programática de la variable $R$ (Factor de Ajuste) fue decidida deliberadamente para que este modelo puramente teórico sea "calibrable" a la realidad de cada sector del espacio aéreo operado, permitiendo predicciones de saturación que los controladores consideren acertadas y confiables en el mundo real.
+
 ---
 
 ## 3. Predicción Estacional: Descomposición de Fourier
@@ -128,6 +134,9 @@ Esta matemática compleja se implementa limpiamente en el sistema a través de l
     ```
 
 Este enlace directo entre teoría y código permite proyectar patrones repetitivos suaves hacia el futuro (inyectando dichas variables `X` a fechas venideras), superando las limitaciones de los simples promedios móviles, y justificando el porqué el backend maneja con tanta fidelidad la ciclicidad aeronáutica interanual.
+
+**Justificación del Modelo:** 
+Las series de tiempo propias de la industria aeronáutica exhiben múltiples estacionalidades superpuestas (ciclos anuales de vacaciones y ciclos semanales de negocios). Herramientas matemáticas tradicionales como ARIMA fallan drásticamente con múltiples estacionalidades complejas o largas ($P=365$), y arquitecturas de *Deep Learning* requieren tiempos de entrenamiento computacional inasumibles para proyecciones instantáneas solicitadas por el usuario. La Descomposición Analítica de Fourier fue cuidadosamente escogida como la opción más robusta porque modela estas "olas" combinadas matemáticamente a través de trigonometría simple, siendo computacionalmente inmediata en *Scikit-Learn* y manteniendo total explicabilidad (caja blanca) para la toma de decisiones gerenciales.
 
 ---
 
@@ -206,6 +215,13 @@ $$
 
 El uso de `max(0, ...)` en el código simplemente evita proyectar valores de tráfico negativos. Lo interesante de este enfoque es que la incertidumbre se vuelve dinámica: si intentamos predecir un día históricamente inestable, los árboles no se pondrán de acuerdo, la desviación estándar crecerá, y nuestra banda de confianza será mucho más ancha, alertándonos del riesgo.
 
+**Justificación del Modelo (Sustento Técnic0):**
+En el ámbito de la predicción operativa de demanda diaria, la relación entre las variables (días de la semana, época del año y rezagos históricos) es inherentemente no lineal e interactiva ("el tráfico se comporta diferente si un viernes cae en temporada navideña frente a temporada baja"). Regresiones paramétricas lineales colapsarían ante estas interacciones interdependientes. 
+Se seleccionó y codificó el algoritmo *Random Forest* frente a alternativas de Redes Neuronales Recurrentes (LSTM) basándose en tres precedentes críticos para el proyecto: 
+1. **Velocidad de Inferencia Tabular**: Entrena en milisegundos sobre matrices extraídas de consultas SQL (DuckDB).
+2. **Resiliencia al Ruido**: Su técnica de pre-empacamiento (*bagging*) y la construcción paralela de Árboles es genéticamente resistente a sobreajustarse a eventos atípicos del pasado (como el cierre súbito de un aeropuerto por clima extremo).
+3. **Incertidumbre Transparente**: Al proveer una varianza empírica midiendo la discrepancia de opiniones entre 100 estimadores, proporciona un margen de seguridad valioso estadísticamente que ninguna "caja negra" de Machine Learning puro suele ofrecer sin complejísimo modelado numérico.
+
 ---
 
 ## 5. Regresión Lineal: Crecimiento de Aerolíneas
@@ -235,6 +251,10 @@ A través de esta pendiente `slope`, el sistema clasifica automáticamente a las
 * **Expansión Positiva (`slope > 0.5`):** La compañía está en crecimiento comprobable (suma en promedio más de medio vuelo base cada mes).
 * **Contracción Negativa (`slope < -0.5`):** El operador está reduciendo su oferta.
 * **Estable ($-0.5 \le slope \le 0.5$):** Empresas maduras cuya operación se mantiene constante, sin variaciones drásticas a largo plazo.
+
+**Justificación del Modelo:**
+Aunque el análisis de mercado de aerolíneas podría atacarse con técnicas complejas de Machine Learning, estas metodologías fallarían al intentar aislar la dirección estratégica de fondo. En este contexto de negocio, el objetivo *no es predecir con exactitud microscópica* si una aerolínea volará "104" o "107" veces el mes entrante, sino descubrir la *inclinación y aceleración matemática en términos macro de mercado*. 
+La Regresión OLS se codificó como el estándar definitivo porque actúa como un filtro natural de bajo paso: descarta la variabilidad estocástica y le extrae a los datos un único valor incontrovertible ($\beta_1$). Funciona como un "velocímetro" de cuota de mercado con rigor matemático puro, permitiendo ordenar y jerarquizar a competidores a nivel computacional con precisión imbatible, algo de sumo valor para planeación a nivel macro y gestión de *Slots* aeroportuarios.
 
 ---
 
@@ -275,6 +295,10 @@ Para que esta matemática sea útil a nivel operativo, el propio controlador (Ba
 * **Operación Normal ($IS \le 80\%$):** El sector operará dentro de límites seguros.
 * **Estado de Alerta ($80\% < IS \le 100\%$):** Riesgo inminente de saturación; disparador ("Trigger") preventivo para planear regulaciones ATFM (Air Traffic Flow Management).
 * **Estado Crítico ($IS > 100\%$):** Demanda excesiva confirmada que sobrepasará la capacidad matemática.
+
+**Justificación del Modelo Integral (Regla del 10% y Saturación):**
+Ante el desafío de estimar la congestión sectorial a futuro, intentar un modelamiento predictivo iterativo ($K$-pasos) para cada una de las 24 horas del día propagaría el margen de error estadístico exponencialmente en el largo plazo, saturando la latencia del procesador inútilmente. Empleando este conjunto de directrices se adoptó el precedente usado globalmente en el dimensionamiento de infraestructura (la estimación del **Volumen Horario de Diseño**).
+Al codificar que $\hat{D}_{max} = \hat{y} \cdot 10\%$ y contrastarlo con $CH_{adj}$, el proyecto abandona la ineficiencia de procesar las "horas valle" del tráfico; enfocando matemáticamente la alerta sobre el "Escenario Banco" o del peor caso crítico posible (el pico de carga del turno). Computacionalmente esto es vital ya que asegura alertas directas para la seguridad del espacio aéreo operando con mínimos recursos de servidor.
 ---
 
 ## 📚 7. Bibliografía y Referencias
