@@ -33,13 +33,15 @@ class DuckDBRegionAirportRepository(RegionAirportRepository):
                 """)
                 
                 if os.path.exists(self.csv_path):
-                    # Import CSV
-                    # The CSV has id, icao_code, region_id, created_at
-                    # We can import directly, but we need to ensure the sequence is updated afterwards
-                    conn.execute(f"""
-                        INSERT INTO region_airports 
-                        SELECT * FROM read_csv_auto('{self.csv_path}');
-                    """)
+                    row_count = conn.execute("SELECT count(*) FROM region_airports").fetchone()[0]
+                    if row_count == 0:
+                        # Import CSV
+                        # The CSV has id, icao_code, region_id, created_at
+                        # We can import directly, but we need to ensure the sequence is updated afterwards
+                        conn.execute(f"""
+                            INSERT INTO region_airports 
+                            SELECT * FROM read_csv_auto('{self.csv_path}');
+                        """)
                     
                     # Sync sequence
                     max_id = conn.execute("SELECT MAX(id) FROM region_airports").fetchone()[0]

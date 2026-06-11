@@ -36,36 +36,36 @@ Al subir un archivo, se dispara el caso de uso `IngestFlightsData`, que utiliza 
 
 ---
 
-## 📑 3. Cálculo de Capacidad (Módulo Normativo)
+## 📑 3. Cálculo de Capacidad Dinámica (RAC 14 Estocástico)
 
-Este es el módulo central basado en la **Circular 006 de la UAEAC**.
+A diferencia de sistemas tradicionales basados en capacidades estáticas, este módulo utiliza un ensamble de **Agentes Inteligentes** para calcular la Capacidad Estocástica RAC 14 mediante simulaciones de Montecarlo.
 
 ### 📐 Fundamentación de los Parámetros UI:
-Al realizar un cálculo, usted interactúa con variables que tienen un impacto matemático directo en el resultado final:
+Al realizar un cálculo, usted interactúa con variables que moldean el comportamiento físico de la simulación:
 
-1.  **TFC (Tiempo de Funciones de Control)**: 
-    - Es la suma de los tiempos promerdio de coordinación, transferencia y comunicación. 
-    - **Ubicación en Código**: `CalculateSectorCapacity.execute#L41-L49`.
-2.  **TPS (Time in Sector)**:
-    - El sistema lo calcula automáticamente promediando la duración de los vuelos que cruzaron el sector en el rango de fechas seleccionado.
-3.  **Factor de Ajuste R**:
-    - **Slider en Vista**: Permite penalizar la capacidad (ej: un Factor R de 0.8 reduce la capacidad teórica en un 20%).
-    - **Uso Técnico**: Se utiliza para modelar condiciones de degradación operativa.
+1.  **TFC Dinámico (Tiempo de Funciones de Control)**: 
+    - Calculado vectorialmente por el agente `Physicist`, quien evalúa la proximidad y las trayectorias de los vuelos históricos, y extrae el cuello de botella (TMA vs Pista).
+2.  **Rango de Incertidumbre (Montecarlo)**:
+    - El Agente `RiskManager` ejecuta miles de simulaciones para entregar un rango estadístico (ej: 40 a 45 vuelos por hora) con 95% de confianza, en vez de un solo número frágil.
+3.  **Factor de Utilización (Ashford)**:
+    - **Slider en Vista**: Permite inyectar estrés o pasividad en el cálculo estocástico (ej: 0.8 reduce el límite simulado). El agente `ComplianceOfficer` verifica además si la geometría viola parámetros regulativos del RAC 14.
 
 ### 🔄 Flujo de Cálculo:
 ```mermaid
 sequenceDiagram
     participant U as Usuario
     participant V as UI: CapacityReportView
-    participant B as Backend: CalculateSectorCapacity
+    participant BA as BackendAgent
+    participant Ag as Agentes RAC 14
     participant D as DB: DuckDB
 
     U->>V: Selecciona Sector y Filtros
-    V->>B: Petición de Cálculo (sector_id, filters)
-    B->>D: Query SQL (Agregación de TPS)
-    D-->>B: Resultado TPS
-    B->>B: Aplica Fórmula Circular 006
-    B-->>V: Respuesta JSON (SCV, CH, CH_Adjusted)
+    V->>BA: Petición de Cálculo (sector_id, filters)
+    BA->>Ag: Orquesta RiskManager, Physicist y ComplianceOfficer
+    Ag->>D: Query SQL vectorial
+    D-->>Ag: Trazas de Vuelo (DataFrame)
+    Ag-->>BA: Capacidad Estocástica + Métricas Físicas
+    BA-->>V: Respuesta JSON (RAC 14 Metrics + Legacy Comparison)
     V-->>U: Muestra Reporte con Gráficos
 ```
 ### 🔍 Análisis Detallado: Secuencia de Interacción
@@ -85,7 +85,7 @@ El módulo predictivo le permite anticiparse a la demanda futura basándose en m
 
 ### 📊 Interpretación de Visualizaciones:
 - **Daily Demand Chart**: Muestra la línea de tendencia central. El área sombreada representa el **Intervalo de Confianza**.
-- **Seasonal Trend**: Visualiza la descomposición de Fourier. Es útil para identificar si un pico de tráfico se debe a un evento estacional (ej: temporada de vacaciones).
+- **Seasonal Trend**: Visualiza la tendencia estacional basada en el calendario oficial de Colombia y eventos personalizados. Es útil para identificar si un pico de tráfico se debe a puentes festivos, Semana Santa, recesos escolares o temporadas de fin de año.
 - **Sector Saturation Chart**: Compara la demanda proyectada contra la capacidad calculada en el Módulo 3. 
     - **Alerta 🟡 (80%)**: El sector se acerca a su límite operativo.
     - **Crítico 🔴 (100%)**: Se recomienda implementar medidas de control de flujo (ATFM).

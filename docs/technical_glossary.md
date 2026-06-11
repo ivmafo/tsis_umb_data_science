@@ -72,8 +72,9 @@ Donde:
 | **MAE** | Error Absoluto Medio | El error promedio en unidades reales. MAE=2.4 significa que la predicción falla por ~2.4 vuelos. |
 | **Outlier** | Valor Atípico | Un dato muy alejado del promedio (ej. un día con 0 vuelos por falla de radar). Se filtran en el ETL. |
 | **Feature Engineering** | Ingeniería de Características | Crear nuevas variables (ej. "Día de la semana", "Mes") a partir de la fecha para ayudar al modelo a aprender patrones. |
-| **Fourier Analysis** | Análisis de Fourier | Técnica matemática que descompone una señal compleja (tráfico anual) en sumas de ondas simples (senos y cosenos) para identificar ciclos repetitivos. |
+| **Colombia Calendar Dummies** | Variables Dummy de Calendario de Colombia | Variables binarias (0 o 1) creadas a partir del calendario aeronáutico colombiano (festivos oficiales, traslados Emiliani, Semana Santa, recesos escolares y fin de año) para capturar picos estacionales de tráfico aéreo. |
 | **Random Forest** | Bosque Aleatorio | Algoritmo de ML que combina el voto de múltiples árboles de decisión para reducir el error y el sobreajuste (overfitting). |
+| **Simulación Montecarlo** | Inferencia Estocástica | Ejecución masiva de cálculos aleatorizados basados en distribuciones de probabilidad ($ \mu, \sigma $) para obtener rangos de certidumbre estadísticos, evadiendo promedios fijos frágiles. |
 
 ---
 

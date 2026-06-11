@@ -81,7 +81,14 @@ Para asegurar una UX fluida (Glassmorphism), el fetching de datos en componentes
 | Funcionalidad Visual | Archivo Principal | Capa Técnica | Integración API |
 | :--- | :--- | :--- | :--- |
 | Dashboard Predictivo | `PredictiveView.tsx` | View | `/predict/daily` |
+| Cálculo de Capacidad | `CapacityReportView.tsx` | View | `/sectors/{id}/calculate` |
 | Gestión de Sectores | `SectorConfigurationView.tsx` | View | `/sectors/` |
+| Gestión de Aeropuertos| `AirportsView.tsx` | View | `/airports/` |
+| Gestión de Regiones | `RegionsView.tsx` | View | `/regions/` |
+| Aeropuertos por Región| `RegionAirportsView.tsx`| View | `/regions/.../airports/`|
+| Distribución Vuelos | `FlightDistributionView.tsx`| View | `/metrics/stats/...` |
+| Historial y Trazas | `HistoryView.tsx` | View | `/etl/files` |
+| Carga de Archivos | `UploadView.tsx` | View | `/etl/upload` |
 | Gráfico de Demanda | `DailyDemandChart.tsx` | Organismo | Integrado en PrediciveView |
 | Mapa Térmico (Picos) | `PeakHoursHeatmap.tsx` | Organismo | `/predict/peak-hours` |
 | Listado de Archivos | `FilesView.tsx` | View | `/files/` |

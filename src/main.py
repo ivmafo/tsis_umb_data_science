@@ -71,6 +71,9 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
     
+    from .infrastructure.adapters.api.error_logger import attach_exception_logger
+    attach_exception_logger(app)
+    
     # Include routers
     app.include_router(metrics_router)
     app.include_router(etl_router)

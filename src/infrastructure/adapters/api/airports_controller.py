@@ -22,6 +22,9 @@ class AirportResponse(BaseModel):
     dst: Optional[str] = None
     type: Optional[str] = None
     source: Optional[str] = None
+    reference_code: Optional[str] = "4E"
+    has_rapid_exit_taxiway: Optional[bool] = False
+    requires_backtrack: Optional[bool] = False
 
 class AirportCreate(BaseModel):
     icao_code: str
@@ -36,6 +39,9 @@ class AirportCreate(BaseModel):
     dst: Optional[str] = None
     type: Optional[str] = None
     source: Optional[str] = None
+    reference_code: Optional[str] = "4E"
+    has_rapid_exit_taxiway: Optional[bool] = False
+    requires_backtrack: Optional[bool] = False
 
 class PaginatedResponse(BaseModel):
     data: List[AirportResponse]

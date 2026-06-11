@@ -8,22 +8,42 @@ interface Sector {
     name: string;
 }
 
+export interface UncertaintyRange {
+    lower: number;
+    upper: number;
+}
+
+export interface StochasticCapacityReport {
+    nominal_theoretical_capacity: number;
+    ashford_baseline_capacity: number;
+    stochastic_simulated_capacity: number;
+    uncertainty_range: UncertaintyRange;
+    applied_utilization_factor: number;
+    status: string;
+}
+
+export interface PhysicistMetrics {
+    dynamic_tfc: number;
+    dynamic_rot: number;
+    bottleneck_source: string;
+}
+
+export interface LegacyNominalComparison {
+    ch_theoretical: number;
+    ch_adjusted: number;
+    tps_seconds: number;
+    scv_aircraft: number;
+    total_flights_analyzed: number;
+    r_factor: number;
+    tfc_breakdown: any;
+}
+
 interface CapacityResult {
     sector_name: string;
-    TPS: number;
-    TFC_Total: number;
-    TFC_Breakdown: {
-        t_transfer: number;
-        t_comm_ag: number;
-        t_separation: number;
-        t_coordination: number;
-    };
-    SCV: number;
-    CH_Theoretical: number;
-    CH_Adjusted: number;
-    R_Factor: number;
-    total_flights_analyzed: number;
-    formula_used: string;
+    physicist_metrics: PhysicistMetrics;
+    stochastic_capacity_report: StochasticCapacityReport;
+    legacy_nominal_comparison: LegacyNominalComparison;
+    formula_used?: string;
 }
 
 /**
@@ -88,7 +108,14 @@ const CapacityReportView: React.FC = () => {
                 start_date: startDate,
                 end_date: endDate
             });
-            setResult(res.data);
+
+            // Si el backend devuelve status 200 pero reporta un error lógico (ej: sin vuelos)
+            if (res.data && res.data.error) {
+                setError(res.data.error);
+                setResult(null);
+            } else {
+                setResult(res.data);
+            }
         } catch (err: any) {
             console.error("Fallo técnico en motor de capacidad:", err);
             setError(err.response?.data?.detail || "Error en el cálculo. Verifique la existencia de vuelos en el rango seleccionado.");
@@ -191,25 +218,25 @@ const CapacityReportView: React.FC = () => {
                                     <div className="absolute top-0 right-0 p-4 opacity-10">
                                         <Calculator className="w-24 h-24" />
                                     </div>
-                                    <h3 className="text-indigo-100 text-sm font-medium uppercase tracking-wider">Capacidad Horaria (CH)</h3>
+                                    <h3 className="text-indigo-100 text-sm font-medium uppercase tracking-wider">Capacidad Estocástica RAC 14</h3>
                                     <div className="flex items-baseline gap-2 mt-1">
-                                        <span className="text-5xl font-bold">{result.CH_Adjusted}</span>
+                                        <span className="text-5xl font-bold">{Math.round(result.stochastic_capacity_report.stochastic_simulated_capacity)}</span>
                                         <span className="text-xl text-indigo-200">vuelos/hora</span>
                                     </div>
                                     <p className="mt-2 text-indigo-200 text-sm">
-                                        Basado en factor R={result.R_Factor}
+                                        Rango 95%: {Math.round(result.stochastic_capacity_report.uncertainty_range.lower)} - {Math.round(result.stochastic_capacity_report.uncertainty_range.upper)}
                                     </p>
                                 </div>
 
-                                {/* Capacidad Simultánea */}
+                                {/* Capacidad Analítica */}
                                 <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 flex flex-col justify-center">
-                                    <h3 className="text-slate-500 text-sm font-bold uppercase tracking-wider">Capacidad Simultánea (SCV)</h3>
+                                    <h3 className="text-slate-500 text-sm font-bold uppercase tracking-wider">Capacidad Nominal (CH)</h3>
                                     <div className="flex items-baseline gap-2 mt-1">
-                                        <span className="text-4xl font-bold text-slate-900">{result.SCV}</span>
-                                        <span className="text-lg text-slate-500">aeronaves</span>
+                                        <span className="text-4xl font-bold text-slate-900">{result.legacy_nominal_comparison.ch_adjusted}</span>
+                                        <span className="text-lg text-slate-500">vuelos/hora</span>
                                     </div>
                                     <p className="mt-2 text-slate-400 text-xs">
-                                        Máximo número de aeronaves controladas simultáneamente de forma segura.
+                                        Cálculo heredado determinista con factor R={result.legacy_nominal_comparison.r_factor}.
                                     </p>
                                 </div>
                             </div>
@@ -228,7 +255,7 @@ const CapacityReportView: React.FC = () => {
                                             <div>
                                                 <div className="flex justify-between text-sm mb-1">
                                                     <span className="text-slate-600">TPS (Tiempo Promedio en Sector)</span>
-                                                    <span className="font-bold text-slate-900">{result.TPS.toFixed(1)} seg</span>
+                                                    <span className="font-bold text-slate-900">{result.legacy_nominal_comparison.tps_seconds.toFixed(1)} seg</span>
                                                 </div>
                                                 <div className="w-full bg-slate-100 rounded-full h-2">
                                                     <div className="bg-indigo-500 h-2 rounded-full" style={{ width: '100%' }}></div>
@@ -236,8 +263,8 @@ const CapacityReportView: React.FC = () => {
                                             </div>
                                             <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
                                                 <div className="text-xs text-slate-500">Vuelos Analizados</div>
-                                                <div className="text-xl font-bold text-slate-800">{result.total_flights_analyzed}</div>
-                                                {result.total_flights_analyzed < 30 && (
+                                                <div className="text-xl font-bold text-slate-800">{result.legacy_nominal_comparison.total_flights_analyzed}</div>
+                                                {result.legacy_nominal_comparison.total_flights_analyzed < 30 && (
                                                     <div className="mt-2 text-xs text-amber-600 font-medium flex items-center gap-1">
                                                         <AlertTriangle className="w-3 h-3" />
                                                         Muestra pequeña ({'<'}30), baja confianza estadística.
@@ -247,30 +274,27 @@ const CapacityReportView: React.FC = () => {
                                         </div>
                                     </div>
 
-                                    {/* Componente: TFC (Tiempo de Trabajo del Controlador) */}
+                                    {/* Componente: TFC Dinámico (Tiempo de Trabajo del Controlador RAC 14) */}
                                     <div>
-                                        <h4 className="text-sm font-bold text-emerald-600 mb-3 border-b border-emerald-100 pb-1">Manual (Parámetros TFC)</h4>
+                                        <h4 className="text-sm font-bold text-emerald-600 mb-3 border-b border-emerald-100 pb-1">Modelado Físico (Agentes RAC 14)</h4>
                                         <div className="space-y-2">
-                                            {[
-                                                { label: 'Transferencia', val: result.TFC_Breakdown.t_transfer },
-                                                { label: 'Comms A/G', val: result.TFC_Breakdown.t_comm_ag },
-                                                { label: 'Separación', val: result.TFC_Breakdown.t_separation },
-                                                { label: 'Coordinación', val: result.TFC_Breakdown.t_coordination },
-                                            ].map((item, idx) => (
-                                                <div key={idx} className="flex justify-between items-center text-sm">
-                                                    <span className="text-slate-600">{item.label}</span>
-                                                    <span className="font-mono text-slate-800 bg-slate-100 px-2 py-0.5 rounded">{item.val}s</span>
-                                                </div>
-                                            ))}
+                                            <div className="flex justify-between items-center text-sm">
+                                                <span className="text-slate-600">Tiempo ROT Limitante</span>
+                                                <span className="font-mono text-slate-800 bg-slate-100 px-2 py-0.5 rounded">{result.physicist_metrics.dynamic_rot.toFixed(1)}s</span>
+                                            </div>
+                                            <div className="flex justify-between items-center text-sm">
+                                                <span className="text-slate-600">Cuello de Botella</span>
+                                                <span className="font-mono text-slate-800 bg-slate-100 px-2 py-0.5 rounded uppercase">{result.physicist_metrics.bottleneck_source}</span>
+                                            </div>
                                             <div className="mt-2 pt-2 border-t border-slate-100 flex justify-between items-center font-bold">
-                                                <span className="text-slate-800">Total TFC</span>
-                                                <span className="text-emerald-600">{result.TFC_Total.toFixed(1)}s</span>
+                                                <span className="text-slate-800">TFC Dinámico Final</span>
+                                                <span className="text-emerald-600">{result.physicist_metrics.dynamic_tfc.toFixed(1)}s</span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 text-xs text-slate-400 font-mono">
-                                    Fórmula: {result.formula_used}
+                                    Fórmula: RAC 14 Estocástico + Factor Ashford {result.stochastic_capacity_report.applied_utilization_factor}
                                 </div>
                             </div>
 
@@ -285,21 +309,18 @@ const CapacityReportView: React.FC = () => {
                                     {/* Explicación CH */}
                                     <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start border-b border-slate-100 pb-6">
                                         <div className="md:col-span-4">
-                                            <h4 className="font-bold text-indigo-700 text-sm uppercase tracking-wider mb-1">Capacidad Horaria (CH)</h4>
-                                            <p className="text-xs text-slate-500">Volumen máximo de tránsito aéreo que puede ser gestionado en una hora.</p>
+                                            <h4 className="font-bold text-indigo-700 text-sm uppercase tracking-wider mb-1">Capacidad Estocástica (RAC 14)</h4>
+                                            <p className="text-xs text-slate-500">Volumen máximo de tránsito aéreo con penalización por varianza e infraestructura.</p>
                                         </div>
                                         <div className="md:col-span-8 bg-slate-50 p-4 rounded-lg font-mono text-xs text-slate-700">
                                             <div className="flex flex-col gap-2">
                                                 <div className="flex items-center gap-2">
-                                                    <span className="font-bold">Fórmula:</span>
-                                                    <code className="bg-white px-2 py-1 rounded border border-slate-200">CH = (3600 * SCV) / TPS</code>
+                                                    <span className="font-bold">Fórmula de Demanda (Ashford):</span>
+                                                    <code className="bg-white px-2 py-1 rounded border border-slate-200">Capacidad * Factor({result.stochastic_capacity_report.applied_utilization_factor})</code>
                                                 </div>
                                                 <div className="flex items-center gap-2">
-                                                    <span className="font-bold">Cálculo:</span>
-                                                    <span>(3600 * {result.SCV}) / {result.TPS.toFixed(1)} = <strong>{result.CH_Theoretical}</strong></span>
-                                                </div>
-                                                <div className="mt-1 text-slate-500 italic">
-                                                    * Ajuste por Factor R ({result.R_Factor}): {result.CH_Theoretical} * {result.R_Factor} = <strong>{result.CH_Adjusted}</strong>
+                                                    <span className="font-bold">Cálculo Estocástico (Montecarlo):</span>
+                                                    <span><strong>{result.stochastic_capacity_report.stochastic_simulated_capacity.toFixed(0)}</strong> vuelos/hora seguros al 95%.</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -308,21 +329,17 @@ const CapacityReportView: React.FC = () => {
                                     {/* Explicación SCV */}
                                     <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start border-b border-slate-100 pb-6">
                                         <div className="md:col-span-4">
-                                            <h4 className="font-bold text-slate-700 text-sm uppercase tracking-wider mb-1">Capacidad Simultánea (SCV)</h4>
-                                            <p className="text-xs text-slate-500">Número máximo de aeronaves que se pueden gestionar simultáneamente de forma segura.</p>
+                                            <h4 className="font-bold text-slate-700 text-sm uppercase tracking-wider mb-1">Cálculo Nominal (Legacy 006)</h4>
+                                            <p className="text-xs text-slate-500">Método de la Circular 006 para Capacidad Simultánea y Horaria Teórica.</p>
                                         </div>
                                         <div className="md:col-span-8 bg-slate-50 p-4 rounded-lg font-mono text-xs text-slate-700">
                                             <div className="flex flex-col gap-2">
                                                 <div className="flex items-center gap-2">
-                                                    <span className="font-bold">Fórmula:</span>
-                                                    <code className="bg-white px-2 py-1 rounded border border-slate-200">SCV = TPS / (TFC * 1.3)</code>
-                                                </div>
-                                                <div className="flex items-center gap-2">
-                                                    <span className="font-bold">Cálculo:</span>
-                                                    <span>{result.TPS.toFixed(1)} / ({result.TFC_Total.toFixed(1)} * 1.3) = <strong>{result.SCV}</strong></span>
+                                                    <span className="font-bold">SCV Lógico:</span>
+                                                    <span>{result.legacy_nominal_comparison.tps_seconds.toFixed(1)} / (TFC * 1.3) = <strong>{result.legacy_nominal_comparison.scv_aircraft}</strong> aeronaves</span>
                                                 </div>
                                                 <div className="mt-1 text-slate-500 italic">
-                                                    * El valor 1.3 corresponde al factor de buffer de seguridad estándar.
+                                                    * Se obtuvo un Factor R de {result.legacy_nominal_comparison.r_factor} que derivó en una capacidad tradicional de {result.legacy_nominal_comparison.ch_adjusted} vuelos/hora.
                                                 </div>
                                             </div>
                                         </div>
@@ -331,15 +348,14 @@ const CapacityReportView: React.FC = () => {
                                     {/* Explicación de Datos Automáticos */}
                                     <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">
                                         <div className="md:col-span-4">
-                                            <h4 className="font-bold text-slate-700 text-sm uppercase tracking-wider mb-1">Automático (Datos Históricos)</h4>
-                                            <p className="text-xs text-slate-500">Datos extraídos automáticamente del análisis de vuelos procesados.</p>
+                                            <h4 className="font-bold text-slate-700 text-sm uppercase tracking-wider mb-1">TFC Dinámico (El Físico)</h4>
+                                            <p className="text-xs text-slate-500">Agente físico que evalúa asimetría vertical y penalizaciones RAC 14.</p>
                                         </div>
                                         <div className="md:col-span-8 bg-slate-50 p-4 rounded-lg font-mono text-xs text-slate-700">
                                             <div className="flex flex-col gap-2">
                                                 <div>
-                                                    <span className="font-bold block mb-1">TPS (Tiempo Promedio en Sector):</span>
-                                                    <p className="text-slate-600 mb-1">Media aritmética de la duración de vuelo dentro de los límites del sector para los <strong>{result.total_flights_analyzed}</strong> vuelos procesados.</p>
-                                                    <code className="bg-white px-2 py-1 rounded border border-slate-200 block w-fit">AVG(duración_vuelo_en_polígono)</code>
+                                                    <span className="font-bold block mb-1">Análisis de Limitante (Cuello de Botella):</span>
+                                                    <p className="text-slate-600 mb-1">El valor del TFC Dinámico fue establecido en <strong>{result.physicist_metrics.dynamic_tfc.toFixed(1)}s</strong> determinado que la dependencia mayor es: {result.physicist_metrics.bottleneck_source.toUpperCase()}.</p>
                                                 </div>
                                             </div>
                                         </div>

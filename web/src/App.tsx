@@ -10,7 +10,9 @@ import { HistoryView } from './views/HistoryView';
 import SectorConfigurationView from './views/SectorConfigurationView';
 import CapacityReportView from './views/CapacityReportView';
 import PredictiveView from './views/PredictiveView';
+import { CalendarEventsView } from './views/CalendarEventsView';
 import { LayoutDashboard } from 'lucide-react';
+
 
 /**
  * Componente Principal de la Aplicación (App).
@@ -72,6 +74,9 @@ function App() {
         return <CapacityReportView />;
       case 'predictive':
         return <PredictiveView />;
+      case 'calendar-events':
+        return <CalendarEventsView />;
+
       default:
         return (
           <div className="p-10 text-center text-slate-500">

@@ -10,6 +10,7 @@ class CalculateSectorCapacity:
     Orquestador del cálculo de capacidad técnica de sectores ATC.
     Implementa la metodología de la Circular 006 de la Aerocivil para derivar
     la capacidad horaria basada en parámetros operativos y demanda real.
+    Base Normativa Global: OACI Doc 9426 (Manual de Planificación de Servicios de Tránsito Aéreo).
     """
     def __init__(self, db_path: str = "data/metrics.duckdb"):
         """
@@ -42,7 +43,7 @@ class CalculateSectorCapacity:
         # El TFC es el tiempo total invertido por el controlador en un vuelo promedio.
         t_transfer = sector.get('t_transfer', 0)  # Tiempo de Transferencia
         t_comm_ag = sector.get('t_comm_ag', 0)    # Tiempo de Comunicaciones Aire-Tierra
-        t_separation = sector.get('t_separation', 0) # Tiempo de Vigilancia y Separación
+        t_separation = sector.get('t_separation', 0) # Tiempo de Vigilancia y Separación (Doc 4444 PANS-ATM)
         t_coordination = sector.get('t_coordination', 0) # Tiempo de Coordinaciones
         
         # Cálculo del TFC Total
@@ -102,17 +103,17 @@ class CalculateSectorCapacity:
                 }
 
             # 4. Calcular SCV (Capacidad Simultánea de Vuelos)
-            # Fórmula: SCV = TPS / (TFC * Factor de Carga Mental)
+            # Fórmula legal (Circular 006 / Doc 9426): SCV = TPS / (TFC * Factor de Carga Mental)
             # El factor 1.3 representa el margen de seguridad para evitar la saturación cognitiva del controlador.
             buffer_factor = 1.3
             SCV = TPS / (TFC * buffer_factor)
             
             # 5. Calcular CH (Capacidad Horaria Teórica)
-            # Fórmula: CH = (3600 * SCV) / TPS
+            # Fórmula legal (Circular 006 / Doc 9426): CH = (3600 * SCV) / TPS
             # Este valor indica cuántos vuelos puede manejar el sector en una ventana de una hora bajo las condiciones dadas.
             CH = (3600 * SCV) / TPS
             
-            # 6. Factor de Ajuste R
+            # 6. Factor de Ajuste R (RAC 14 Cap E / Doc 9157)
             # Se utiliza para penalizar o bonificar la capacidad según condiciones operacionales específicas.
             R = sector.get('adjustment_factor_r', 1.0) 
             if R is None: R = 0.8  # Valor base por defecto según normativa si no está definido

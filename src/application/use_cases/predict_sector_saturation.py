@@ -12,13 +12,14 @@ class PredictSectorSaturation:
     Cruza los modelos de demanda predictiva con la capacidad técnica calculada 
     para identificar momentos exactos de sobrecarga operativa en el futuro.
     """
-    def __init__(self, db_path: str = "data/metrics.duckdb"):
+    def __init__(self, db_path: str = "data/metrics.duckdb", backend_agent=None):
         """
         Inicializa el analizador inyectando sus dependencias.
         """
         self.db_path = db_path
         self.manage_sectors = ManageSectors(db_path)
         self.demand_predictor = PredictDailyDemand(db_path)
+        self.backend_agent = backend_agent
 
     def execute(self, sector_id: str = None, days_ahead: int = 30,  start_date: str = None, end_date: str = None, **kwargs) -> Dict[str, Any]:
         """
@@ -52,23 +53,29 @@ class PredictSectorSaturation:
         if not sector:
             return {"error": f"Sector {sector_id} not found"}
 
-        # 2. Calculate Capacity (CH)
-        t_transfer = sector.get('t_transfer', 0) or 0
-        t_comm_ag = sector.get('t_comm_ag', 0) or 0
-        t_separation = sector.get('t_separation', 0) or 0
-        t_coordination = sector.get('t_coordination', 0) or 0
-        TFC = t_transfer + t_comm_ag + t_separation + t_coordination
+        # 2. Calculate Capacity (CH) via BackendAgent stochastics instead of manual formula
+        if not self.backend_agent:
+            return {"error": "System not configured with RAC 14 BackendAgent"}
+            
+        try:
+            # filters pass empty initially since demand is handled later
+            cap_report = self.backend_agent.execute_dynamic_capacity_calculation(sector_id, {})
+        except ValueError as e:
+            return {"error": str(e)}
+            
+        if "error" in cap_report:
+            return cap_report
+            
+        # Extraemos la capacidad determinista estocástica del Backend Agent
+        stochastic_data = cap_report.get("stochastic_capacity_report", {})
+        physicist_data = cap_report.get("physicist_metrics", {})
         
-        if TFC <= 0:
-            # Fallback or error?
-            # return {"error": "Sector TFC is zero. Cannot calculate capacity."}
-             TFC = 1 # Avoid div by zero, but warn
+        # En vez de CH_Adjusted, usamos la capacidad simulada segura
+        # que incorpora el Factor Ashford y penalidades por altitud/infraestructura
+        CH_Adjusted = stochastic_data.get("stochastic_simulated_capacity", 0)
         
-        buffer_factor = 1.3
-        CH = 3600 / (TFC * buffer_factor)
-        
-        R = sector.get('adjustment_factor_r', 0.8) or 0.8
-        CH_Adjusted = CH * R
+        # Guardamos TFC calculado por el físico para el reporte
+        TFC_dynamic = physicist_data.get("dynamic_tfc", 0)
 
         # 3. Forecast Demand (Delegate)
         # Pass all compatible arguments
@@ -113,8 +120,8 @@ class PredictSectorSaturation:
             enhanced_forecast.append(enhanced_item)
 
         # 5. Return Result
-        max_saturation = max([x['saturation_index'] for x in enhanced_forecast]) if enhanced_forecast else 0
-        avg_saturation = np.mean([x['saturation_index'] for x in enhanced_forecast]) if enhanced_forecast else 0
+        max_saturation = float(max([x['saturation_index'] for x in enhanced_forecast])) if enhanced_forecast else 0.0
+        avg_saturation = float(np.mean([x['saturation_index'] for x in enhanced_forecast])) if enhanced_forecast else 0.0
         
         status_text = "Normal"
         if max_saturation > 100: status_text = "CRÍTICO (Sobrecarga)"
@@ -130,35 +137,32 @@ class PredictSectorSaturation:
         
         # Calculation Breakdown
         calculation_steps = [
-            {"step": "1. Tiempo de Ocupación (TFC)", "detail": f"Suma de tiempos promedios (Transferencia, Comms, etc): {TFC} segundos por vuelo."},
-            {"step": "2. Capacidad Teórica", "detail": f"3600s / (TFC * 1.3 Buffer) = {round(CH, 1)} vuelos/hora."},
-            {"step": "3. Ajuste por Complejidad", "detail": f"Capacidad Teórica * Factor R ({R}) = {round(CH_Adjusted, 1)} vuelos/hora (Capacidad Final)."},
-            {"step": "4. Índice de Saturación", "detail": f"(Demanda Pico Estimada / Capacidad Final) * 100."}
+            {"step": "1. Análisis Normativo (Compliance)", "detail": f"Advertencias RAC 14 detectadas: {len(cap_report.get('compliance_warnings', []))}."},
+            {"step": "2. Performance Física (The Physicist)", "detail": f"TFC Dinámico: {float(round(TFC_dynamic, 1))}s. Origen Cuello de Botella: {physicist_data.get('bottleneck_source')}."},
+            {"step": "3. Capacidad Estocástica (Risk Manager)", "detail": f"Capacidad Asegurada Base: {float(round(stochastic_data.get('ashford_baseline_capacity', 0), 1))} / Capacidad Simulada Final: {float(round(CH_Adjusted, 1))} vuelos/hr."},
+            {"step": "4. Índice de Riesgo Futuro (Predicción AI)", "detail": "(Demanda Pico AI / Capacidad Simulada Final) * 100."}
         ]
 
 
 
         # --- EXECUTIVE REPORT (STORYTELLING) ---
         executive_report = {
-            "title": "Informe Ejecutivo de Saturación de Sector",
+            "title": "Informe Ejecutivo de Riesgo y Saturación Estocástica",
             "narrative": (
                 f"**Estimado Coordinador de Vuelo:**\n\n"
-                f"La salud operativa del sector **{sector['name']}** se clasifica actualmente como **{status_text}**.\n"
-                f"Nuestros cálculos indican que, en el momento de mayor estrés, la demanda ocupará el **{round(max_saturation, 1)}%** de la capacidad segura disponible.\n\n"
-                f"**La Ciencia de la Capacidad:**\n"
-                f"No todos los vuelos 'pesan' lo mismo. Hemos calculado un **Tiempo de Ocupación (TFC)** de {round(TFC)} segundos por aeronave. "
-                f"Esto significa que cada avión 'consume' esa cantidad de tiempo de atención exclusiva del controlador. "
-                f"Considerando el factor de complejidad R={R}, su equipo puede manejar de manera segura **{round(CH_Adjusted, 1)} vuelos por hora**.\n\n"
-                f"**Veredicto Operativo:**\n"
-                f"{'✅ Operación Verde: El sector tiene holgura suficiente. No se requieren medidas.' if max_saturation <= 80 else ('⚠️ Alerta Amarilla: Estamos cerca del límite. Se recomienda vigilancia activa.' if max_saturation <= 100 else '❌ Alerta Roja: La demanda excede la capacidad. ES IMPERATIVO aplicar medidas de gestión de flujo (slots/retrasos) para garantizar la seguridad.')}\n\n"
-                f"**Glosario:**\n"
-                f"- **Capacidad Declarada**: El número máximo de aviones que entran en el sector antes de que la seguridad se vea comprometida.\n"
-                f"- **Saturación**: El porcentaje del 'tanque de combustible' del controlador que se está utilizando."
+                f"La salud operativa proyectada del sector **{sector['name']}** se clasifica como **{status_text}**.\n"
+                f"En el momento de mayor estrés de la ventana analizada, la demanda ocupará el **{round(max_saturation, 1)}%** de la capacidad probabilística segura.\n\n"
+                f"**Performance Dinámica (RAC 14):**\n"
+                f"Bajo el escrutinio de los agentes físicos y de riesgo, el sector tiene un TFC de cuello de botella de {round(TFC_dynamic)}s. "
+                f"Al someter esta red a un Factor de Utilización Ashford de {stochastic_data.get('applied_utilization_factor', 0.8)}, confirmamos "
+                f"que su equipo puede manejar con un 95% de confianza hasta **{round(CH_Adjusted, 1)} vuelos por hora**.\n\n"
+                f"**Veredicto Analítico:**\n"
+                f"{'✅ Operación Verde: El sector tiene holgura estocástica. Tienen control total sobre el flujo.' if max_saturation <= 80 else ('⚠️ Alerta Amarilla: Nos aproximamos a la banda de incertidumbre. Preparar tácticas ATFM visuales.' if max_saturation <= 100 else '❌ Alerta Roja: Límite estocástico superado. ACTIVAR MEDIDAS ATFM (Slots/Ruteo) para no romper los límites seguros de PANS-ATM.')}\n\n"
             ),
             "key_highlights": [
-                {"label": "Estado", "value": status_text, "insight": "Condición operativa"},
-                {"label": "Saturación Máx", "value": f"{round(max_saturation, 1)}%", "insight": "% de capacidad utilizada"},
-                {"label": "Capacidad Real", "value": f"{round(CH_Adjusted, 1)}/hr", "insight": "Límite seguro de flujo"}
+                {"label": "Estado de Simulador", "value": status_text, "insight": "Condición operativa de riesgo"},
+                {"label": "Saturación Proyectada", "value": f"{round(max_saturation, 1)}%", "insight": "% de Capacidad Estocástica usada"},
+                {"label": "Capacidad Asegurada", "value": f"{round(CH_Adjusted, 1)}/hr", "insight": "Dentro del 95% de confianza (Ashford)"}
             ]
         }
         
@@ -169,10 +173,13 @@ class PredictSectorSaturation:
             "history": demand_result.get("history", []),
             "forecast": enhanced_forecast,
             "metrics": {
-                "TFC": round(TFC, 2),
-                "CH_Adjusted": round(CH_Adjusted, 2),
-                "R_Factor": R,
-                "Max_Saturation": round(max_saturation, 1),
+                "dynamic_tfc": float(round(TFC_dynamic, 2)),
+                "CH_Adjusted": float(round(CH_Adjusted, 2)),
+                "stochastic_range": {
+                    "lower": float(stochastic_data.get("uncertainty_range", {}).get("lower", 0)),
+                    "upper": float(stochastic_data.get("uncertainty_range", {}).get("upper", 0))
+                },
+                "Max_Saturation": float(round(max_saturation, 1)),
                 "Status": status_text
             },
             "calculation_steps": calculation_steps,

@@ -30,7 +30,7 @@ export const SystemStatus = () => {
             try {
                 // El backend reporta si hay un thread de procesamiento activo
                 const res = await api.get('/etl/status');
-                setStatus(res.data);
+                setStatus(res.data || { is_running: false });
             } catch (e) {
                 console.error("Fallo técnico en monitoreo de pulso (SystemStatus):", e);
             }
@@ -41,7 +41,7 @@ export const SystemStatus = () => {
         return () => clearInterval(interval);
     }, []);
 
-    if (!status.is_running) {
+    if (!status || !status.is_running) {
         return (
             <div className="px-6 py-4 border-t border-white/10 transition-colors">
                 <div className="flex items-center gap-3">

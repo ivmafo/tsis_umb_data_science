@@ -21,6 +21,8 @@ from ..use_cases.predict_peak_hours import PredictPeakHours
 from ..use_cases.predict_airline_growth import PredictAirlineGrowth
 from ..use_cases.predict_sector_saturation import PredictSectorSaturation
 from ..use_cases.predict_seasonal_trend import PredictSeasonalTrend
+from ..use_cases.backend_agent import BackendAgent
+from ..use_cases.manage_calendar import ManageCalendar
 
 
 class Container(containers.DeclarativeContainer):
@@ -112,9 +114,17 @@ class Container(containers.DeclarativeContainer):
         db_path=config.provided.database_path
     )
 
+    backend_agent_use_case = providers.Factory(
+        BackendAgent,
+        manage_sectors=manage_sectors_use_case,
+        manage_airports=manage_airports_use_case,
+        calculate_capacity=calculate_sector_capacity_use_case
+    )
+
     predict_daily_demand_use_case = providers.Factory(
         PredictDailyDemand,
-        db_path=config.provided.database_path
+        db_path=config.provided.database_path,
+        backend_agent=backend_agent_use_case
     )
 
     predict_peak_hours_use_case = providers.Factory(
@@ -129,13 +139,21 @@ class Container(containers.DeclarativeContainer):
 
     predict_sector_saturation_use_case = providers.Factory(
         PredictSectorSaturation,
-        db_path=config.provided.database_path
+        db_path=config.provided.database_path,
+        backend_agent=backend_agent_use_case
     )
 
     predict_seasonal_trend_use_case = providers.Factory(
         PredictSeasonalTrend,
+        db_path=config.provided.database_path,
+        backend_agent=backend_agent_use_case
+    )
+
+    manage_calendar_use_case = providers.Factory(
+        ManageCalendar,
         db_path=config.provided.database_path
     )
+
 
 
 # Global container instance
@@ -170,6 +188,9 @@ def get_manage_sectors_use_case() -> ManageSectors:
 def get_calculate_sector_capacity_use_case() -> CalculateSectorCapacity:
     return container.calculate_sector_capacity_use_case()
 
+def get_backend_agent() -> BackendAgent:
+    return container.backend_agent_use_case()
+
 def get_predict_daily_demand_use_case() -> PredictDailyDemand:
     return container.predict_daily_demand_use_case()
 
@@ -184,5 +205,9 @@ def get_predict_sector_saturation_use_case() -> PredictSectorSaturation:
 
 def get_predict_seasonal_trend_use_case() -> PredictSeasonalTrend:
     return container.predict_seasonal_trend_use_case()
+
+def get_manage_calendar_use_case() -> ManageCalendar:
+    return container.manage_calendar_use_case()
+
 
 

@@ -18,6 +18,10 @@ El backend está construido bajo los principios de Arquitectura Hexagonal y se d
 | `entities/region.py` | Entidad para agrupar aeropuertos en regiones administrativas. |
 | `entities/region_airport.py` | Entidad de relación entre regiones y aeropuertos. |
 | `entities/sector.py` | Entidad que define la lógica de un sector (par o-d). |
+| `agents/backend_agent.py` | *Orquestador principal y punto de entrada para los cálculos racionales.* |
+| `agents/physicist.py` | Simulador físico de TFC dinámico y límites de umbral de pista (ROT). |
+| `agents/compliance_officer.py`| Evaluador de regulaciones geométricas del RAC 14. |
+| `agents/risk_manager.py` | Motor estadístico para la inferencia probabilística usando Montecarlo. |
 | `ports/airport_repository.py` | Interfaz (Puerto) para el acceso a datos de aeropuertos. |
 | `ports/file_repository.py` | Interfaz para la gestión del repositorio de archivos. |
 | `ports/region_repository.py` | Interfaz para la gestión de datos de regiones. |
@@ -32,14 +36,22 @@ El backend está construido bajo los principios de Arquitectura Hexagonal y se d
 | :--- | :--- |
 | `di/container.py` | Contenedor de Inyección de Dependencias (Dependency Injector). |
 | `dtos/metric_dto.py` | Objetos de Transferencia de Datos para reportes de métricas. |
-| `use_cases/calculate_sector_capacity.py` | Lógica central del cálculo de capacidad (Circular 006). |
+| `use_cases/backend_agent.py` | Super-servicio que coordina el ensamble del Riesgo/Física y SectorCapacity. |
+| `use_cases/calculate_sector_capacity.py` | Lógica central del cálculo de capacidad heredado (Legacy Circular 006). |
 | `use_cases/ingest_flights_data.py` | Orquestador del proceso ETL de ingesta masiva. |
 | `use_cases/predict_daily_demand.py` | Pipeline de predicción de demanda diaria (ML). |
-| `use_cases/predict_seasonal_trend.py` | Cálculo de tendencias estacionales mediante Fourier. |
+| `use_cases/predict_seasonal_trend.py` | Cálculo de tendencias estacionales mediante Variables Dummy de Calendario. |
 | `use_cases/predict_sector_saturation.py` | Lógica de detección de colisión demanda vs capacidad. |
+| `use_cases/predict_airline_growth.py` | Regresión lineal para proyecciones de crecimiento de aerolíneas. |
 | `use_cases/manage_sectors.py` | CRUD y lógica de administración de sectores. |
 | `use_cases/manage_airports.py` | Gestión de catálogos de aeropuertos. |
 | `use_cases/manage_regions.py` | Gestión de catálogos de regiones. |
+| `use_cases/manage_region_airports.py`| Gestión de relación muchos a muchos entre regiones y aeropuertos. |
+| `use_cases/manage_files.py` | Gestión del historial de archivos procesados. |
+| `use_cases/manage_filters.py` | Lógica para obtener parámetros de filtrado global (Años, Meses). |
+| `use_cases/generate_*.py` | Familia de casos de uso para generación de reportes PDF/Excel. |
+| `use_cases/get_*_stats.py` | Familia de casos de uso para obtener métricas agregadas (Stats). |
+| `use_cases/export_raw_flights_use_case.py` | Exportación de trazas de vuelo en raw. |
 
 ### ⚡ 1.3 Capa de Infraestructura (`src/infrastructure/`)
 *Implementaciones técnicas, adaptadores y configuración.*
@@ -79,7 +91,7 @@ Frontend desarrollado en React v18+ y TypeScript, optimizado para visualización
 | :--- | :--- |
 | `SectorSaturationChart.tsx` | Gráfico dinámico de capacidad vs demanda proyectada. |
 | `DailyDemandChart.tsx` | Visualización de series temporales con intervalos de confianza. |
-| `SeasonalTrendChart.tsx` | Gráfico de descomposición estacional (Fourier). |
+| `SeasonalTrendChart.tsx` | Gráfico de tendencia estacional (Dummies de Calendario). |
 | `DestinationsTreemap.tsx` | Visualización jerárquica de tráficos por destino. |
 | `layout/Sidebar.tsx` | Navegación principal con iconos Lucide. |
 

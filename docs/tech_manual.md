@@ -20,23 +20,25 @@ graph TD
     end
 
     subgraph "Capa de Aplicación (Casos de Uso)"
-        UC_CAP[CalculateSectorCapacity]
+        BA[BackendAgent Orchestrator]
+        UC_CAP[CalculateSectorCapacity (Legacy C006)]
         UC_PRED[PredictDailyDemand]
         UC_INGEST[IngestFlightsData]
         DI_C[Dependency Injection Container]
     end
 
-    subgraph "Capa de Dominio (Entidades y Puertos)"
+    subgraph "Capa de Dominio (Entidades y Agentes)"
         E_SECTOR[Entity: Sector]
-        E_FILE[Entity: FileInfo]
+        AG_RAC[Agents: Physicist, ComplianceOfficer, RiskManager]
         P_REPO[Port: IMetricRepository]
         P_AIRPORT[Port: IAirportRepository]
     end
 
     UI -- "JSON/HTTP" --> API
-    API -- "Inyecta" --> UC_CAP
-    UC_CAP -- "Lógica" --> E_SECTOR
-    UC_CAP -- "Contrato" --> P_REPO
+    API -- "Inyecta" --> BA
+    BA -- "Delega FísicaRAC14" --> AG_RAC
+    BA -- "Ejecuta Comparación" --> UC_CAP
+    AG_RAC -- "Contrato" --> P_REPO
     P_REPO -- "Implementación" --> DB
     UC_INGEST -- "IO/Parallel" --> PLAD
 ```
@@ -111,28 +113,31 @@ $$
 
 ---
 
-### 🤖 3.2 Motor Predictivo: Híbrido Fourier-Residual
+### 🤖 3.2 Motor Predictivo: Híbrido de Variables Dummy de Calendario y Ensamble Residual
 
-El sistema utiliza un ensamble para capturar tanto la ciclicidad como las anomalías de tráfico.
+El sistema utiliza un ensamble híbrido para capturar la tendencia a largo plazo, la ciclicidad estacional y las anomalías de tráfico usando variables binarias (dummies) de calendario.
 
-#### A. Componente Estacional (FFT)
-Se descompone la serie temporal $Y_t$ usando series de Fourier:
+#### A. Componente de Calendario (Variables Dummy)
+En lugar de una descomposición armónica pura (Fourier), la cual difumina picos bruscos de tráfico turístico, se modelan las dinámicas nacionales de forma determinista mediante variables binarias:
 
 $$
-S_t = \sum_{n=1}^{k} \left[ a_n \cos\left(\frac{2\pi n t}{P}\right) + b_n \sin\left(\frac{2\pi n t}{P}\right) \right]
+S_t = \gamma_1 \cdot \text{es\_festivo}_t + \gamma_2 \cdot \text{semana\_santa}_t + \gamma_3 \cdot \text{semana\_receso}_t + \gamma_4 \cdot \text{fin\_de\_ano}_t + \sum_{d=0}^{6} \alpha_d \cdot \text{DOW}_{d,t} + \sum_{m=1}^{12} \theta_m \cdot \text{MES}_{m,t}
 $$
 
-- **Anual**: $P=365.25$, $k=10$ armónicos.
-- **Semanal**: $P=7$, $k=3$ armónicos.
+Donde:
+- `es_festivo`: Indica si la fecha corresponde a un festivo nacional en Colombia (calculado vía `holidays.Colombia` con traslados por Ley Emiliani, o de la base de datos).
+- `semana_santa`: Semana de festividades móviles calculada mediante el algoritmo de Pascua.
+- `semana_receso`: Receso escolar oficial de Colombia en octubre (semana previa al puente de la Diversidad).
+- `fin_de_ano`: Temporada alta vacacional (del 15 de diciembre al 15 de enero).
 
 #### B. Predicción de Demanda Diaria (Random Forest)
-El volumen total de vuelos $Y_{t}$ es pronosticado directamente mediante un ensamble de árboles de decisión:
+El volumen diario de vuelos se predice entrenando un ensamble sobre las variables de calendario y retardos históricos (Lags):
 
 $$
-\hat{Y}_{t+1} = \frac{1}{100} \sum_{m=1}^{100} T_{m}(DOW, MES, L_{1}, L_{7}, L_{14}, L_{28})
+\hat{Y}_{t+1} = \frac{1}{100} \sum_{m=1}^{100} T_{m}(DOW, MES, L_{1}, L_{7}, L_{14}, L_{28}, \text{es\_festivo}, \text{semana\_santa}, \text{semana\_receso}, \text{fin\_de\_ano})
 $$
 
-Donde $L_{n}$ son los **Lags** (retardos) de la serie de tiempo y $DOW/MES$ son variables categóricas de calendario.
+Donde $L_{n}$ son los **Lags** de la serie de tiempo. Las predicciones futuras de demanda se restringen en tiempo de ejecución mediante el validador físico de capacidad (*Techo Operativo*): $\min(\hat{Y}_t, \text{Capacidad\_Maxima\_ATC})$.
 
 ---
 
@@ -141,9 +146,13 @@ Donde $L_{n}$ son los **Lags** (retardos) de la serie de tiempo y $DOW/MES$ son 
 | Componente | Archivo Fuente | Método Crítico | Teoría Aplicada |
 | :--- | :--- | :--- | :--- |
 | **Ingesta ETL** | `ingest_flights_data.py` | `execute()` | Parallel I/O & SIMD |
+| **Orquestador RAC 14**| `backend_agent.py` | `calculate_dynamic_capacity()`| Agentes Inteligentes |
+| **Simulador Montecarlo**| `risk_manager.py` | `monte_carlo_simulation()` | Inferencia Estocástica |
 | **Cálculo C006** | `calculate_sector_capacity.py` | `execute()` | Sliding Window Analytic |
 | **IA Predicción** | `predict_daily_demand.py` | `_train_model()` | Bootstrap Aggregation |
-| **IA Estacional** | `predict_seasonal_trend.py` | `fourier_features()` | Harmonic Analysis |
+| **IA Estacional** | `predict_seasonal_trend.py` | `add_calendar_features()` | Colombia Calendar Dummies |
+| **Proyector Crecimiento**| `predict_airline_growth.py` | `LinearRegression` | Regresión Lineal OLS |
+| **Reportes Analíticos** | `generate_*_report.py` | `execute()` | Procesamiento de Pandas a PDF/Excel |
 | **Repositorio** | `duckdb_repository.py` | `get_metrics()` | Columnar Storage (OLAP) |
 
 ---

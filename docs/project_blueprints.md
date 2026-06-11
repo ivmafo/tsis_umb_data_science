@@ -53,10 +53,31 @@ classDiagram
             +Float lat
             +Float lon
         }
+        class Region {
+            +String id
+            +String name
+        }
+        class FileInfo {
+            +String id
+            +String name
+            +String status
+            +datetime upload_date
+        }
         class IMetricRepository {
             <<Interface>>
             +get_tps(sector_id, range)
             +save_metrics(data)
+        }
+        class BackendAgent {
+            <<Agent Orchestrator>>
+            +calculate_dynamic_capacity(sector)
+        }
+        class Physicist {
+            +calculate_dynamic_tfc(df)
+            +calculate_bottleneck()
+        }
+        class RiskManager {
+            +monte_carlo_simulation(ch, dev)
         }
     }
 
@@ -74,6 +95,14 @@ classDiagram
             +execute(days, filters) ForecastDTO
             -_train_model()
             -_predict()
+        }
+        class ManageAirports {
+            +create(Payload)
+            +get_all()
+        }
+        class ManageRegions {
+            +create(Payload)
+            +get_all()
         }
     }
 
@@ -93,7 +122,12 @@ classDiagram
     UseCase <|-- PredictDailyDemand
     IMetricRepository <|.. DuckDBRepository : implements
     CalculateSectorCapacity --> IMetricRepository : injects
-    APIController --> CalculateSectorCapacity : invokes
+    BackendAgent --> Physicist : requests
+    BackendAgent --> RiskManager : requests
+    APIController --> BackendAgent : invokes
+    APIController --> PredictDailyDemand : invokes
+    APIController --> ManageAirports : invokes
+    APIController --> ManageRegions : invokes
     Sector "1" *-- "*" Airport : associated via rules
 ```
 
@@ -244,14 +278,15 @@ graph LR
     User -- "1. Solicita Cálculo" --> UI
     UI -- "2. GET /capacity" --> Ctrl
     Ctrl -- "3. execute()" --> UC
-    UC -- "4. get_tps()" --> Repo
-    Repo -- "5. SQL Aggregation" --> DB
-    DB -. "6. Return Metrics" .-> Repo
-    Repo -. "7. Return Entities" .-> UC
-    UC -- "8. Apply C006" --> UC
-    UC -. "9. Return ResultDTO" .-> Ctrl
-    Ctrl -. "10. Return JSON" .-> UI
-    UI -. "11. Render Charts" .-> User
+    UC -- "4. Delega" --> BA
+    BA -- "5. get_tps()" --> Repo
+    Repo -- "6. SQL Aggregation" --> DB
+    DB -. "7. Return Metrics" .-> Repo
+    Repo -. "8. Return Data" .-> BA
+    BA -- "9. Orquesta RiskManager/Physicist" --> BA
+    BA -. "10. Return RAC14 ResultDTO" .-> Ctrl
+    Ctrl -. "11. Return JSON" .-> UI
+    UI -. "12. Render Dynamic Charts" .-> User
 ```
 
 #### 🔍 Análisis Detallado: Colaboración

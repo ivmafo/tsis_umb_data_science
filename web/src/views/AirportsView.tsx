@@ -53,7 +53,10 @@ export const AirportsView = () => {
         altitude: 0,
         timezone: 0,
         dst: 'U',
-        source: 'User'
+        source: 'User',
+        reference_code: '4E',
+        has_rapid_exit_taxiway: false,
+        requires_backtrack: false
     });
 
     /**
@@ -62,7 +65,8 @@ export const AirportsView = () => {
     const resetForm = () => {
         setFormData({
             icao_code: '', iata_code: '', name: '', city: '', country: '',
-            type: 'small_airport', latitude: 0, longitude: 0, altitude: 0, timezone: 0, dst: 'U', source: 'User'
+            type: 'small_airport', latitude: 0, longitude: 0, altitude: 0, timezone: 0, dst: 'U', source: 'User',
+            reference_code: '4E', has_rapid_exit_taxiway: false, requires_backtrack: false
         });
         setEditingId(null);
     };
@@ -144,7 +148,10 @@ export const AirportsView = () => {
             altitude: airport.altitude || 0,
             timezone: airport.timezone || 0,
             dst: airport.dst || 'U',
-            source: airport.source || 'User'
+            source: airport.source || 'User',
+            reference_code: airport.reference_code || '4E',
+            has_rapid_exit_taxiway: airport.has_rapid_exit_taxiway || false,
+            requires_backtrack: airport.requires_backtrack || false
         });
         setShowModal(true);
     };
@@ -215,6 +222,7 @@ export const AirportsView = () => {
                                 <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">ID</th>
                                 <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Identificadores</th>
                                 <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Terminal / Nombre</th>
+                                <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Clave Reg.</th>
                                 <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Ubicación Geográfica</th>
                                 <th className="px-6 py-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Acciones</th>
                             </tr>
@@ -234,6 +242,9 @@ export const AirportsView = () => {
                                     <td className="px-6 py-4">
                                         <div className="text-sm font-semibold text-slate-800">{airport.name}</div>
                                         <div className="text-[10px] text-slate-400 uppercase font-bold">{airport.type?.replace('_', ' ')}</div>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <div className="text-sm font-bold text-slate-600 bg-slate-100 inline-block px-2 py-1 rounded">{airport.reference_code || '4E'}</div>
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="text-sm text-slate-600">{airport.city}</div>
@@ -364,6 +375,39 @@ export const AirportsView = () => {
                                         onChange={e => setFormData({ ...formData, iata_code: e.target.value })}
                                         placeholder="Ej: BOG"
                                     />
+                                </div>
+                                <div className="space-y-1.5">
+                                    <label className="block text-sm font-bold text-slate-700">Clave de Referencia (RAC 14)</label>
+                                    <select
+                                        className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all cursor-pointer"
+                                        value={formData.reference_code}
+                                        onChange={e => setFormData({ ...formData, reference_code: e.target.value })}
+                                    >
+                                        <option value="4E">4E (Aeronaves Pesadas B747/A330)</option>
+                                        <option value="4F">4F (Aeronaves Super Clásicas A380)</option>
+                                        <option value="3C">3C (Aeronaves Medianas A320/B737)</option>
+                                        <option value="4C">4C (Mixto A320/B737 Max)</option>
+                                    </select>
+                                </div>
+                                <div className="space-y-3 flex flex-col justify-center mt-6">
+                                    <label className="flex items-center gap-3 cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            className="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary/30"
+                                            checked={formData.has_rapid_exit_taxiway}
+                                            onChange={e => setFormData({ ...formData, has_rapid_exit_taxiway: e.target.checked })}
+                                        />
+                                        <span className="text-sm font-bold text-slate-700">Tiene Calles de Salida Rápida</span>
+                                    </label>
+                                    <label className="flex items-center gap-3 cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            className="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary/30"
+                                            checked={formData.requires_backtrack}
+                                            onChange={e => setFormData({ ...formData, requires_backtrack: e.target.checked })}
+                                        />
+                                        <span className="text-sm font-bold text-slate-700">Requiere Backtrack (Menos Eficiente)</span>
+                                    </label>
                                 </div>
                             </div>
 

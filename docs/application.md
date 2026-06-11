@@ -14,6 +14,7 @@ graph TD
 
     subgraph "Capa de Aplicación (Use Cases)"
         UC_INGEST[IngestFlightsData]
+        BA[BackendAgent]
         UC_CAP[CalculateSectorCapacity]
         UC_PRED[PredictDailyDemand]
     end
@@ -21,22 +22,25 @@ graph TD
     subgraph "Puertos de Salida (Secondary)"
         P_REPO[MetricRepository Port]
         P_FILE[FileRepository Port]
+        AGENTS[Agentes RAC 14]
     end
 
     API -- Invoca --> UC_INGEST
-    API -- Invoca --> UC_CAP
+    API -- Invoca --> BA
+    BA -- Orquesta --> UC_CAP
+    BA -- Delega --> AGENTS
     UC_INGEST -- Usa --> P_FILE
     UC_CAP -- Consulta --> P_REPO
 ```
 ### 🔍 Análisis Detallado: Orquestación
-- **Explicación del Gráfico**: Muestra el flujo de control vertical desde la entrada HTTP hasta la persistencia. La arquitectura fuerza que el API (Adaptador Primario) nunca hable directamente con la Base de Datos (Adaptador Secundario); todo debe pasar por el Caso de Uso.
+- **Explicación del Gráfico**: Muestra el flujo de control vertical desde la entrada HTTP hasta la persistencia. La arquitectura fuerza que el API (Adaptador Primario) nunca hable directamente con la Base de Datos. En la nueva arquitectura RAC 14, **BackendAgent** actúa como super-orquestador entre casos de uso (como `CalculateSectorCapacity`) y la lógica de los agentes de dominio.
 - **Componentes Involucrados**: 
     - `FastAPI Controllers` (`src/infrastructure/adapters/api/`)
-    - `Use Cases` (`src/application/use_cases/`)
-    - `Repositories` (`src/domain/repositories/`)
+    - `Use Cases & Integrator` (`src/application/use_cases/`)
+    - `Repositories & Agents` (`src/domain/`)
 - **Referencias a Código**:
     - [`main.py`](file:///c:/Users/LENOVO/Documents/tesis/src/main.py): Punto de entrada que monta los routers.
-    - [`metrics_controller.py`](file:///c:/Users/LENOVO/Documents/tesis/src/infrastructure/adapters/api/metrics_controller.py): Ejemplo de controlador que invoca `calculate_sector_capacity`.
+    - [`backend_agent.py`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/backend_agent.py): El maestro orquestador de capacidad dinámica.
 
 
 ---

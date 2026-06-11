@@ -8,31 +8,31 @@ Esta sección expande la documentación técnica generada automáticamente, prop
 
 Los casos de Uso ([`src/application/use_cases/`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/)) encapsulan la lógica de orquestación.
 
-### 🧮 1.1 Cálculo de Capacidad (CalculateSectorCapacity)
-::: src.application.use_cases.calculate_sector_capacity
+### 🧮 1.1 Capacidad Estocástica (BackendAgent)
+::: src.application.use_cases.backend_agent
     options:
       members:
-        - execute
+        - calculate_dynamic_capacity
 
-> **Nota Técnica**: La clase `CalculateSectorCapacity` implementa el flujo de control para la **Circular 006**.
-> - **Método Crítico**: `_get_tps()` realiza la agregación temporal de vuelos en ventanas de 60 minutos con solapamiento métrico para detectar el valor pico.
-> - **Fundamento**: Basado en el algoritmo de ventana deslizante para análisis de series temporales.
+> **Nota Técnica**: El componente `BackendAgent` actúa como el orquestador maestro para el modelo **RAC 14**.
+> - **Método Crítico**: Coordina a `RiskManager` para la inferencia probabilística Montecarlo, delegando cálculos físicos de TFC y ROT al ente `Physicist`. Sigue interoperando con el método legacy `CalculateSectorCapacity` bajo demanda.
+> - **Fundamento**: Basado en arquitecturas Multi-Agente enfocadas a sistemas dinámicos bajo estrés operativo.
 
 ---
 
 ## 📈 2. Fundamentación Matemática de Modelos Predictivos
 
-### 📉 2.1 Módulo Estacional (Fourier Series)
-[`PredictSeasonalTrend`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/predict_seasonal_trend.py) utiliza la descomposición de series de tiempo.
+### 📉 2.1 Módulo Estacional (Variables Dummy de Calendario de Colombia)
+[`PredictSeasonalTrend`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/predict_seasonal_trend.py) utiliza un modelo híbrido basado en variables dummy del calendario oficial colombiano y eventos personalizados persistidos en DuckDB.
 
-**Ecuación de Tendencia**:
+**Ecuación de Tendencia y Estacionalidad**:
 
 $$
-y_{t} = \beta_{0} + \beta_{1} t + \sum_{n=1}^N \left[ a_{n} \cos\left(\frac{2\pi nt}{P}\right) + b_{n} \sin\left(\frac{2\pi nt}{P}\right) \right] + \epsilon_{t}
+y_{t} = \beta_{0} + \beta_{1} t + \gamma_{1} \cdot \text{es\_festivo}_{t} + \gamma_{2} \cdot \text{semana\_santa}_{t} + \gamma_{3} \cdot \text{semana\_receso}_{t} + \gamma_{4} \cdot \text{fin\_de\_ano}_{t} + \sum_{d=0}^{6} \alpha_{d} \cdot \text{DOW}_{d,t} + \sum_{m=1}^{12} \theta_{m} \cdot \text{MES}_{m,t} + \epsilon_{t}
 $$
 
-- **Justificación**: El espacio aéreo presenta ciclos anuales ($P=365.25$) y semanales ($P=7$). El uso de términos de Fourier ($N=10$ para anual, $N=3$ para semanal) permite capturar la ciclicidad sin sobreajuste (overfitting).
-- **Referencia**: Hyndman, R.J., & Athanasopoulos, G. (2018). *Forecasting: Principles and Practice*.
+- **Justificación**: Se reemplazó la representación por series de Fourier (senos y cosenos) para evitar la modelación de picos abruptos como transiciones suaves. El calendario aeronáutico de Colombia (festivos, Semana Santa, recesos de octubre y temporadas vacacionales) se modela de forma determinista y binaria (dummies), logrando una precisión muy superior (MAPE de ~6.68%) y permitiendo la parametrización de días atípicos mediante una interfaz web interactiva.
+- **Referencia**: Box, G. E., Jenkins, G. M., & Reinsel, G. C. (2015). *Time Series Analysis: Forecasting and Control*.
 
 ### 🌲 2.2 Predicción de Demanda Diaria (Random Forest)
 [`PredictDailyDemand`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/predict_daily_demand.py) implementa un modelo de regresión no paramétrico.
@@ -50,6 +50,7 @@ Esta tabla mapea la lógica de backend con su representación visual en el front
 | Entidad / Lógica | Archivo Python (Backend) | Componente React (Frontend) | Responsabilidad Visual |
 | :--- | :--- | :--- | :--- |
 | **Sectores** | `manage_sectors.py` | `SectorConfigurationView.tsx` | Configuración de parámetros operativos. |
+| **Capacidad** | `backend_agent.py` | `CapacityReportView.tsx` | Simulación RAC 14, Cuellos de Botella y Métricas Legacy. |
 | **Demanda** | `predict_daily_demand.py` | `DailyDemandChart.tsx` | Visualización de predicción a 30 días. |
 | **Picos** | `predict_peak_hours.py` | `PeakHoursHeatmap.tsx` | Detección de horas de congestión. |
 | **Saturación** | `predict_sector_saturation.py`| `SectorSaturationChart.tsx` | Alerta de capacidad vs demanda. |
@@ -102,7 +103,7 @@ El sistema se apoya en una selección curada de tecnologías de vanguardia para 
 | **FastAPI** | [fastapi.tiangolo.com](https://fastapi.tiangolo.com/) | Framework de alto rendimiento basado en tipos de Python para APIs asíncronas. | Orquestación de endpoints en [`src/infrastructure/api_server.py`](file:///c:/Users/LENOVO/Documents/tesis/src/infrastructure/api_server.py). |
 | **DuckDB** | [duckdb.org](https://duckdb.org/) | Base de datos analítica integrada (OLAP) optimizada para storage columnar. | Persistencia y agregaciones en [`duckdb_repository.py`](file:///c:/Users/LENOVO/Documents/tesis/src/infrastructure/adapters/database/duckdb_repository.py). |
 | **Scikit-learn**| [scikit-learn.org](https://scikit-learn.org/) | Estándar de la industria para algoritmos de Machine Learning tradicionales. | Modelo Random Forest en [`predict_daily_demand.py`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/predict_daily_demand.py). |
-| **SciPy** | [scipy.org](https://scipy.org/) | Librería de algoritmos fundamentales para computación científica. | Optimización y Series de Fourier en [`predict_seasonal_trend.py`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/predict_seasonal_trend.py). |
+| **Holidays** | [pypi.org/project/holidays/](https://pypi.org/project/holidays/) | Determinar festivos nacionales y leyes de traslados móviles por país. | Festivos oficiales de Colombia y Ley Emiliani en [`predict_daily_demand.py`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/predict_daily_demand.py). |
 | **Pydantic** | [docs.pydantic.dev](https://docs.pydantic.dev/) | Validación de datos y gestión de configuraciones mediante modelos de tipo. | Esquemas de entrada/salida en [`src/application/dtos/`](file:///c:/Users/LENOVO/Documents/tesis/src/application/dtos/). |
 
 ### ⚛️ Frontend (React & TS)

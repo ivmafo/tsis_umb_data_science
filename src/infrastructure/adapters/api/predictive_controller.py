@@ -5,15 +5,17 @@ from src.application.use_cases.predict_peak_hours import PredictPeakHours
 from src.application.use_cases.predict_airline_growth import PredictAirlineGrowth
 from src.application.use_cases.predict_sector_saturation import PredictSectorSaturation
 from src.application.use_cases.predict_seasonal_trend import PredictSeasonalTrend
+from src.application.use_cases.manage_calendar import ManageCalendar
 from src.application.di.container import (
     get_predict_daily_demand_use_case,
     get_predict_peak_hours_use_case,
     get_predict_airline_growth_use_case,
-    get_predict_peak_hours_use_case,
-    get_predict_airline_growth_use_case,
     get_predict_sector_saturation_use_case,
-    get_predict_seasonal_trend_use_case
+    get_predict_seasonal_trend_use_case,
+    get_manage_calendar_use_case
 )
+from pydantic import BaseModel, Field
+
 
 router = APIRouter(prefix="/predictive", tags=["Predictive"])
 
@@ -113,6 +115,12 @@ def get_airline_growth_forecast(
 def get_sector_saturation_forecast(
     sector_id: str,
     days: int = Query(30, description="Días a proyectar"),
+    airport: Optional[str] = Query(None, description="Filtro de aeropuerto"),
+    route: Optional[str] = Query(None, description="Filtro de ruta"),
+    min_level: Optional[int] = Query(None, description="Nivel mínimo"),
+    max_level: Optional[int] = Query(None, description="Nivel máximo"),
+    start_date: Optional[str] = Query(None, description="Fecha de inicio (YYYY-MM-DD)"),
+    end_date: Optional[str] = Query(None, description="Fecha límite (YYYY-MM-DD)"),
     use_case: PredictSectorSaturation = Depends(get_predict_sector_saturation_use_case)
 ):
     """
@@ -128,7 +136,16 @@ def get_sector_saturation_forecast(
         Dict: Reporte de riesgo con descripción en lenguaje natural e indicadores clave.
     """
     try:
-        result = use_case.execute(sector_id, days_ahead=days)
+        result = use_case.execute(
+            sector_id=sector_id, 
+            days_ahead=days,
+            airport=airport,
+            route=route,
+            min_level=min_level,
+            max_level=max_level,
+            start_date=start_date,
+            end_date=end_date
+        )
         if "error" in result:
              raise HTTPException(status_code=400, detail=result["error"])
         return result
@@ -163,3 +180,45 @@ def get_seasonal_trend_forecast(
         return use_case.execute(start_date=start_date, end_date=end_date, sector_id=sector_id, airport=airport, route=route, min_level=min_level, max_level=max_level)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+class CalendarEventSchema(BaseModel):
+    fecha: str = Field(..., description="Fecha en formato YYYY-MM-DD")
+    descripcion: str = Field(..., description="Descripción del festivo o evento")
+    tipo: str = Field(..., description="Tipo de evento: 'festivo', 'receso', 'fin_de_ano', 'custom'")
+
+@router.get("/calendar-events")
+def get_calendar_events(
+    year: Optional[int] = Query(None, description="Filtrar por año (ej. 2026)"),
+    use_case: ManageCalendar = Depends(get_manage_calendar_use_case)
+):
+    """Obtiene todos los eventos de calendario (festivos colombianos y personalizados) para un año."""
+    try:
+        target_year = year or datetime.now().year
+        return use_case.get_merged_calendar(target_year)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/calendar-events")
+def save_calendar_event(
+    event: CalendarEventSchema,
+    use_case: ManageCalendar = Depends(get_manage_calendar_use_case)
+):
+    """Guarda o actualiza un evento personalizado en el calendario."""
+    try:
+        return use_case.save_event(fecha=event.fecha, descripcion=event.descripcion, tipo=event.tipo)
+    except ValueError as ve:
+        raise HTTPException(status_code=400, detail=str(ve))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.delete("/calendar-events/{fecha}")
+def delete_calendar_event(
+    fecha: str,
+    use_case: ManageCalendar = Depends(get_manage_calendar_use_case)
+):
+    """Elimina un evento personalizado del calendario."""
+    try:
+        return use_case.delete_event(fecha=fecha)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+

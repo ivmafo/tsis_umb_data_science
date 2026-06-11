@@ -17,6 +17,7 @@ interface Sector {
     t_coordination: number;
     adjustment_factor_r: number;
     capacity_baseline: number;
+    utilization_factor: number;
 }
 
 /**
@@ -128,7 +129,8 @@ const SectorConfigurationView: React.FC = () => {
             t_separation: 0,
             t_coordination: 0,
             adjustment_factor_r: 0.8, // Valor base recomendado por OACI
-            capacity_baseline: 0
+            capacity_baseline: 0,
+            utilization_factor: 0.8 // Factor Ashford por defecto
         });
         setIsCreating(true);
     };
@@ -187,9 +189,13 @@ const SectorConfigurationView: React.FC = () => {
                                     <span className="text-slate-400 block mb-0.5">T. Comm A/G</span>
                                     <span className="text-slate-700">{sector.t_comm_ag}s</span>
                                 </div>
-                                <div className="bg-indigo-50 p-2 rounded col-span-2 flex justify-between items-center text-indigo-600">
+                                <div className="bg-slate-50 p-2 rounded col-span-2 flex justify-between items-center text-slate-600">
                                     <span>Factor R</span>
-                                    <span className="text-sm">{sector.adjustment_factor_r}</span>
+                                    <span className="text-sm font-bold">{sector.adjustment_factor_r}</span>
+                                </div>
+                                <div className="bg-indigo-50 p-2 rounded col-span-4 flex justify-between items-center text-indigo-600">
+                                    <span>Utilización Ashford</span>
+                                    <span className="text-sm font-bold">{sector.utilization_factor ?? 0.8}</span>
                                 </div>
                             </div>
                         </div>
@@ -343,6 +349,32 @@ const SectorConfigurationView: React.FC = () => {
                                         <div className="flex justify-between text-[10px] text-indigo-400 font-bold mt-2">
                                             <span>MÁXIMA RESTRICCIÓN (0.5)</span>
                                             <span>CONDICIONES IDEALES (1.0)</span>
+                                        </div>
+                                    </div>
+
+                                    {/* FACTOR UTILIZACIÓN ASHFORD */}
+                                    <div className="bg-cyan-50/50 p-6 rounded-2xl border border-cyan-100 mt-6 group">
+                                        <div className="flex justify-between items-center mb-4">
+                                            <div>
+                                                <label className="block text-sm font-bold text-cyan-900">Factor de Utilización de Ashford</label>
+                                                <p className="text-xs text-cyan-600 mt-0.5">Define la presión de demanda para el Modelo Estocástico (RiskManager)</p>
+                                            </div>
+                                            <span className="text-2xl font-mono font-black text-cyan-600 bg-white px-4 py-1 rounded-xl shadow-sm border border-cyan-100">
+                                                {editingSector.utilization_factor ?? 0.8}
+                                            </span>
+                                        </div>
+                                        <input
+                                            type="range"
+                                            min="0.1"
+                                            max="1.0"
+                                            step="0.05"
+                                            value={editingSector.utilization_factor ?? 0.8}
+                                            onChange={e => setEditingSector({ ...editingSector, utilization_factor: parseFloat(e.target.value) })}
+                                            className="w-full accent-cyan-600 cursor-pointer"
+                                        />
+                                        <div className="flex justify-between text-[10px] text-cyan-400 font-bold mt-2">
+                                            <span>BAJA PRESIÓN (0.1)</span>
+                                            <span>MÁXIMA SATURACIÓN ESTOCÁSTICA (1.0)</span>
                                         </div>
                                     </div>
                                 </div>

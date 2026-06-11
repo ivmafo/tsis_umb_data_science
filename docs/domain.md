@@ -33,6 +33,25 @@ La entidad [`Region`](file:///c:/Users/LENOVO/Documents/tesis/src/domain/entitie
 - **Lógica de Agregación**: Permite agrupar aeropuertos para el cálculo de métricas agregadas por zona de control.
 - **Atributo `nivel_min`**: Define el piso operacional para el análisis de vuelos dentro de su jurisdicción, filtrando datos de baja altitud no relevantes para el control de área.
 
+### 🤖 2.3 Agentes Inteligentes (Modelado Estocástico RAC 14)
+Estas entidades especializadas actúan como motores de razonamiento autónomo dentro del espacio aéreo, reemplazando el cálculo estático lineal (Circular 006) por un análisis físico y reglamentario dinámico. Orquestados por el `BackendAgent`, colaboran para inferir la capacidad en condiciones de incertidumbre.
+
+#### 🕵️‍♂️ Cómo Trabajan los Agentes (Flujo de Orquestación)
+
+1. **`Physicist` (Motor de Dinámica Computacional)**:
+    - **Rol**: Aislar y calcular las variables físicas del espacio aéreo (Tiempo de Funciones de Control dinámico).
+    - **Cómo trabaja**: Recibe los datos crudos (coordenadas, tiempos) y aplica fórmulas de cinemática para deducir distancias recorridas y tiempos de ocupación reales. Adicionalmente, evalúa el *Runway Occupancy Time (ROT)* para determinar si el cuello de botella es la pista o el sector en el aire. Retorna un objeto con las métricas cinemáticas.
+
+2. **`ComplianceOfficer` (Auditor Reglamentario)**:
+    - **Rol**: Modelar el estrés operativo y las restricciones geométricas dictadas por el reglamento RAC 14.
+    - **Cómo trabaja**: Recibe la distribución del tráfico. Evalúa la "Asimetría Vertical" (vuelos que suben vs vuelos que bajan) y calcula intersecciones geométricas complejas. A partir de esto, deriva el **Factor Ashford** (un multiplicador de estrés operativo) y el **Nivel de Cumplimiento (Compliance Score)** que dicta qué tan degradada está la eficiencia teórica.
+
+3. **`RiskManager` (Motor de Inferencia Probabilística)**:
+    - **Rol**: Transformar métricas deterministas en rangos de certidumbre estocástica. 
+    - **Cómo trabaja**: Ejecuta **Simulaciones de Montecarlo** (1,000 iteraciones por defecto). Toma el TFC físico y el Factor Ashford, y proyecta escenarios aleatorizados inyectando varianza estadística (desviación estándar histórica). Así, no entrega un único número frágil ("40 vuelos/hr"), sino una distribución probabilística robusta ("Con 95% de confianza, la capacidad es de 38 a 42 vuelos/hr").
+
+> **Sinergia**: El `BackendAgent` invoca a los tres agentes secuencialmente: primero obtiene la radiografía física (`Physicist`), luego la penalización reglamentaria (`ComplianceOfficer`), y finalmente inyecta ambos contextos en la máquina probabilística (`RiskManager`) para obtener el reporte final.
+
 ---
 
 ## 💎 3. Objetos de Valor (Value Objects)

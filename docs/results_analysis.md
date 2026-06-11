@@ -33,7 +33,7 @@ Se ha cumplido con el 100% de los requerimientos funcionales definidos en los *B
 | :--- | :--- | :--- | :--- |
 | **RF-01** | Ingesta SRS | ✅ Completo | Implementado en `ingest_flights_data.py` usando `pl.scan_csv()` para manejo *out-of-core*. Soporta archivos mayores a la RAM disponible. |
 | **RF-02** | Gestión Sectores | ✅ Completo | CRUD completo en `ManageSectors`. Persistencia JSON transparente en base de datos relacional. |
-| **RF-03** | Cálculo C006 | ✅ Completo | Motor matemático en `CalculateSectorCapacity`. Implementa la fórmula exacta de la Circular 006 con precisión de punto flotante. |
+| **RF-03** | Capacidad RAC 14 | ✅ Completo | Motor estocástico en `BackendAgent`. Implementa simulaciones Montecarlo y Agentes Físicos, además de conservar legacy C006. |
 | **RF-04** | Predicción ML | ✅ Completo | Modelo de Ensamble (**Random Forest Regressor**) en `PredictDailyDemand`. |
 | **RF-05** | Alertas UI | ✅ Completo | Componentes visuales en React que cambian de color (Verde/Amarillo/Rojo) según umbrales de saturación. |
 | **RF-06** | Reportes | ✅ Completo | Generación de PDFs y Excels con `pandas` y `reportlab`. |
@@ -126,6 +126,69 @@ A pesar de los buenos resultados, existen limitaciones teóricas:
 ### Trabajo Futuro
 *   Integración con APIs meteorológicas (NOAA/IDEAM) para modular la capacidad teórica.
 *   Implementación de modelos LSTM (Long Short-Term Memory) para capturar secuencias temporales complejas a corto plazo.
+
+---
+
+## 🖼️ 5. Análisis Visual de la Interfaz (Ejemplos UI)
+
+Para aterrizar los cálculos matemáticos en la operación diaria, el sistema despliega distintos dashboards visuales. 
+
+*(**Nota para el editor**: Guarda tus pantallazos en la carpeta `docs/assets/` con los nombres indicados abajo para que aparezcan automáticamente en la documentación).*
+
+### 5.1 Dashboard de Capacidad RAC 14
+**Objetivo**: Mostrar el cálculo estocástico vs el cálculo legacy.
+
+![Cálculo de Capacidad Estocástica](assets/ui_capacity_report.png)
+
+**¿Qué significa este cálculo en la pantalla?**
+- **El Rango (Las Bandas Promedio)**: El número principal que el Controlador ve no es una verdad absoluta, sino la *media probabilística*. El UI muestra visualmente un "Límite Inferior" y "Límite Superior". Si la media es 45, y la banda baja es 42, el controlador sabe que en el peor escenario (stress operativo/clima), el sector se saturará al llegar a 42 vuelos, dándole margen de anticipación.
+- **Métricas Físicas (Physicist)**: El usuario puede ver si la penalización de separación vino por Tiempo en el Aire (Airspace Bottleneck) o por Tiempo en Pista (ROT limitante por falta de Calles de Salida Rápida).
+
+### 5.2 Dashboard Predictivo (Saturación)
+**Objetivo**: Visualizar en qué momento exacto del día la demanda colisionará con la capacidad calculada.
+
+![Gráfico de Saturación de Sector](assets/ui_sector_saturation.png)
+
+**¿Qué significa este cálculo en la pantalla?**
+- **Línea de Capacidad (Umbral Rojo)**: Representa el límite de seguridad (ej. 100% de la capacidad calculada por la Circular 006 o RAC 14).
+- **Barras de Aviones (Azul/Naranja)**: Si las barras azules (vuelos proyectados por Machine Learning para una hora específica) sobrepasan la línea roja, la barra se pinta de *Naranja/Rojo* emitiendo una alerta.
+- **Acción Operativa**: El controlador, al ver un pico rojo a las 14:00 hrs, ya sabe desde las 08:00 hrs que debe aplicar una *Regulación de Flujo (Holdings o demoras en tierra)* para aplanar esa curva antes de que el problema ocurra.
+
+### 5.3 Módulo de Ingesta y ETL
+**Objetivo**: Auditar la calidad de los datos crudos subidos por el sistema radar.
+
+![Historial de Archivos](assets/ui_etl_history.png)
+
+**¿Qué significa este cálculo en la pantalla?**
+- Muestra el historial de cargas masivas de `.csv` del sistema radar (SRS).
+- Un icono verde/rojo indica si el archivo falló validaciones de esquema (ej. si venía con columnas rotas) gracias al motor Polars. Esto garantiza al usuario que la Inteligencia Artificial posterior solo consuma datos 100% íntegros.
+
+### 5.4 Dashboard de Distribución de Vuelos
+**Objetivo**: Analizar multidimensionalmente la operación aérea mediante widgets interactivos que responden a filtros maestros (Olap-like).
+
+![Treemaps de Distribución Geográfica](assets/ui_flight_distribution_treemaps.png)
+
+**1. Treemaps Geográficos (Orígenes, Destinos y Regiones FIR)**
+- **¿Qué muestran?**: Desglosan la volumetría del espacio aéreo en rectángulos proporcionales.
+- **¿Para qué sirven?**: Permiten identificar visualmente de un vistazo cuáles son los aeropuertos y regiones que mayor carga inyectan al sistema. Por ejemplo, un rectángulo predominante de "SKBO" evidencia que El Dorado monopoliza la salida de vuelos en ese bloque temporal.
+
+![Gráficos de Barras de Flota y Operadores](assets/ui_flight_distribution_bars.png)
+
+**2. Gráficos de Flota (Tipo de Vuelo y Empresas)**
+- **¿Qué muestran?**: Gráficos de barras ordenados, discriminando vuelos Regulares (Comerciales) vs No Regulares (Privados, Militares), y el Top de aerolíneas operadoras.
+- **¿Para qué sirven?**: Vital para entender la composición del tráfico. Un sector dominado por Avianca requiere menos negociación ATC que un sector altamente fragmentado con múltiples escuelas de aviación volando al mismo tiempo.
+
+![Evolución Histórica Temporal](assets/ui_flight_distribution_time.png)
+
+**3. Evolución Histórica (Líneas de Tiempo por Mes y Año)**
+- **¿Qué muestran?**: Series de tiempo de la cantidad de vuelos absolutos.
+- **¿Para qué sirven?**: Permite validar visualmente si el tráfico aéreo colombiano se está recuperando o contrayendo (Ej. Post-pandemia). Da los cimientos estadísticos para planear la contratación de controladores a 5 años vista.
+
+![Mapas de Calor Horarios](assets/ui_flight_distribution_heatmaps.png)
+
+**4. Mapas de Calor (Peak Hours por Salida y Llegada)**
+- **¿Qué muestran?**: Una matriz de Días de la Semana (Lunes a Domingo) cruzados por las Horas del Día (00:00 a 23:00). Las celdas más oscuras indican alta concentración de aviones despegando o aterrizando.
+- **¿Para qué sirven?**: Es el mapa táctico definitivo para la asignación de turnos ATC. Descubre patrones repetitivos (Ej. Bancos de vuelos los viernes a las 18:00) permitiendo aumentar o reducir el personal en la torre de manera eficiente.
 
 ---
 

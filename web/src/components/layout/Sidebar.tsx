@@ -11,8 +11,10 @@ import {
     FaHistory,
     FaCalculator,
     FaClipboardList,
-    FaChartLine
+    FaChartLine,
+    FaCalendarAlt
 } from 'react-icons/fa';
+
 import clsx from 'clsx';
 import { ingestData, resetDatabase } from '../../api';
 import { FaTrashRestore } from 'react-icons/fa';
@@ -99,7 +101,16 @@ export const Sidebar = ({ currentView, onSelect }: SidebarProps) => {
                 { id: 'capacity-report', label: 'Reporte de Capacidad', icon: FaClipboardList }
             ]
         },
-        { id: 'predictive', label: 'Predictiva AI', icon: FaChartLine },
+        {
+            id: 'predictive-group',
+            label: 'Predictiva AI',
+            icon: FaChartLine,
+            children: [
+                { id: 'predictive', label: 'Modelos Predictivos', icon: FaChartLine },
+                { id: 'calendar-events', label: 'Calendario Festivos', icon: FaCalendarAlt }
+            ]
+        },
+
         { id: 'config', label: 'Configuración', icon: FaCogs },
     ];
 

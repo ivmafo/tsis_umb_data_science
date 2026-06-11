@@ -19,9 +19,9 @@ Sea $f$ un vuelo caracterizado por el par ordenado $(o_f, d_f)$, correspondiente
 
 La función de pertenencia $\mathbb{I}(f, S)$ se define mediante la intersección de condiciones lógicas:
 
-$$
+```math
 f \in S \iff (O_S = \emptyset \lor o_f \in O_S) \land (D_S = \emptyset \lor d_f \in D_S)
-$$
+```
 
 ### 1.2 Justificación e Implementación en Código
 
@@ -48,31 +48,31 @@ El cálculo de capacidad sigue la metodología de la **Circular Reglamentaria 00
 
 **TPS (Tiempo Promedio en Sector)**: Equivalente al tiempo de residencia ($t_{occ}$). Se calcula como la media aritmética de la duración de todos los vuelos $N$ en la muestra histórica.
 
-$$
+```math
 TPS = \frac{1}{N} \sum_{i=1}^{N} \text{duracion}_i
-$$
+```
 
 **TFC (Tiempo de Funciones de Control)**: Es la suma de los tiempos manuales requeridos por el controlador para gestionar un vuelo típico.
 
-$$
+```math
 TFC = t_{transfer} + t_{comms} + t_{sep} + t_{coord}
-$$
+```
 
 ### 2.2 Capacidad Horaria Teórica ($CH$)
 
 La Capacidad Horaria (métrica final de flujo proyectada a una ventana de 3600 segundos) se calcula matemáticamente integrando el Factor de Seguridad o Buffer Factor ($\beta = 1.3$) sugerido por los estándares de fatiga para prevenir la saturación cognitiva del controlador:
 
-$$
+```math
 CH = \frac{3600}{TFC \cdot \beta}
-$$
+```
 
 ### 2.3 Capacidad Ajustada ($CH_{adj}$) y Código
 
 Una vez obtenida la métrica ideal, se pasa por un "filtro de la vida real" o Factor de Complejidad ($R$). Este factor $R$ (típicamente entre 0.8 y 1.0) se codifica explícitamente en el CRUD del sistema (`manage_sectors.py`) para absorber características únicas (clima recurrente, cuellos de botella del radar, etc.).
 
-$$
+```math
 CH_{adj} = CH \cdot R
-$$
+```
 
 Esta matemática aeronáutica se transcribe línea por línea en el motor de saturación (`predict_sector_saturation.py`):
 ```python
@@ -91,27 +91,31 @@ El uso de las directrices del Doc 9971 de la OACI garantiza que el cálculo base
 
 ---
 
-## 3. Predicción Estacional: Descomposición de Fourier y Regresión
+## 3. Predicción Estacional: Variables Dummy de Calendario de Colombia y Regresión Lineal
 
-Como Ingeniero y Científico de Datos del proyecto, quiero contarte que predecir el tráfico aéreo no es tan sencillo como hacer una línea recta. Imagina que eres un supervisor en el Centro de Control de Bogotá (CG ACC). Tú sabes por experiencia que los vuelos no son constantes: suben drásticamente en Semana Santa, en la semana de receso de octubre y en diciembre. A estas "olas" predecibles se les llama **estacionalidad** *(Guerrero, 2003, "Análisis Estadístico de Series de Tiempo Económicas")*.
+Como Ingeniero y Científico de Datos del proyecto, quiero contarte que predecir el tráfico aéreo no es tan sencillo como hacer una línea recta. Imagina que eres un supervisor en el Centro de Control de Bogotá (CG ACC). Tú sabes por experiencia que los vuelos no son constantes: suben drásticamente en Semana Santa, en la semana de receso de octubre y en diciembre. A estas variaciones predecibles se les llama **estacionalidad** *(Guerrero, 2003, "Análisis Estadístico de Series de Tiempo Económicas")*.
 
-Para que el módulo **Predicción Estacional** entienda estas olas complejas, usamos un modelo híbrido. Mezclamos **Regresión Lineal** (para saber si la aviación colombiana crece o baja en el tiempo) y **Series de Fourier** (para dibujar las olas de cada temporada).
+Inicialmente el sistema utilizaba series de Fourier (senos y cosenos) para modelar este comportamiento. Sin embargo, dado que el tráfico aeronáutico experimenta picos y valles discretos y abruptos (como los puentes festivos o las vacaciones escolares), las funciones trigonométricas continuas generaban oscilaciones indeseadas (fenómeno de Gibbs) y subestimaban los picos reales. Por ello, se implementó un modelo basado en **Variables Dummy de Calendario Colombiano** y eventos customizados persistidos en base de datos, combinados con **Regresión Lineal**.
 
-### 3.1 El Modelo Matemático en Lenguaje Sencillo (Modelo Aditivo)
+### 3.1 El Modelo Matemático en Lenguaje Sencillo (Modelo Aditivo con Dummies)
 
 Pensamos en la cantidad de vuelos futuros $y(t)$ como una ecuación, una suma de tres partes importantes *(Makridakis, Spiliotis, & Assimakopoulos, 2018)*:
 
-$$
-y(t) = T(t) + S_{anual}(t) + S_{semanal}(t) + \epsilon
-$$
+```math
+y(t) = T(t) + S_{calendario}(t) + \epsilon
+```
 
 **¿Qué significa cada variable?**
 *   $y(t)$: Es lo que queremos predecir (la variable objetivo). ¿Cuántos vuelos habrá en el día $t$?
-*   $T(t)$: **Tendencia** (Trend). Extraída con la Regresión Lineal pura. Representa si la aviación crece a lo largo de los años, sin importar el mes *(Alderete, 2006, "Fundamentos de Econometría")*. 
-*   $S_{anual}(t)$ y $S_{semanal}(t)$: **Estacionalidad**. Son las "olas" que inyectan más o menos vuelos dependiendo de si es diciembre (anual) o si es un martes ejecutivo (semanal).
-*   $\epsilon$: **Ruido Blanco**. Es el margen de error irreducible o la suerte (por ejemplo, el cierre imprevisto de una pista).
+*   $T(t)$: **Tendencia** (Trend). Extraída con la Regresión Lineal pura. Representa si la aviación crece o decrece a lo largo de los años *(Alderete, 2006, "Fundamentos de Econometría")*.
+*   $S_{calendario}(t)$: **Componente Estacional**. Es la suma del impacto de variables binarias (0 o 1) representativas del calendario oficial colombiano y eventos personalizados:
+    
+    ```math
+    S_{calendario}(t) = \gamma_1 \cdot \text{es\_festivo}_t + \gamma_2 \cdot \text{semana\_santa}_t + \gamma_3 \cdot \text{semana\_receso}_t + \gamma_4 \cdot \text{fin\_de\_ano}_t + \sum_{d=0}^{6} \alpha_d \cdot \text{DOW}_{d,t} + \sum_{m=1}^{12} \theta_m \cdot \text{MES}_{m,t}
+    ```
+*   $\epsilon$: **Ruido Blanco**. Es el margen de error irreducible (por ejemplo, huelgas o cancelaciones masivas por condiciones climatológicas).
 
-En el archivo `predict_seasonal_trend.py`, usamos la popular librería de Python `scikit-learn` para crear un *Pipeline* o túnel que une estas fórmulas de manera automática:
+En el archivo `predict_seasonal_trend.py`, usamos la popular librería de Python `scikit-learn` para crear un *Pipeline* o túnel que une la estandarización y la regresión lineal:
 
 ```python
 # Usamos scikit-learn para unir la estandarización de datos y la regresión
@@ -119,37 +123,26 @@ model = make_pipeline(StandardScaler(), LinearRegression())
 model.fit(X, y) # Entrenamos (Machine Learning tabular)
 ```
 
-### 3.2 Imposibilitando lo Complejo: Series de Fourier
+### 3.2 Implementación e Ingeniería del Calendario Colombiano
 
-¿Cómo le enseñamos a una máquina qué es "diciembre" o "Semana Santa"? Usamos trigonometría avanzada pero fácil de codificar. Las **Series de Fourier** afirman matemáticamente que cualquier curva, por más extraña que sea, se puede imitar sumando ondas simples (senos y cosenos) *(Oppenheim & Willsky, 1997, "Señales y Sistemas")*.
+¿Cómo le enseñamos a una máquina las complejidades del calendario aeronáutico colombiano? En la función `add_calendar_features()`, el sistema construye de forma inteligente las siguientes columnas de características:
 
-$$
-S(t) = \sum_{n=1}^{N} \left( a_n \cos\left(\frac{2\pi n t}{P}\right) + b_n \sin\left(\frac{2\pi n t}{P}\right) \right)
-$$
+1.  **Festivos Nacionales (`es_festivo`)**:
+    *   Utiliza la librería oficial de Python `holidays` configurada para Colombia (`holidays.Colombia`).
+    *   Calcula de forma nativa los festivos fijos y móviles de Colombia, considerando automáticamente la **Ley Emiliani (Ley 51 de 1983)**, la cual traslada ciertos festivos al lunes siguiente.
+    *   Se combina con eventos marcados como `'festivo'` en la tabla `calendar_events` de DuckDB para festividades regionales o atípicas.
+2.  **Semana Santa (`semana_santa`)**:
+    *   Las fechas de Semana Santa son móviles y dependen del año lunar. El sistema implementa el **Algoritmo de Pascua de Meeus-Butcher** para calcular el Domingo de Resurrección de cada año.
+    *   Define la ventana desde el Domingo de Ramos (Pascua - 7 días) hasta el Domingo de Resurrección para marcar toda la temporada vacacional de Semana Santa con un flag binario `1`.
+3.  **Semana de Receso Escolar (`semana_receso`)**:
+    *   Se calcula de forma dinámica basándose en el calendario escolar de Colombia (típicamente la semana previa al festivo del Día de la Diversidad / Columbus Day, 12 de Octubre).
+4.  **Temporada de Fin de Año (`fin_de_ano`)**:
+    *   Temporada vacacional alta recurrente entre el 15 de diciembre y el 15 de enero de cada año.
+5.  **Eventos Personalizados CRUD**:
+    *   Se creó una tabla `calendar_events` en DuckDB que permite al usuario registrar cualquier fecha atípica (huelgas, eventos deportivos, cierres programados) directamente desde la interfaz web en React.
 
-**Explicación de Variables Armónicas:**
-*   $t$: Es el número del día. Tu reloj de los datos.
-*   $P$: El tamaño del ciclo que se repite ($365.25$ días para un año, $7$ para una semana).
-*   $N$: Número de "Armónicos". Piensa en $N$ como la resolución del modelo. Entre más grande sea $N$, curvas más complejas y "dentadas" lograremos imitar (el Teorema de Fourier puro).
-*   $a_n, b_n$: Pesos o factores que el modelo descubre solo para saber qué tan alta es la "ola" en la vida real.
-
-Esto se enseña fácil, pero ¿cómo se programa? Con la famosa librería matemática `numpy` (`np.sin` y `np.cos`). En nuestra función interna `add_fourier_terms()`, la computadora fabrica columnas de datos de forma iterativa:
-
-*   **El Ciclo Anual**: La teoría nos exige usar $N=10$ armónicos para imitar perfectamente los picos exabruptos del turismo decembrino o mermas de febrero.
-    ```python
-    t_year = data[date_col].dt.dayofyear
-    for k in range(1, 11): # Construyendo 10 "olas" anuales superpuestas
-        data[f'sin_year_{k}'] = np.sin(2 * np.pi * k * t_year / 365.25)
-    ...
-    ```
-*   **El Ciclo Semanal**: Se exigen $N=3$ armónicos para comprender las caídas operativas dramáticas de los sábados por la tarde frente al estallido comercial de un jueves a mediodía:
-    ```python
-    t_week = data[date_col].dt.dayofweek
-    for k in range(1, 4): ... # 3 olas cortitas para la semana
-    ```
-
-**Justificación del Modelo: (¿Por qué esto y no Inteligencia Artificial profunda?):** 
-Como estudiante, te preguntarás por qué no usar Redes Neuronales o Modelos Estadísticos famosos como ARIMA. La respuesta es el costo e ineficiencia. ARIMA fracasa rotundamente cuando el problema exhibe ciclos muy largos ($P=365$) o ciclos dobles (anual + semanal) *(Hyndman & Athanasopoulos, 2018, "Forecasting: Principles and Practice")*. Y por otro lado, el *Deep Learning* pide tiempos de entrenamiento brutales para tareas sencillas. Escogí la **Descomposición de Fourier combinada con OLS** porque es una solución elegante: modela la realidad en milisegundos con trigonometría básica de `numpy` y mantiene total "explicabilidad" o transparencia, algo que prohíbe las inteligencias artificiales de "caja negra" en la Aeronáutica Civil internacional *(OACI, Doc 10039, Manual sobre la gestión de información aeronáutica - AIM)*.
+**Justificación del Modelo: (¿Por qué esto y no series de Fourier o IA profunda?):**
+Las series de Fourier tienen dificultades para representar picos y caídas instantáneas (por ejemplo, un lunes festivo que duplica el tráfico de retorno y un martes normal que vuelve al promedio). Esto generaba subestimaciones operativas. Al estructurar el calendario mediante variables binarias (dummies), el modelo de Regresión Lineal de largo plazo y el RandomForest de corto plazo logran aislar de forma exacta el peso relativo de cada evento. La validación mediante backtesting temporal arrojó una reducción del error **MAPE a tan solo 6.68%**, garantizando además una total "explicabilidad" del modelo (XAI), fundamental para los estándares de seguridad de la OACI *(OACI, Doc 10039)*.
 
 ---
 
@@ -166,9 +159,9 @@ Imagina el algoritmo no como un computador solitario, sino como si contratáramo
 
 Matemáticamente el "Bosque" se comporta así:
 
-$$
+```math
 \hat{y} = \frac{1}{K} \sum_{k=1}^{K} T_k(X)
-$$
+```
 
 **Explicación de las Letras (Variables del Comité):**
 *   $X$: Se le conoce como Tensor de Características o **Las Pistas**. Son los datos del día a predecir (qué día es, si es puente, cuántos vuelos hubo ayer). Lo formamos usando arreglos con la librería relacional `pandas`.
@@ -180,9 +173,9 @@ $$
 
 ¿Cómo le damos "pistas" a estos árboles? Le programamos en código lo que en ciencia de datos llamamos "Lags" o rezagos temporales (autocorrelaciones biológicas). Simplemente le enseñamos al árbol que la historia de la aviación tiende a repetirse en ciclos idénticos *(Box, Jenkins, & Reinsel, 2015, "Modelos de Series Temporales y Predicción")*:
 
-$$
+```math
 X_t = [ DOW_t, MES_t, AÑO_t, DOY_t, Lag_1, Lag_7, Lag_{14}, Lag_{28} ]
-$$
+```
 
 **¿Qué significan las Pistas de Entrada ($X_t$)?**
 1.  **Variables Calendario** (Atrapan el comportamiento humano global de oficina, dinero y fiestas):
@@ -213,19 +206,19 @@ Para pintar dinámicamente esa "Sombra estadística de Duda" en el Web Dashboard
 
 1. Se toma el promedio y se halla la Desviación Mágica ($\sigma_{pred}$), qué tan lejos opinan individualmente del acuerdo oficial colectivo:
 
-$$
+```math
 \sigma_{pred} = \sqrt{ \frac{1}{K-1} \sum_{k=1}^{K} (T_k(X) - \hat{y})^2 }
-$$
+```
 
 2. Apelando al pilar maestro de la probabilidad estadística elemental, usamos el **Teorema del Límite Central** de una campana paramétrica de Gauss asumiendo el techo de 95% de confianza (Con valor $Z=1.96$) *(Montgomery & Runger, 2014, "Probabilidad y Estadística Aplicada a la Ingeniería")*:
 
-$$
+```math
 IC_{upper} = \hat{y} + 1.96 \cdot \sigma_{pred}
-$$
+```
 
-$$
+```math
 IC_{lower} = \max(0, \hat{y} - 1.96 \cdot \sigma_{pred})
-$$
+```
 
 El código incluye un simple `max(0, ...)` porque físicamente ningún ATC en El Dorado va a gestionar -5 aviones invertidos. Es una simple restricción física de dominio operativo.
 
@@ -242,9 +235,9 @@ Cuando la Aeronáutica Civil (Aerocivil) o un estudiante investigador quiere sab
 
 La ecuación es la fórmula de una línea recta que ves en cálculo básico:
 
-$$
+```math
 y = \beta_0 + \beta_1 \cdot t
-$$
+```
 
 **¿Qué representan estas letras de cara al negocio?**
 *   $y$: Cantidad mensual de vuelos logrados por la marca aerocomercial.
@@ -286,9 +279,9 @@ Por lo tanto, en el módulo `predict_sector_saturation.py` opté como arquitecto
 
 Esta lógica estadística asegura que, en el momento neurálgico o **"Hora Banco"** de un día de operaciones, un sistema de red aeroportuaria agrupará estadísticamente el **$10\%$** del tráfico proyectado para transcurrir en todo su día completo de 24 horas.
 
-$$
+```math
 \hat{D}_{max} = \hat{y}_{diario} \cdot 0.10
-$$
+```
 
 **Variables de estrés inminente:**
 *   $\hat{y}_{diario}$: El tráfico bruto de la jornada pronosticado al final del bucle hiperpreciso por nuestro Random Forest en previsión.
@@ -302,25 +295,25 @@ estimated_peak_hour_load = val * 0.10
 
 ### 6.2 Construcción del Índice de Saturación ($IS$) y Regulación OACI
 
-Ya tengo materializada visualmente a mis "tropas invasoras" o "Avalancha de la Hora Pico" ($\hat{D}_{max}$). Ahora debo evaluar mi "Muralla Física". 
-La resistencia neuronal e infranqueable del ser humano en control radar obedece los tratados de biometría y metodologías puras impartidas por el la normativa internacional a través de la ICAO / OACI *(Doc 9971 - Manual sobre la Gestión Afluencia Tránsito Aéreo y Capacidad, OACI, 2020)*, reguladas internamente por la circular 006 de nuestra Aerocivil.
-La denominamos (y definimos analíticamente en la Sección 2) como Capacidad Ajustada Teórica ($CH_{adj}$). 
+Ya una vez estimada la demanda de tráfico para la hora pico ($\hat{D}_{max}$), es necesario contrastarla con el límite operativo del sector de control. 
+La capacidad máxima que el controlador de tránsito aéreo puede gestionar con márgenes óptimos de seguridad se rige por la normativa internacional de la OACI *(Doc 9971 - Manual sobre la Gestión Afluencia Tránsito Aéreo y Capacidad, OACI, 2020)* y es adoptada a nivel nacional mediante la Circular Reglamentaria 006 de la Aerocivil.
+Esta métrica, descrita previamente, se denomina Capacidad Ajustada Teórica ($CH_{adj}$). 
 
-El estandarte final del aplicativo, o **Índice de Saturación ($IS$)**, calibra en un termómetro científico de 0 a 100 de qué tan al límite llevaremos la mente geométrica del operador:
+El indicador final de este análisis es el **Índice de Saturación ($IS$)**, el cual cuantifica porcentualmente el nivel de carga operativa proyectada respecto a la capacidad de diseño del sector:
 
-$$
+```math
 IS = \left( \frac{\hat{D}_{max}}{CH_{adj}} \right) \cdot 100
-$$
+```
 
-**Explicación Final de Las Variables (Ratio $IS$):**
-El Reglamento Técnico Colombiano exige que la carga cognitiva de un controlador no provoque degradación sistémica de la alerta viva frente a emergencias. El código programado sirve como la sirena condicional a los supervisores ATFM del CG de la FIR Bogotá sobre el desmedido exceso en este parámetro logístico fundamental.
+**Interpretación Operativa del Índice ($IS$):**
+La regulación técnica exige mantener la carga de trabajo operativa en umbrales que garanticen la seguridad y eficiencia del espacio aéreo. El sistema automatiza el cálculo para emitir alertas ATFM oportunas:
 ```python
-# Un condicional Python salva de división en cero (Error Crash) si la plataforma radar estuviese desactiva (capacidad cero de control)
+# Control de excepciones para evitar división por cero en escenarios donde la capacidad del sector se declare temporalmente nula.
 saturation_index = (estimated_peak_hour_load / CH_Adjusted) * 100 if CH_Adjusted > 0 else 0
 ```
-* **Status Normal ($IS \le 80\%$):** Margen elástico para tomar café y gestionar radiofrecuencias del TMA de manera limpia.
-* **Alerta Preventiva y Retención ATFM ($80\% < IS \le 100\%$):** ¡Disparador táctico condicionado! Solicitar de inmediato a la aerolínea Wingo o Latam aguantar a los Boeing 737 cinco minutos con motores cortados en el puente en tierra de Cali y Medellín para alargar holguras operacionales en la zona Terminal.
-* **Congestión Crítica Radar ($IS > 100\%$):** Colapso vectorizado. Imposible sostener normas de separación estipuladas. Nuestra Inteligencia Artificial detectó astutamente esto $30$ días anticipados para evitar despachos a ciegas del tráfico nacional al aeropuerto El Dorado.
+* **Operación Normal ($IS \le 80\%$):** El flujo de tránsito se mantiene operativo dentro de límites óptimos. El controlador dispone de suficientes holguras para resolver posibles interacciones en el sector.
+* **Alerta Preventiva y Medidas ATFM ($80\% < IS \le 100\%$):** Demanda próxima al límite estructural. Significa el umbral para aplicar medidas tácticas de regulación de afluencia (p.ej., asignación de demoras en tierra o *slots* de salida) mitigando picos de congestión.
+* **Saturación Crítica ($IS > 100\%$):** La afluencia pronosticada excedería la capacidad máxima del espacio aéreo, elevando seriamente el riesgo de incidentes operativos al sobrepasar la capacidad de procesamiento de separación del Controlador. La predicción anticipada de modelo asiste a la autoridad ATM para redistribuir el tráfico de manera obligatoria.
 
 **Justificación Tecnológica de cara al Estudiante (Eficiencia Absoluta):**
 Usar el precepto determinístico de la fracción $10\%$ pre-calculado, contra realizar 24 predicciones por Hora en Árboles independientes es un hito monumental que en ciencia de computación definimos como *Simplicidad Computacional contra Desfase de Variabilidad Bruta*. Combinar el canon aeronáutico conservador paramétrico de la Federal Aviation Administration (OACI) empujado directamente detrás del modelo Machine Learning robusto (Random Forest), fabrica la perfecta emulación matemática de un Experto Previsor de Congestión en el Espacio Aéreo de nuestro territorio. Este marco, corre de forma estelar en modestas máquinas informáticas y previene masivamente errores, siendo un pináculo de integración multidisciplinar con tecnología escalable en instituciones estudiantiles o proyectos limitados por *Cloud Hosting* o *SaaS* de alto coste en Colombia y toda Latinoamérica.

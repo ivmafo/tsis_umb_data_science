@@ -118,6 +118,11 @@ export interface Airport {
     timezone?: number;      // GMT offset
     dst?: string;           // Daylight Savings
     source?: string;        // Fuente de datos
+
+    // --- Campos de Capacidad RAC 14 ---
+    reference_code?: string;
+    has_rapid_exit_taxiway?: boolean;
+    requires_backtrack?: boolean;
 }
 
 /**
@@ -362,3 +367,39 @@ export const getSeasonalTrendForecast = async (filters: PredictiveFilters) => {
     });
     return response.data;
 };
+
+// --- API de Calendario y Festivos ---
+
+export interface CalendarEvent {
+    fecha: string;        // Formato YYYY-MM-DD
+    descripcion: string;  // Descripción del evento
+    tipo: string;         // 'festivo', 'receso', 'fin_de_ano', 'custom'
+    es_oficial?: boolean; // Si es un festivo oficial de Colombia
+}
+
+/**
+ * Obtiene la lista unificada de festivos oficiales y personalizados para un año específico.
+ */
+export const getCalendarEvents = async (year?: number): Promise<CalendarEvent[]> => {
+    const response = await api.get('/predictive/calendar-events', {
+        params: { year }
+    });
+    return response.data;
+};
+
+/**
+ * Guarda o actualiza un evento personalizado en el calendario.
+ */
+export const saveCalendarEvent = async (event: CalendarEvent): Promise<{ status: string; message: string }> => {
+    const response = await api.post('/predictive/calendar-events', event);
+    return response.data;
+};
+
+/**
+ * Elimina un evento personalizado del calendario.
+ */
+export const deleteCalendarEvent = async (fecha: string): Promise<{ status: string; message: string }> => {
+    const response = await api.delete(`/predictive/calendar-events/${fecha}`);
+    return response.data;
+};
+

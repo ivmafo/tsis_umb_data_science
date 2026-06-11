@@ -14,22 +14,23 @@ Los requerimientos funcionales definen los servicios que el sistema debe proporc
 - **RF1.3**: El sistema debe permitir la recarga forzada de datos, eliminando duplicados mediante un identificador de archivo (`file_id`).
 - **Archivo de Referencia**: [`ingest_flights_data.py`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/ingest_flights_data.py)
 
-### 🧮 RF2: Cálculo de Capacidad Técnica
-- **RF2.1**: El sistema debe calcular el Tiempo de Permanencia en Sector (TPS) basándose en la historia de vuelos.
-- **RF2.2**: El sistema debe aplicar la fórmula de la Circular 006 (UAEAC) para derivar la Capacidad Simultánea (SCV) y Horaria (CH).
-- **RF2.3**: El sistema debe permitir el ajuste manual de parámetros técnicos (TFC y Factor R).
-- **Archivo de Referencia**: [`calculate_sector_capacity.py`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/calculate_sector_capacity.py)
+### 🧮 RF2: Cálculo de Capacidad Dinámica (RAC 14)
+- **RF2.1**: El sistema debe emplear simulación Montecarlo para inferir la Capacidad Estocástica RAC 14 con un 95% de confianza.
+- **RF2.2**: El sistema debe inferir tiempos operacionales reales mediante Agentes Inteligentes (`Physicist`, `ComplianceOfficer`).
+- **RF2.3**: El sistema debe mantener el cálculo legado de la Circular 006 (UAEAC) para auditoría.
+- **Archivo de Referencia**: [`backend_agent.py`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/backend_agent.py)
 
 ### 🔮 RF3: Análisis Predictivo e IA
 - **RF3.1**: El sistema debe generar predicciones de demanda diaria para un horizonte de 30 días.
-- **RF3.2**: El sistema debe descomponer la demanda en componentes estacionales (Fourier) y residuales (Random Forest).
+- **RF3.2**: El sistema debe descomponer la demanda en componentes estacionales (Variables Dummy de Calendario de Colombia) y residuales (Random Forest).
 - **RF3.3**: El sistema debe alertar visualmente cuando la demanda proyectada supere la capacidad calculada (Saturación).
 - **Archivo de Referencia**: [`predict_daily_demand.py`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/predict_daily_demand.py)
 
 ### ⚙️ RF4: Administración de Maestros
 - **RF4.1**: El sistema debe proporcionar un CRUD (Crear, Leer, Actualizar, Borrar) para Sectores Aeronáuticos.
-- **RF4.2**: El sistema debe gestionar catálogos de Regiones (FIR) y Aeropuertos (ICAO).
-- **Archivo de Referencia**: [`manage_sectors.py`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/manage_sectors.py)
+- **RF4.2**: El sistema debe gestionar catálogos de Regiones (FIR) y Aeropuertos (ICAO) con sus respectivas relaciones Muchos-A-Muchos.
+- **RF4.3**: El sistema debe listar el historial de cargas de archivos procesados y fallidos.
+- **Archivo de Referencia**: [`manage_sectors.py`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/manage_sectors.py), [`manage_airports.py`](file:///c:/Users/LENOVO/Documents/tesis/src/application/use_cases/manage_airports.py)
 
 ---
 
@@ -60,7 +61,9 @@ Los requerimientos no funcionales definen restricciones sobre los servicios o fu
 
 | Requerimiento | Módulo Backend | Componente Frontend |
 | :--- | :--- | :--- |
-| **Ingesta** | `IngestFlightsData` | `FilesView.tsx` |
-| **Capacidad** | `CalculateSectorCapacity`| `CapacityReportView.tsx` |
+| **Ingesta** | `IngestFlightsData` | `FilesView.tsx`, `UploadView.tsx` |
+| **Capacidad** | `BackendAgent`| `CapacityReportView.tsx` |
 | **Predicción**| `PredictDailyDemand` | `DailyDemandChart.tsx` |
-| **Maestros** | `ManageSectors` | `SectorConfigurationView.tsx`|
+| **Crecimiento**| `PredictAirlineGrowth` | `FlightDistributionView.tsx` |
+| **Maestros** | `ManageSectors`, `ManageAirports`| `SectorConfigurationView.tsx`, `AirportsView.tsx`|
+| **Resultados**| `Generate*Report` | Exportación PDF / Excel desde la UI |

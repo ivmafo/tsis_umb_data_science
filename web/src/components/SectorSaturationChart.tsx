@@ -141,7 +141,6 @@ const SectorSaturationChart: React.FC<Props> = ({ filters }) => {
                         title: { text: "Saturación (%)", style: { color: '#FEB019' } },
                         labels: { style: { colors: '#FEB019' } },
                         min: 0,
-                        max: 120
                     }
                 ],
                 tooltip: { shared: true, intersect: false },
@@ -151,12 +150,22 @@ const SectorSaturationChart: React.FC<Props> = ({ filters }) => {
                         {
                             y: 80, yAxisIndex: 1,
                             borderColor: '#FEB019',
+                            strokeDashArray: 5,
                             label: { text: 'Umbral Alerta' }
+                        },
+                        {
+                            y: (newMetrics.stochastic_range && newMetrics.CH_Adjusted) ? (newMetrics.stochastic_range.lower / newMetrics.CH_Adjusted) * 100 : 100,
+                            y2: (newMetrics.stochastic_range && newMetrics.CH_Adjusted) ? (newMetrics.stochastic_range.upper / newMetrics.CH_Adjusted) * 100 : 100,
+                            yAxisIndex: 1,
+                            fillColor: '#ef4444',
+                            opacity: 0.15,
+                            label: { text: 'Banda Estocástica (95%)', style: { background: '#ef4444', color: '#fff', fontSize: '10px' } }
                         },
                         {
                             y: 100, yAxisIndex: 1,
                             borderColor: '#ef4444',
-                            label: { text: 'Saturación Total', style: { background: '#ef4444' } }
+                            strokeDashArray: 0,
+                            label: { text: 'Saturación Nominal', style: { background: '#ef4444', color: '#fff' } }
                         }
                     ]
                 }
@@ -180,20 +189,20 @@ const SectorSaturationChart: React.FC<Props> = ({ filters }) => {
             {metrics && (
                 <div className="mt-4 grid grid-cols-4 gap-4 text-center border-t pt-2 bg-gray-50 rounded p-2">
                     <div>
-                        <span className="block text-gray-500 text-xs">Tiempo Prom. (TFC)</span>
-                        <span className="font-bold">{metrics.TFC} s</span>
+                        <span className="block text-gray-500 text-xs">TFC Dinámico (RAC 14)</span>
+                        <span className="font-bold">{metrics.dynamic_tfc} s</span>
                     </div>
                     <div>
-                        <span className="block text-gray-500 text-xs">Capacidad Teórica (CH)</span>
-                        <span className="font-bold">{metrics.CH_Theoretical} vuelos/hr</span>
+                        <span className="block text-gray-500 text-xs">Rango Estocástico (95%)</span>
+                        <span className="font-bold text-slate-600">{metrics.stochastic_range?.lower} - {metrics.stochastic_range?.upper} v/hr</span>
                     </div>
                     <div>
-                        <span className="block text-gray-500 text-xs">Factor (R)</span>
-                        <span className="font-bold">{metrics.R_Factor}</span>
-                    </div>
-                    <div>
-                        <span className="block text-gray-500 text-xs">Capacidad Ajustada</span>
+                        <span className="block text-gray-500 text-xs">Capacidad Asegurada</span>
                         <span className="font-bold text-blue-600">{metrics.CH_Adjusted} vuelos/hr</span>
+                    </div>
+                    <div>
+                        <span className="block text-gray-500 text-xs">Pico de Saturación</span>
+                        <span className={`font-bold ${metrics.Max_Saturation > 100 ? 'text-red-500' : 'text-amber-500'}`}>{metrics.Max_Saturation ?? 0}%</span>
                     </div>
                 </div>
             )}
@@ -250,10 +259,10 @@ const SectorSaturationChart: React.FC<Props> = ({ filters }) => {
 
             <MethodologySection
                 title={filters.start_date ? "Análisis de Saturación Estacional" : "Saturación de Sector"}
-                algorithm="Modelo Híbrido: Predicción RF + Capacidad (Circular 006)"
-                variables={['Tiempo de Ocupación (TFC)', 'Vuelos Previstos', 'Factor Buffer (1.3)']}
+                algorithm="Modelo Híbrido: Predicción AI (Demand) + Agentes Estocásticos RAC 14 (Capacity)"
+                variables={['Tiempo de Ocupación Dinámico (TFC)', 'Factor Ashford Probabilístico', 'Bandas de Incertidumbre (Estocástico)']}
                 filters="Sector Específico"
-                dataVolume={filters.start_date ? "Comparación histórica del periodo seleccionado" : "Datos de vuelos del sector en los últimos 90 días"}
+                dataVolume={filters.start_date ? "Comparación histórica del periodo seleccionado" : "Datos de vuelos del sector en los últimos 90 días combinados con simulación montecarlo"}
                 explanation={error || (metrics?.description || "Calculando...")}
             />
 

@@ -21,3 +21,13 @@ class Airport(BaseModel):
     dst: str  # Horario de verano (Daylight Saving Time)
     type: str  # Tipo de instalación (aeropuerto, helipuerto, etc.)
     source: str  # Fuente de los datos (ej. OurAirports)
+    
+    # --- Parámetros RAC 14 (Capacidad y Performance) ---
+    reference_code: Optional[str] = "4E"  # Código de referencia OACI (ej. 4E, 3C)
+    has_rapid_exit_taxiway: bool = False  # Presencia de calles de salida rápida
+    requires_backtrack: bool = False      # Si la pista requiere backtrack para el despegue
+    
+    @property
+    def is_high_altitude(self) -> bool:
+        """Determina automáticamente si la estación es de gran altitud (>5000 ft)"""
+        return self.altitude > 5000

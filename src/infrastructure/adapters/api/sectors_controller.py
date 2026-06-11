@@ -1,9 +1,10 @@
 
 from fastapi import APIRouter, Depends, HTTPException
 from typing import List, Dict, Any, Optional
-from src.application.di.container import get_manage_sectors_use_case, get_calculate_sector_capacity_use_case
+from src.application.di.container import get_manage_sectors_use_case, get_calculate_sector_capacity_use_case, get_backend_agent
 from src.application.use_cases.manage_sectors import ManageSectors
 from src.application.use_cases.calculate_sector_capacity import CalculateSectorCapacity
+from src.application.use_cases.backend_agent import BackendAgent
 from pydantic import BaseModel
 
 router = APIRouter(prefix="/sectors", tags=["sectors"])
@@ -17,6 +18,7 @@ class SectorCreate(BaseModel):
     t_coordination: float = 0.0
     adjustment_factor_r: float = 0.8
     capacity_baseline: int = 0
+    utilization_factor: float = 0.8  # Factor Ashford para simulación estocástica RAC 14
 
 class SectorUpdate(BaseModel):
     name: Optional[str] = None
@@ -27,6 +29,7 @@ class SectorUpdate(BaseModel):
     t_coordination: Optional[float] = None
     adjustment_factor_r: Optional[float] = None
     capacity_baseline: Optional[int] = None
+    utilization_factor: Optional[float] = None
 
 class CapacityRequest(BaseModel):
     start_date: Optional[str] = None
@@ -139,27 +142,28 @@ def delete_sector(
 def calculate_capacity(
     id: str, 
     req: CapacityRequest, 
-    uc: CalculateSectorCapacity = Depends(get_calculate_sector_capacity_use_case)
+    uc: BackendAgent = Depends(get_backend_agent)
 ):
     """
-    Realiza el cálculo matemático de capacidad horaria (CH) y volumen (SCV) para un sector dada una ventana de tiempo.
-    Este endpoint es el núcleo de aplicación de la Circular 006 de la Aerocivil.
+    Realiza el cálculo Dinámico y Estocástico de capacidad (RAC 14 / Circular 006).
+    Usa la tríada de Agentes (Compliance, Physicist, RiskManager).
     
     Args:
         id (str): El sector objetivo del cálculo.
         req (CapacityRequest): Rango de fechas para el análisis de flujos históricos.
-        uc (CalculateSectorCapacity): Caso de uso que implementa la lógica matemática y física.
+        uc (BackendAgent): Controlador integrador que fusiona la persistencia nominal con agentes matemáticos.
         
     Returns:
-        Dict: Resultados detallados de SCV, TFC, TPS y CH Ajustada.
-        
-    Raises:
-        HTTPException: 404 para sectores inválidos o 500 para errores internos de cálculo.
+        Dict: Reporte JSON estructurado con saturación estocástica y bandas de confianza.
     """
     try:
         filters = {"start_date": req.start_date, "end_date": req.end_date}
-        result = uc.execute(id, filters)
-        return result
+        # In this endpoint, we are going to look up the sector to find its saved utilization factor
+        # Since BackendAgent orchestrates this, we pass the standard default or if the user sends one, we use it.
+        # But wait, the sector data has 'utilization_factor'. 
+        return uc.execute_dynamic_capacity_calculation(id, filters)
+        # Note: In BackendAgent, we'll fetch sector_data and use sector_data.get('utilization_factor', 0.8) if we want.
+        # Let's adjust BackendAgent in a subsequent step if needed, or pass it explicitly.
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
